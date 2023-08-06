@@ -3,6 +3,7 @@ package main
 import (
 	account_controller "github.com/JusSix1/GameExchange/controller/account"
 	login_controller "github.com/JusSix1/GameExchange/controller/login"
+	post_controller "github.com/JusSix1/GameExchange/controller/post"
 	revenue_controller "github.com/JusSix1/GameExchange/controller/revenue"
 	user_controller "github.com/JusSix1/GameExchange/controller/user"
 	"github.com/JusSix1/GameExchange/entity"
@@ -39,6 +40,8 @@ func main() {
 			protected.DELETE("/account", account_controller.DeleteAccount)
 
 			protected.GET("/games", account_controller.ListGame)
+
+			protected.POST("/post", post_controller.CreatePost)
 
 			// protected.POST("/order/:email", order_controller.CreateOrder)
 			// protected.GET("/order/:email", order_controller.GetOrder)

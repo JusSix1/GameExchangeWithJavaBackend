@@ -15,4 +15,5 @@ export interface AccountsInterface {
 	Game:    			GamesInterface,
 	Order_ID: 		   	number,
 	Order: 			   	OrdersInterface,
+	Is_Post:			boolean,
 }

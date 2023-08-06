@@ -50,6 +50,8 @@ type Account struct {
 	Game           Game   `gorm:"references:id" valid:"-"`
 	Order_ID       *uint  `valid:"-"`
 	Order          Order  `gorm:"references:id" valid:"-"`
+	Is_Post        bool   `valid:"-"`
+	Post           []Post `gorm:"foreignKey:Account_ID"`
 }
 
 type Order struct {
@@ -65,6 +67,17 @@ type Revenue struct {
 	User_ID *uint   `valid:"-"`
 	User    User    `gorm:"references:id" valid:"-"`
 	Income  float64 `valid:"required~Income is blank"`
+}
+
+type Post struct {
+	gorm.Model
+	Account_ID        *uint   `valid:"-"`
+	Account           Account `gorm:"references:id" valid:"-"`
+	Description       string  `valid:"required~Description is blank"`
+	Advertising_image string  `valid:"image_valid~Please change the image"`
+	Price             uint    `valid:"required~Price is blank"`
+	Is_Reserve        bool    `valid:"-"`
+	Is_Sell           bool    `valid:"-"`
 }
 
 func init() {

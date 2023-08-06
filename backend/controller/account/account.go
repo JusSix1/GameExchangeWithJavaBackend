@@ -45,6 +45,7 @@ func CreateAccount(c *gin.Context) {
 		Email:          account.Email,
 		Email_Password: account.Email_Password,
 		Game_ID:        &game.ID,
+		Is_Post:        false,
 	}
 
 	if err := entity.DB().Create(&newAccount).Error; err != nil {
