@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/JusSix1/GameExchange/entity"
+	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -46,6 +47,12 @@ func CreateAccount(c *gin.Context) {
 		Email_Password: account.Email_Password,
 		Game_ID:        &game.ID,
 		Is_Post:        false,
+	}
+
+	// validate Account
+	if _, err := govalidator.ValidateStruct(newAccount); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	if err := entity.DB().Create(&newAccount).Error; err != nil {

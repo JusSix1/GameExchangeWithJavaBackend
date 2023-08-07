@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/JusSix1/GameExchange/entity"
+	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,6 +33,12 @@ func CreatePost(c *gin.Context) {
 		Is_Sell:           post.Is_Sell,
 	}
 
+	// validate post
+	if _, err := govalidator.ValidateStruct(newPost); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	if err := entity.DB().Create(&newPost).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -46,6 +53,6 @@ func CreatePost(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": account})
+	c.JSON(http.StatusOK, gin.H{"data": post})
 
 }
