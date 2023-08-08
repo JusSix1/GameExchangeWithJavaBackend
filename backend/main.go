@@ -36,7 +36,8 @@ func main() {
 
 			protected.POST("/account/:email", account_controller.CreateAccount)
 			protected.GET("/all-account/:email", account_controller.GetAllAccount)
-			protected.GET("/account-in-order/:id", account_controller.GetAccountInOrder)
+			// protected.GET("/account-in-order/:id", account_controller.GetAccountInOrder)
+			protected.PATCH("/account", account_controller.UpdateAccount)
 			protected.DELETE("/account", account_controller.DeleteAccount)
 
 			protected.POST("/game", account_controller.CreateGame)

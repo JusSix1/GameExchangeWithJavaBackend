@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { DataGrid, FilterColumnsArgs, GetColumnForNewFilterArgs, GridColDef, GridRowSelectionModel, GridToolbarContainer, GridToolbarExport, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector } from '@mui/x-data-grid';
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormHelperText, Grid, Paper, Snackbar, TextField, Typography } from '@mui/material';
-import TextareaAutosize from '@mui/base/TextareaAutosize';
+import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Paper, Snackbar, TextField, Typography } from '@mui/material';
 import Autocomplete from "@mui/material/Autocomplete";
 import Moment from 'moment';
-import { styled } from '@mui/system';
-
 import ip_address from '../ip';
 import { AccountsInterface } from '../../models/account/IAccount';
 import UserFullAppBar from '../FullAppBar/UserFullAppBar';
 import { GamesInterface } from '../../models/account/IGame';
 import { PostsInterface } from '../../models/post/IPost';
+import './All_My_Account.css'
 
 const styles: { [name: string]: React.CSSProperties } = {
     container: {
@@ -34,12 +32,14 @@ export default function All_My_Account_UI() {
     const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
     const [account, setAccount] = React.useState<AccountsInterface[]>([]);
     const [importAccount, setImportAccount] = React.useState<Partial<AccountsInterface>>({});
+    const [editAccount, setEditAccount] = React.useState<Partial<AccountsInterface>>({});
     const [post, setPost] = React.useState<Partial<PostsInterface>>({});
     const [game, setGame] = React.useState<GamesInterface[]>([]);
 
     const [imageString, setImageString] = React.useState<string | ArrayBuffer | null>(null);
     const [newGame, setNewGame] = React.useState<string>('');
     const [description, setDescription] = React.useState<String>('');
+    const [buttonDialogAccount, setButtonDialogAccount] = React.useState<String>('');
 
     const [success, setSuccess] = React.useState(false);
     const [error, setError] = React.useState(false);
@@ -49,6 +49,7 @@ export default function All_My_Account_UI() {
     const [dialogDeleteOpen, setDialogDeleteOpen] = React.useState(false);
     const [dialogPostOpen, setDialogPostOpen] = React.useState(false);
     const [dialogAddGameOpen, setDialogAddGameOpen] = React.useState(false);
+    const [dialogEditOpen, setDialogEditOpen] = React.useState(false);
 
     const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
 
@@ -78,7 +79,7 @@ export default function All_My_Account_UI() {
         { field: 'Email', headerName: 'Email', width: 200 },
         { field: 'Email_Password', headerName: 'Email password', width: 200 },
         {
-            field: ' ',
+            field: 'A',
             headerName: 'Post',
             width: 200,
             renderCell: params => (
@@ -90,7 +91,7 @@ export default function All_My_Account_UI() {
                     color="warning"
                     //onClick={() => handleEditButtonClick(params.row.ID)}
                   >
-                    Edit
+                    Edit Post
                   </Button>
                 ) : (
                   <Button
@@ -105,6 +106,16 @@ export default function All_My_Account_UI() {
               </>
             ),
           },
+          { field: 'B', headerName: 'Edit', width: 200, renderCell: params => (
+            <Button
+                size='small'
+                variant="contained"
+                color="primary"
+                onClick={() => handleEditButtonClick(params.row)}
+            >
+              Edit
+            </Button>
+          ),}
     ];   
 
     const filterColumns = ({ field, columns, currentFilters }: FilterColumnsArgs) => {
@@ -153,13 +164,20 @@ export default function All_My_Account_UI() {
         handleDialogPostClickOpen();
     };
 
+    const handleEditButtonClick = (data: any) => {
+        setImportAccount(data);
+        handleDialogEditClickOpen();
+    };
+
     const handleDialogCreateClickOpen = () => {
         setDialogCreateOpen(true);
+        setButtonDialogAccount('Import');
     };
 
     const handleDialogCreateClickClose = () => {
         setDialogCreateOpen(false);
         setNewGame('');
+        setImportAccount({})
     };
 
     const handleDialogDeleteClickOpen = () => {
@@ -177,6 +195,11 @@ export default function All_My_Account_UI() {
     const handleDialogPostClickClose = () => {
         setDialogPostOpen(false);
         setImageString(null);
+    };
+
+    const handleDialogEditClickOpen = () => {
+        setDialogCreateOpen(true);
+        setButtonDialogAccount('Summit');
     };
 
     const handleDialogAddGameClickOpen = () => {
@@ -244,7 +267,7 @@ export default function All_My_Account_UI() {
 
         setDialogLoadOpen(true);
 
-        if(newGame != '') {
+        if(newGame !== '') {
             let data = {       //ประกาศก้อนข้อมูล                                                    
                 Name:       newGame,            
             };
@@ -321,10 +344,54 @@ export default function All_My_Account_UI() {
         
     }
 
+    const EditAccount = async () => {   
+
+        setDialogLoadOpen(true);
+
+        let data = {       //ประกาศก้อนข้อมูล     
+            ID:                 importAccount.ID,                                                           
+            Game_Account:       importAccount.Game_Account,            
+            Game_Password:  	importAccount.Game_Password,        
+            Email:             	importAccount.Email,         
+            Email_Password:    	importAccount.Email_Password,                       
+            Game_ID: 			importAccount.Game_ID,
+        };
+
+        console.log(data);
+
+        const apiUrl = ip_address() + "/account";                      //ส่งขอการเพิ่ม
+        const requestOptions = {     
+            method: "PATCH",      
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+            },     
+            body: JSON.stringify(data),
+        };
+
+        await fetch(apiUrl, requestOptions)
+        .then((response) => response.json())
+        .then(async (res) => {      
+            if (res.data) {
+                setSuccess(true);
+                handleDialogCreateClickClose();
+                getAccount();
+                setImportAccount({});
+            } else {
+                setError(true);  
+                setErrorMsg(" - "+res.error);  
+            }
+        });
+        
+        setDialogLoadOpen(false);
+        
+    }
 
     const DeleteAccount = async () => {    
 
-        setDialogLoadOpen(true);
+        if(rowSelectionModel.length !== 0){
+        
+            setDialogLoadOpen(true);
 
         var dataArr = [];
 
@@ -356,7 +423,14 @@ export default function All_My_Account_UI() {
                 setErrorMsg(" - "+res.error);  
             }
         });
+
         setDialogLoadOpen(false);
+
+        } else {
+            setError(true);  
+            setErrorMsg(" - No account selected");  
+        }
+
     }
 
     const CreatePost = async () => {   
@@ -403,7 +477,7 @@ export default function All_My_Account_UI() {
     const [count, setCount] = React.useState<number>(0);
 
     React.useEffect(() => {
-        if(count == 0) {
+        if(count === 0) {
             const fetchData = async () => {
                 setDialogLoadOpen(true);
                 await getAccount();
@@ -474,10 +548,10 @@ export default function All_My_Account_UI() {
 
             <Grid container sx={{ padding: 2 }}>
                 <Grid sx={{ padding: 2 }}>
-                    <Button size='small' variant="contained" color="primary" onClick={() => handleDialogCreateClickOpen()}>Add Account</Button>
+                    <button className="AddAccBtn" onClick={() => handleDialogCreateClickOpen()}>Add Account</button>
                 </Grid>
                 <Grid sx={{ padding: 2 }}>
-                    <Button size='small' variant="contained" color="error" onClick={() => handleDialogDeleteClickOpen()}>Delete Account</Button>
+                    <button className="DeleAccBtn" onClick={() => handleDialogDeleteClickOpen()}>Delete Account</button>
                 </Grid>
             </Grid>
 
@@ -506,6 +580,7 @@ export default function All_My_Account_UI() {
                                                 options={game}
                                                 fullWidth
                                                 size="small"
+                                                value={importAccount.Game_ID ? game.find(option => option.ID === importAccount.Game_ID) : null}
                                                 onChange={(event: any, value) => {
                                                     setImportAccount({ ...importAccount, Game_ID: value?.ID });
                                                     setNewGame(""); // Clear the new game input when a game is selected
@@ -553,6 +628,7 @@ export default function All_My_Account_UI() {
                                                 label="Account"
                                                 type='string'
                                                 variant="outlined"
+                                                value={importAccount.Game_Account}
                                                 onChange={(event) => setImportAccount({...importAccount, Game_Account: event.target.value})}
                                             />
                                         </Grid>
@@ -563,6 +639,7 @@ export default function All_My_Account_UI() {
                                                 label="Password"
                                                 type='string'
                                                 variant="outlined"
+                                                value={importAccount.Game_Password}
                                                 onChange={(event) => setImportAccount({...importAccount, Game_Password: event.target.value})}
                                             />
                                         </Grid>
@@ -580,6 +657,7 @@ export default function All_My_Account_UI() {
                                             label="Email"
                                             type='string'
                                             variant="outlined"
+                                            value={importAccount.Email}
                                             onChange={(event) => setImportAccount({...importAccount, Email: event.target.value})}
                                         />
                                     </Grid>
@@ -590,6 +668,7 @@ export default function All_My_Account_UI() {
                                             label="Password"
                                             type='string'
                                             variant="outlined"
+                                            value={importAccount.Email_Password}
                                             onChange={(event) => setImportAccount({...importAccount, Email_Password: event.target.value})}
                                         />
                                     </Grid>
@@ -601,13 +680,13 @@ export default function All_My_Account_UI() {
                 </DialogContent>
                 <DialogActions>
                     <Button size='small' onClick={handleDialogCreateClickClose} color="error">Cancel</Button>
-                    <Button size='small' onClick={CreateAccount} color="info" autoFocus>Import</Button>
+                    <Button size='small' onClick={buttonDialogAccount === "Import" ? CreateAccount : EditAccount} color="info" autoFocus>{buttonDialogAccount}</Button>
                 </DialogActions>
             </Dialog>
 
             <Dialog
                 open={dialogDeleteOpen}
-                onClose={handleDialogCreateClickClose}
+                onClose={handleDialogDeleteClickClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >

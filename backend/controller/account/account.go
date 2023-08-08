@@ -84,13 +84,51 @@ func GetAllAccount(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": account})
 }
 
-// GET /account-in-order/:id
-func GetAccountInOrder(c *gin.Context) {
-	var account []entity.Account
+// // GET /account-in-order/:id
+// func GetAccountInOrder(c *gin.Context) {
+// 	var account []entity.Account
 
-	id := c.Param("id")
+// 	id := c.Param("id")
 
-	if err := entity.DB().Raw("SELECT * FROM accounts WHERE order_id = ? ORDER BY id_account DESC", id).Find(&account).Error; err != nil {
+// 	if err := entity.DB().Raw("SELECT * FROM accounts WHERE order_id = ? ORDER BY id_account DESC", id).Find(&account).Error; err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, gin.H{"data": account})
+// }
+
+// PATCH /account
+func UpdateAccount(c *gin.Context) {
+	var account entity.Account
+	var game entity.Game
+
+	if err := c.ShouldBindJSON(&account); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if tx := entity.DB().Where("id = ?", account.Game_ID).First(&game); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Game not found"})
+		return
+	}
+
+	// update user fields that are allowed to be updated
+	updateAccount := entity.Account{
+		Game_Account:   account.Game_Account,
+		Game_Password:  account.Game_Password,
+		Email:          account.Email,
+		Email_Password: account.Email_Password,
+		Game_ID:        &game.ID,
+	}
+
+	// validate user
+	if _, err := govalidator.ValidateStruct(updateAccount); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := entity.DB().Where("id = ?", account.ID).Updates(&updateAccount).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
