@@ -4,7 +4,7 @@ import './App.css';
 import SignIn_User from "./component/SignIn_User_UI";
 import User_Profile_UI from "./component/user/User_Profile_UI";
 //import My_Order_UI from "./component/order/myOrder";
-import Home_User_UI from "./component/Home_User_UI";
+import Home_User_UI from "./component/Home/Home_User_UI";
 import All_My_Account_UI from "./component/account/All_My_Account_UI";
 import My_Revenue_Account_UI from "./component/RevenueAccount/myRevenueAccount";
 

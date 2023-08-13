@@ -3,7 +3,6 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import List from '@mui/material/List';
@@ -17,12 +16,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import ViewListIcon from '@mui/icons-material/ViewList';
-import MoneyOffIcon from '@mui/icons-material/MoneyOff';
 import GradingIcon from '@mui/icons-material/Grading';
-
-// Admin Icon
-import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
-import TrendingUpTwoToneIcon from '@mui/icons-material/TrendingUpTwoTone';
 
 import { Link as RouterLink } from "react-router-dom";
 import { UsersInterface } from '../../models/user/IUser';
@@ -41,6 +35,11 @@ function UserFullAppBar() {
   function drawerList() {
     return (
       <List sx={{ width: "100%" }}>
+        <ListItem button component={RouterLink} to="/">
+          <HomeIcon />
+          <ListItemText primary="Home" sx={{ paddingLeft: 1 }} />
+        </ListItem>
+
         <ListItem button component={RouterLink} to="/AllMyAccount">
           <ViewListIcon />
           <ListItemText primary="All My Account" sx={{ paddingLeft: 1 }} />

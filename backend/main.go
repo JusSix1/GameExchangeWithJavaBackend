@@ -30,6 +30,7 @@ func main() {
 		{
 			protected.GET("/user/:email", user_controller.GetUser)
 			protected.GET("/usersprofilepicture/:email", user_controller.GetUserProfilePicture)
+			protected.GET("/usernamelist", user_controller.GetUserNameList)
 			protected.PATCH("/users", user_controller.UpdateUser)
 			protected.PATCH("/usersPassword", user_controller.UpdateUserPassword)
 			protected.DELETE("/users/:email", user_controller.DeleteUser)
@@ -45,6 +46,7 @@ func main() {
 			protected.GET("/newgame", account_controller.NewGame)
 
 			protected.POST("/post", post_controller.CreatePost)
+			protected.GET("/posts", post_controller.ListPost)
 
 			// protected.POST("/order/:email", order_controller.CreateOrder)
 			// protected.GET("/order/:email", order_controller.GetOrder)
