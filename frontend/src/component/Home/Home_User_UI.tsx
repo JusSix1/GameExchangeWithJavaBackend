@@ -5,14 +5,16 @@ import ip_address from "../ip";
 import {
   Alert,
   Autocomplete,
+  Button,
   Dialog,
+  DialogActions,
   DialogTitle,
   Grid,
   Snackbar,
   TextField,
 } from "@mui/material";
 import UserFullAppBar from "../FullAppBar/UserFullAppBar";
-import "./styles.css";
+import "./Home_User_UI.css";
 import Moment from "moment";
 import moment from "moment";
 import { GamesInterface } from "../../models/account/IGame";
@@ -22,14 +24,18 @@ export default function Home_User_UI() {
   const [post, setPost] = React.useState<PostsInterface[]>([]);
   const [game, setGame] = React.useState<GamesInterface[]>([]);
   const [listUserName, setListUserName] = React.useState<UsersInterface[]>([]);
+
   const [search, setSearch] = React.useState("");
   const [gameFilter, setGameFilter] = React.useState<number>();
   const [userNameFilter, setUserNameFilter] = React.useState<number>();
+  const [postID, setPostID] = React.useState<number>();
+  const [accountID, setAccountID] = React.useState<number>();
 
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
   const [dialogLoadOpen, setDialogLoadOpen] = React.useState(false);
+  const [dialogReserveOpen, setDialogReserveOpen] = React.useState(false);
 
   Moment.locale("th");
 
@@ -45,12 +51,26 @@ export default function Home_User_UI() {
     setErrorMsg("");
   };
 
+  const handleReserveButtonClick = (item: any) => {
+    setPostID(item.ID);
+    setAccountID(item.Account.ID);
+    handleDialogReserveClickOpen();
+  };
+
+  const handleDialogReserveClickOpen = () => {
+    setDialogReserveOpen(true);
+  };
+
+  const handleDialogReserveClickClose = () => {
+    setDialogReserveOpen(false);
+  };
+
   const isOptionEqualToValue = (option: { ID: any }, value: { ID: any }) => {
     return option.ID === value.ID;
   };
 
   const getPost = async () => {
-    const apiUrl = ip_address() + "/posts"; // email คือ email ที่ผ่านเข้ามาทาง parameter
+    const apiUrl = ip_address() + "/posts";
     const requestOptions = {
       method: "GET",
       headers: {
@@ -106,6 +126,44 @@ export default function Home_User_UI() {
       });
   };
 
+  const CreateReserve = async () => {
+    setDialogLoadOpen(true);
+
+    console.log(accountID)
+    console.log(postID)
+
+    let data = {
+      Account_ID: accountID,
+      Post_ID: postID,
+    };
+
+    console.log(data)
+
+    const apiUrl = ip_address() + "/order/" + localStorage.getItem("email"); //ส่งขอการเพิ่ม
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then(async (res) => {
+        if (res.data) {
+          setSuccess(true);
+          handleDialogReserveClickClose();
+          getPost();
+        } else {
+          setError(true);
+          setErrorMsg(" - " + res.error);
+        }
+      });
+    setDialogLoadOpen(false);
+  };
+
   React.useEffect(() => {
     const fetchData = async () => {
       setDialogLoadOpen(true);
@@ -142,7 +200,7 @@ export default function Home_User_UI() {
       </Snackbar>
 
       <Grid container>
-        <Grid item xs={7} margin={1} marginLeft={2}>
+        <Grid item xs={7} margin={1}>
           <TextField
             id="search-bar"
             fullWidth
@@ -152,7 +210,7 @@ export default function Home_User_UI() {
             size="small"
           />
         </Grid>
-        <Grid item xs={2} margin={1} marginLeft={4}>
+        <Grid item xs={2} margin={1}>
           <Autocomplete
             id="game-autocomplete"
             options={game}
@@ -185,7 +243,7 @@ export default function Home_User_UI() {
             isOptionEqualToValue={isOptionEqualToValue}
           />
         </Grid>
-        <Grid item xs={2} margin={1} marginLeft={4}>
+        <Grid item xs={2} margin={1}>
           <Autocomplete
             id="username-autocomplete"
             options={listUserName}
@@ -220,7 +278,7 @@ export default function Home_User_UI() {
         </Grid>
       </Grid>
 
-      <Grid sx={{ margin: 1 }} >
+      <Grid sx={{ margin: 1 }}>
         {post
           .filter(
             (item) =>
@@ -233,7 +291,7 @@ export default function Home_User_UI() {
                 item.Account.User_ID === userNameFilter)
           )
           .map((item) => (
-            <Grid  key={item.ID}>
+            <Grid key={item.ID}>
               <div className="post">
                 <div className="post-header">
                   <img
@@ -264,6 +322,29 @@ export default function Home_User_UI() {
                     className="post-image"
                   />
                 )}
+                <div className="container-reserve">
+                  <button
+                    className="button-reserve"
+                    onClick={() => handleReserveButtonClick(item)}
+                  >
+                    <svg
+                      width="180px"
+                      height="60px"
+                      viewBox="0 0 180 60"
+                      className="svg-reserve"
+                    >
+                      <polyline
+                        points="179,1 179,59 1,59 1,1 179,1"
+                        className="bg-line"
+                      />
+                      <polyline
+                        points="179,1 179,59 1,59 1,1 179,1"
+                        className="hl-line"
+                      />
+                    </svg>
+                    <span>Reserve</span>
+                  </button>
+                </div>
               </div>
             </Grid>
           ))}
@@ -275,6 +356,29 @@ export default function Home_User_UI() {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">{"Loading..."}</DialogTitle>
+      </Dialog>
+
+      <Dialog
+        open={dialogReserveOpen}
+        onClose={handleDialogReserveClickClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth={true}
+        maxWidth="sm"
+      >
+        <DialogTitle id="alert-dialog-title">{"Reserve Account"}</DialogTitle>
+        <DialogActions>
+          <Button
+            size="small"
+            color="error"
+            onClick={handleDialogReserveClickClose}
+          >
+            Cancel
+          </Button>
+          <Button size="small" onClick={CreateReserve} autoFocus>
+            Reserve
+          </Button>
+        </DialogActions>
       </Dialog>
     </>
   );

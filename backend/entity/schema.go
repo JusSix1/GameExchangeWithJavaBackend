@@ -39,27 +39,28 @@ type Game struct {
 
 type Account struct {
 	gorm.Model
-	ID_Account     uint   `valid:"-"`
-	User_ID        *uint  `valid:"-"`
-	User           User   `gorm:"references:id" valid:"-"`
-	Game_Account   string `valid:"-"`
-	Game_Password  string `valid:"-"`
-	Email          string `valid:"-"`
-	Email_Password string `valid:"-"`
-	Game_ID        *uint  `valid:"-"`
-	Game           Game   `gorm:"references:id" valid:"-"`
-	Order_ID       *uint  `valid:"-"`
-	Order          Order  `gorm:"references:id" valid:"-"`
-	Is_Post        bool   `valid:"-"`
-	Post           []Post `gorm:"foreignKey:Account_ID"`
+	ID_Account     uint    `valid:"-"`
+	User_ID        *uint   `valid:"-"`
+	User           User    `gorm:"references:id" valid:"-"`
+	Game_Account   string  `valid:"-"`
+	Game_Password  string  `valid:"-"`
+	Email          string  `valid:"-"`
+	Email_Password string  `valid:"-"`
+	Game_ID        *uint   `valid:"-"`
+	Game           Game    `gorm:"references:id" valid:"-"`
+	Is_Post        bool    `valid:"-"`
+	Order          []Order `gorm:"foreignKey:Account_ID"`
+	Post           []Post  `gorm:"foreignKey:Account_ID"`
 }
 
 type Order struct {
 	gorm.Model
-	User_ID *uint     `valid:"-"`
-	User    User      `gorm:"references:id" valid:"-"`
-	Account []Account `gorm:"foreignKey:Order_ID"`
-	Slip    string    `valid:"image_valid~Please change the picture"`
+	User_ID    *uint   `valid:"-"`
+	User       User    `gorm:"references:id" valid:"-"`
+	Account_ID *uint   `valid:"-"`
+	Account    Account `gorm:"references:id" valid:"-"`
+	Slip       string  `valid:"image_valid~Please change the picture"`
+	Is_Confirm bool    `valid:"-"`
 }
 
 type Revenue struct {

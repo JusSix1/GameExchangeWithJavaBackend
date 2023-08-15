@@ -399,8 +399,6 @@ export default function All_My_Account_UI() {
       Game_ID: importAccount.Game_ID,
     };
 
-    console.log(data);
-
     const apiUrl = ip_address() + "/account"; //ส่งขอการเพิ่ม
     const requestOptions = {
       method: "PATCH",
@@ -771,6 +769,8 @@ export default function All_My_Account_UI() {
           onClose={handleDialogDeleteClickClose}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
+          fullWidth={true}
+          maxWidth="sm"
         >
           <DialogTitle id="alert-dialog-title">{"Delete Account"}</DialogTitle>
           <DialogActions>
