@@ -20,15 +20,18 @@ type User struct {
 	FirstName       string    `valid:"required~First name is blank"`
 	LastName        string    `valid:"required~Last name is blank"`
 	Password        string    `valid:"minstringlength(8)~Password must be longer than 8 characters,required~Password is blank"`
+	Personal_ID     string    `valid:"stringlength(13)~Personal ID must be 13 characters,required~Personal ID is blank"`
 	Profile_Name    string    `valid:"maxstringlength(50)~Must be no more than 50 characters long,required~Profile name is blank"`
 	Profile_Picture string    `valid:"image_valid~Please change the picture"`
 	Birthday        time.Time `valid:"NotFutureTime~The day must not be the future,MoreThan18YearsAgo~You must be over 18 years old"`
 	Phone_number    string    `valid:"required~Phone number is blank,matches([0-9]{10})~Phone number invalid format"`
+	Address         string    `valid:"required~Address is blank"`
 	Gender_ID       *uint     `valid:"-"`
 	Gender          Gender    `gorm:"references:id" valid:"-"`
 	Account         []Account `gorm:"foreignKey:User_ID"`
 	Order           []Order   `gorm:"foreignKey:User_ID"`
 	Revenue         []Revenue `gorm:"foreignKey:User_ID"`
+	Post            []Post    `gorm:"foreignKey:User_ID"`
 }
 
 type Game struct {
@@ -46,6 +49,7 @@ type Account struct {
 	Game_Password  string  `valid:"-"`
 	Email          string  `valid:"-"`
 	Email_Password string  `valid:"-"`
+	Price          uint    `valid:"required~Price is blank"`
 	Game_ID        *uint   `valid:"-"`
 	Game           Game    `gorm:"references:id" valid:"-"`
 	Is_Post        bool    `valid:"-"`
@@ -55,12 +59,14 @@ type Account struct {
 
 type Order struct {
 	gorm.Model
-	User_ID    *uint   `valid:"-"`
-	User       User    `gorm:"references:id" valid:"-"`
-	Account_ID *uint   `valid:"-"`
-	Account    Account `gorm:"references:id" valid:"-"`
-	Slip       string  `valid:"image_valid~Please change the picture"`
-	Is_Confirm bool    `valid:"-"`
+	User_ID         *uint     `valid:"-"`
+	User            User      `gorm:"references:id" valid:"-"`
+	Account_ID      *uint     `valid:"-"`
+	Account         Account   `gorm:"references:id" valid:"-"`
+	Slip            string    `valid:"image_valid~Please change the picture"`
+	Slip_Create_At  time.Time `valid:"-"`
+	Is_Slip_Confirm bool      `valid:"-"`
+	Is_Receive      bool      `valid:"-"`
 }
 
 type Revenue struct {
@@ -72,11 +78,12 @@ type Revenue struct {
 
 type Post struct {
 	gorm.Model
+	User_ID           *uint   `valid:"-"`
+	User              User    `valid:"-"`
 	Account_ID        *uint   `valid:"-"`
 	Account           Account `gorm:"references:id" valid:"-"`
 	Description       string  `valid:"required~Description is blank"`
 	Advertising_image string  `valid:"image_valid~Please change the image"`
-	Price             uint    `valid:"required~Price is blank"`
 	Is_Reserve        bool    `valid:"-"`
 	Is_Sell           bool    `valid:"-"`
 }

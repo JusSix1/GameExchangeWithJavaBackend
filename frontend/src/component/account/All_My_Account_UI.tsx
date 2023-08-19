@@ -29,8 +29,8 @@ import {
 import Autocomplete from "@mui/material/Autocomplete";
 import Moment from "moment";
 import ip_address from "../ip";
+import { Link as RouterLink } from "react-router-dom";
 import { AccountsInterface } from "../../models/account/IAccount";
-import UserFullAppBar from "../FullAppBar/UserFullAppBar";
 import { GamesInterface } from "../../models/account/IGame";
 import { PostsInterface } from "../../models/post/IPost";
 import "./All_My_Account.css";
@@ -69,6 +69,7 @@ export default function All_My_Account_UI() {
   const [description, setDescription] = React.useState<String>("");
   const [buttonDialogAccount, setButtonDialogAccount] =
     React.useState<String>("");
+  //const [buttonDialogPost, setButtonDialogPost] = React.useState<String>("");
 
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -123,7 +124,7 @@ export default function All_My_Account_UI() {
               size="small"
               variant="contained"
               color="warning"
-              //onClick={() => handleEditButtonClick(params.row.ID)}
+              component={RouterLink} to={"/edit_post/" + params.row.ID}
             >
               Edit Post
             </Button>
@@ -209,6 +210,7 @@ export default function All_My_Account_UI() {
 
   const handleEditButtonClick = (data: any) => {
     setImportAccount(data);
+    console.log(data);
     handleDialogEditClickOpen();
   };
 
@@ -357,6 +359,7 @@ export default function All_My_Account_UI() {
       Email: importAccount.Email,
       Email_Password: importAccount.Email_Password,
       Game_ID: importAccount.Game_ID,
+      Price: importAccount.Price,
     };
 
     const apiUrl = ip_address() + "/account/" + localStorage.getItem("email"); //ส่งขอการเพิ่ม
@@ -476,9 +479,6 @@ export default function All_My_Account_UI() {
       Account_ID: post.Account_ID,
       Description: description,
       Advertising_image: imageString,
-      Price: post.Price,
-      Is_Reserve: false,
-      Is_Sell: false,
     };
 
     const apiUrl = ip_address() + "/post"; //ส่งขอการเพิ่ม
@@ -530,7 +530,6 @@ export default function All_My_Account_UI() {
 
   return (
     <>
-      <UserFullAppBar />
       <Grid>
         <Snackbar //ป้ายบันทึกสำเร็จ
           open={success}
@@ -554,7 +553,7 @@ export default function All_My_Account_UI() {
           </Alert>
         </Snackbar>
 
-        <Grid container sx={{ padding: 2 }}>
+        <Grid container sx={{ padding: 2 }} > {/* ตารางแสดงผล */}
           <div style={{ height: 540, width: "100%" }}>
             <DataGrid
               rows={account}
@@ -579,7 +578,7 @@ export default function All_My_Account_UI() {
           </div>
         </Grid>
 
-        <Grid container sx={{ padding: 2 }}>
+        <Grid container sx={{ padding: 2 }}> {/* ปุ่ม Import, Delete */}
           <Grid sx={{ padding: 2 }}>
             <button
               className="AddAccBtn"
@@ -598,7 +597,7 @@ export default function All_My_Account_UI() {
           </Grid>
         </Grid>
 
-        <Dialog
+        <Dialog  //Account
           open={dialogCreateOpen}
           onClose={handleDialogCreateClickClose}
           aria-labelledby="alert-dialog-title"
@@ -739,6 +738,27 @@ export default function All_My_Account_UI() {
                       </Grid>
                     </Grid>
                   </Paper>
+                  <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+                    <Grid item xs={12}>
+                      Price
+                    </Grid>
+                    <Grid margin={1} item>
+                      <TextField
+                        fullWidth
+                        id="Price"
+                        label="Price"
+                        type="number"
+                        variant="outlined"
+                        value={importAccount.Price}
+                        onChange={(event) =>
+                          setImportAccount({
+                            ...importAccount,
+                            Price: Number(event.target.value),
+                          })
+                        }
+                      />
+                    </Grid>
+                  </Paper>
                 </Grid>
               </Paper>
             </Box>
@@ -764,7 +784,7 @@ export default function All_My_Account_UI() {
           </DialogActions>
         </Dialog>
 
-        <Dialog
+        <Dialog  //Delete
           open={dialogDeleteOpen}
           onClose={handleDialogDeleteClickClose}
           aria-labelledby="alert-dialog-title"
@@ -788,7 +808,7 @@ export default function All_My_Account_UI() {
           </DialogActions>
         </Dialog>
 
-        <Dialog
+        <Dialog   //post
           open={dialogPostOpen}
           onClose={handleDialogPostClickClose}
           aria-labelledby="alert-dialog-title"
@@ -815,21 +835,6 @@ export default function All_My_Account_UI() {
                     >
                       {description}
                     </textarea>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <h4>Price</h4>
-                  </Grid>
-                  <Grid item xs={12} sx={{ marginX: 2 }}>
-                    <TextField
-                      fullWidth
-                      id="Price"
-                      label="Price"
-                      type="number"
-                      variant="outlined"
-                      onChange={(event) =>
-                        setPost({ ...post, Price: Number(event.target.value) })
-                      }
-                    />
                   </Grid>
                 </Grid>
 
@@ -860,7 +865,7 @@ export default function All_My_Account_UI() {
           </DialogActions>
         </Dialog>
 
-        <Dialog
+        <Dialog   //Add game
           open={dialogAddGameOpen}
           onClose={handleDialogAddGameClickClose}
           aria-labelledby="alert-dialog-title"
@@ -901,7 +906,7 @@ export default function All_My_Account_UI() {
           </DialogActions>
         </Dialog>
 
-        <Dialog
+        <Dialog   //Load
           open={dialogLoadOpen}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"

@@ -46,6 +46,7 @@ func CreateAccount(c *gin.Context) {
 		Email:          account.Email,
 		Email_Password: account.Email_Password,
 		Game_ID:        &game.ID,
+		Price:          account.Price,
 		Is_Post:        false,
 	}
 
@@ -120,6 +121,7 @@ func UpdateAccount(c *gin.Context) {
 		Email:          account.Email,
 		Email_Password: account.Email_Password,
 		Game_ID:        &game.ID,
+		Price:          account.Price,
 	}
 
 	// validate user

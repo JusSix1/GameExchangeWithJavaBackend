@@ -13,7 +13,6 @@ import {
   Snackbar,
   TextField,
 } from "@mui/material";
-import UserFullAppBar from "../FullAppBar/UserFullAppBar";
 import "./Home_User_UI.css";
 import Moment from "moment";
 import moment from "moment";
@@ -83,7 +82,6 @@ export default function Home_User_UI() {
       .then((res) => {
         if (res.data) {
           setPost(res.data);
-          console.log(res.data);
         }
       });
   };
@@ -129,15 +127,10 @@ export default function Home_User_UI() {
   const CreateReserve = async () => {
     setDialogLoadOpen(true);
 
-    console.log(accountID)
-    console.log(postID)
-
     let data = {
       Account_ID: accountID,
       Post_ID: postID,
     };
-
-    console.log(data)
 
     const apiUrl = ip_address() + "/order/" + localStorage.getItem("email"); //ส่งขอการเพิ่ม
     const requestOptions = {
@@ -177,7 +170,6 @@ export default function Home_User_UI() {
 
   return (
     <>
-      <UserFullAppBar></UserFullAppBar>
       <Snackbar //ป้ายบันทึกสำเร็จ
         open={success}
         autoHideDuration={6000}
@@ -199,7 +191,7 @@ export default function Home_User_UI() {
         </Alert>
       </Snackbar>
 
-      <Grid container>
+      <Grid container alignItems="center" justifyContent="center">
         <Grid item xs={7} margin={1}>
           <TextField
             id="search-bar"
@@ -291,61 +283,69 @@ export default function Home_User_UI() {
                 item.Account.User_ID === userNameFilter)
           )
           .map((item) => (
-            <Grid key={item.ID}>
-              <div className="post">
-                <div className="post-header">
-                  <img
-                    src={item.Account.User.Profile_Picture}
-                    alt={`${item.Account.User.Profile_Name}'s profile`}
-                  />
-                  <div className="post-author">
-                    <a
-                      href={`/profile/${item.Account.User.Email}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {item.Account.User.Profile_Name}
-                    </a>
+            <Grid
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Grid key={item.ID} width={"90%"}>
+                <div className="post">
+                  <div className="post-header">
+                    <img
+                      src={item.User.Profile_Picture}
+                      alt={`${item.User.Profile_Name}'s profile`}
+                    />
+                    <div className="post-author">
+                      <a
+                        href={`/profile/${item.User.Email}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {item.User.Profile_Name}
+                      </a>
+                    </div>
+                    <div className="post-timestamp">
+                      {moment(item.CreatedAt).format("DD/MM/YYYY hh:mm A")}
+                    </div>
                   </div>
-                  <div className="post-timestamp">
-                    {moment(item.CreatedAt).format("DD/MM/YYYY hh:mm A")}
+                  <div className="post-content">{item.Description}</div>
+                  <div className="post-price">
+                    <h4>Price {item.Account.Price} ฿</h4>
+                  </div>
+                  {item.Advertising_image && (
+                    <img
+                      src={item.Advertising_image}
+                      alt="Posted content"
+                      className="post-image"
+                    />
+                  )}
+                  <div className="container-reserve">
+                    <button
+                      className="button-reserve"
+                      onClick={() => handleReserveButtonClick(item)}
+                    >
+                      <svg
+                        width="180px"
+                        height="60px"
+                        viewBox="0 0 180 60"
+                        className="svg-reserve"
+                      >
+                        <polyline
+                          points="179,1 179,59 1,59 1,1 179,1"
+                          className="bg-line"
+                        />
+                        <polyline
+                          points="179,1 179,59 1,59 1,1 179,1"
+                          className="hl-line"
+                        />
+                      </svg>
+                      <span>Reserve</span>
+                    </button>
                   </div>
                 </div>
-                <div className="post-content">{item.Description}</div>
-                <div className="post-price">
-                  <h4>Price {item.Price} ฿</h4>
-                </div>
-                {item.Advertising_image && (
-                  <img
-                    src={item.Advertising_image}
-                    alt="Posted content"
-                    className="post-image"
-                  />
-                )}
-                <div className="container-reserve">
-                  <button
-                    className="button-reserve"
-                    onClick={() => handleReserveButtonClick(item)}
-                  >
-                    <svg
-                      width="180px"
-                      height="60px"
-                      viewBox="0 0 180 60"
-                      className="svg-reserve"
-                    >
-                      <polyline
-                        points="179,1 179,59 1,59 1,1 179,1"
-                        className="bg-line"
-                      />
-                      <polyline
-                        points="179,1 179,59 1,59 1,1 179,1"
-                        className="hl-line"
-                      />
-                    </svg>
-                    <span>Reserve</span>
-                  </button>
-                </div>
-              </div>
+              </Grid>
             </Grid>
           ))}
       </Grid>

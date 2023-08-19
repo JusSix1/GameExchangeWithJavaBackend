@@ -1,7 +1,9 @@
+/* Post */
 .post {
     border: 1px solid #ccc;
     padding: 10px;
     margin: 10px;  
+    justify-content: center;
 }
   
 .post-header {
@@ -65,27 +67,29 @@ a:hover {
     text-decoration: underline;
 }
 
-.container-reserve {
+.container-save {
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 10px;
   }
 
+  /* save button */
+
 @import url('https://fonts.googleapis.com/css?family=Lato:100&display=swap');
 
-.button-reserve {
+.button-save {
   width: 180px;
   height: 60px;
   cursor: pointer;
   background: transparent;
-  background-color: #c9e5ff;
-  border: 1px solid #003cff;
+  background-color: #b2ffab;
+  border: 1px solid #10bd00;
   outline: none;
   transition: 1s ease-in-out;
 }
 
-.svg-reserve {
+.svg-save {
   position: absolute;
   left: 0;
   top: 0;
@@ -96,22 +100,41 @@ a:hover {
   transition: 1s ease-in-out;
 }
 
-.button-reserve:hover {
+.button-save:hover {
   transition: 1s ease-in-out;
-  background: #4F95DA;
+  background: #3de02e;
 }
 
-.button-reserve:hover svg {
+.button-save:hover svg {
   stroke-dashoffset: -480;
 }
 
-.button-reserve span {
+.button-save span {
   color: rgb(0, 0, 0);
   font-size: 18px;
   font-weight: 100;
 }
 
-.button-reserve:hover span {
-    color: rgb(255, 255, 255);
+.button-save:hover span {
+    color: rgb(0, 0, 0);
     transition: 1s ease-in-out;
 }
+
+/* textarea */
+
+.container-textarea {
+    margin-top: 50;
+    display: "flex";
+    flex-direction: "column";
+    align-items: "center";
+  }
+
+  .textareaDefaultStyle {
+    padding: 5;
+    width: 100%;
+    height: 100%;
+    display: "block";
+    resize: "none";
+    background-color: "#F";
+    font-size: 16px;
+  }

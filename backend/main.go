@@ -48,6 +48,8 @@ func main() {
 
 			protected.POST("/post", post_controller.CreatePost)
 			protected.GET("/posts", post_controller.ListPost)
+			protected.GET("/post/:email/:id", post_controller.GetPost)
+			protected.PATCH("/post", post_controller.UpdatePost)
 
 			protected.POST("/order/:email", order_controller.CreateOrder)
 			// protected.GET("/order/:email", order_controller.GetOrder)

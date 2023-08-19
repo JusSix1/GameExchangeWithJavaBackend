@@ -64,10 +64,11 @@ func CreateOrder(c *gin.Context) {
 	}
 
 	newOrder := entity.Order{
-		User_ID:    &user.ID,
-		Account_ID: &account.ID,
-		Slip:       order.Slip,
-		Is_Confirm: false,
+		User_ID:         &user.ID,
+		Account_ID:      &account.ID,
+		Slip:            order.Slip,
+		Is_Slip_Confirm: false,
+		Is_Receive:      false,
 	}
 
 	if err := entity.DB().Create(&newOrder).Error; err != nil {
