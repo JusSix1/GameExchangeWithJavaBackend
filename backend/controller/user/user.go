@@ -31,12 +31,17 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
+	println(user.PersonalID)
+	println(user.Address)
+
 	// create new object for create new record
 	newUser := entity.User{
 		Email:           user.Email,
 		FirstName:       user.FirstName,
 		LastName:        user.LastName,
 		Password:        user.Password,
+		PersonalID:      user.PersonalID,
+		Address:         user.Address,
 		Profile_Name:    user.Profile_Name,
 		Profile_Picture: user.Profile_Picture,
 		Gender:          gender,

@@ -20,7 +20,7 @@ type User struct {
 	FirstName       string    `valid:"required~First name is blank"`
 	LastName        string    `valid:"required~Last name is blank"`
 	Password        string    `valid:"minstringlength(8)~Password must be longer than 8 characters,required~Password is blank"`
-	Personal_ID     string    `valid:"stringlength(13)~Personal ID must be 13 characters,required~Personal ID is blank"`
+	PersonalID      string    `valid:"minstringlength(13)~Personal ID must be 13 characters,maxstringlength(13)~Personal ID must be 13 characters,matches([0-9]{10})~Personal ID invalid format,required~Personal ID is blank"`
 	Profile_Name    string    `valid:"maxstringlength(50)~Must be no more than 50 characters long,required~Profile name is blank"`
 	Profile_Picture string    `valid:"image_valid~Please change the picture"`
 	Birthday        time.Time `valid:"NotFutureTime~The day must not be the future,MoreThan18YearsAgo~You must be over 18 years old"`
