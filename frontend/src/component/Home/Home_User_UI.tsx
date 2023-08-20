@@ -19,10 +19,28 @@ import moment from "moment";
 import { GamesInterface } from "../../models/account/IGame";
 import { UsersInterface } from "../../models/user/IUser";
 
+const styles: { [name: string]: React.CSSProperties } = {
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  textareaDefaultStyle: {
+    padding: 1,
+    width: "100%",
+    height: "100%",
+    display: "block",
+    resize: "none",
+    backgroundColor: "#F",
+    fontSize: 16,
+  },
+};
+
 export default function Home_User_UI() {
   const [post, setPost] = React.useState<PostsInterface[]>([]);
   const [game, setGame] = React.useState<GamesInterface[]>([]);
   const [listUserName, setListUserName] = React.useState<UsersInterface[]>([]);
+  const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
   const [search, setSearch] = React.useState("");
   const [gameFilter, setGameFilter] = React.useState<number>();
@@ -48,6 +66,10 @@ export default function Home_User_UI() {
     setSuccess(false);
     setError(false);
     setErrorMsg("");
+  };
+
+  const textAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSearch(event.target.value);
   };
 
   const handleReserveButtonClick = (item: any) => {
@@ -157,16 +179,26 @@ export default function Home_User_UI() {
     setDialogLoadOpen(false);
   };
 
+  const [count, setCount] = React.useState<number>(0);
+
   React.useEffect(() => {
-    const fetchData = async () => {
-      setDialogLoadOpen(true);
-      await getPost();
-      await getGame();
-      await getListUserName();
-      setDialogLoadOpen(false);
-    };
-    fetchData();
-  }, []);
+    if (count === 0) {
+      const fetchData = async () => {
+        setDialogLoadOpen(true);
+        await getPost();
+        await getGame();
+        await getListUserName();
+        setDialogLoadOpen(false);
+      };
+      fetchData();
+      setCount(1);
+    }
+    if (textareaRef && textareaRef.current) {
+      textareaRef.current.style.height = "0px";
+      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = scrollHeight + "px";
+    }
+  }, [count, search]);
 
   return (
     <>
@@ -191,163 +223,172 @@ export default function Home_User_UI() {
         </Alert>
       </Snackbar>
 
-      <Grid container alignItems="center" justifyContent="center">
-        <Grid item xs={7} margin={1}>
-          <TextField
-            id="search-bar"
-            fullWidth
-            onChange={(event) => setSearch(event.target.value)}
-            label="Search a game by description"
-            variant="outlined"
-            size="small"
-          />
-        </Grid>
-        <Grid item xs={2} margin={1}>
-          <Autocomplete
-            id="game-autocomplete"
-            options={game}
-            size="small"
-            value={
-              gameFilter
-                ? game.find((option) => option.ID === gameFilter)
-                : null
-            }
-            onChange={(event: any, value) => {
-              setGameFilter(value?.ID);
-            }}
-            getOptionLabel={(option: any) => `${option.Name}`}
-            renderInput={(params: any) => {
-              return (
-                <TextField
-                  {...params}
-                  variant="outlined"
-                  placeholder="Search game name"
-                />
-              );
-            }}
-            renderOption={(props: any, option: any) => {
-              return (
-                <li {...props} value={option.ID} key={option.ID}>
-                  {option.Name}
-                </li>
-              );
-            }}
-            isOptionEqualToValue={isOptionEqualToValue}
-          />
-        </Grid>
-        <Grid item xs={2} margin={1}>
-          <Autocomplete
-            id="username-autocomplete"
-            options={listUserName}
-            size="small"
-            value={
-              userNameFilter
-                ? listUserName.find((option) => option.ID === userNameFilter)
-                : null
-            }
-            onChange={(event: any, value) => {
-              setUserNameFilter(value?.ID);
-            }}
-            getOptionLabel={(option: any) => `${option.Profile_Name}`}
-            renderInput={(params: any) => {
-              return (
-                <TextField
-                  {...params}
-                  variant="outlined"
-                  placeholder="Search user name"
-                />
-              );
-            }}
-            renderOption={(props: any, option: any) => {
-              return (
-                <li {...props} value={option.ID} key={option.ID}>
-                  {option.Profile_Name}
-                </li>
-              );
-            }}
-            isOptionEqualToValue={isOptionEqualToValue}
-          />
-        </Grid>
-      </Grid>
-
-      <Grid sx={{ margin: 1 }}>
-        {post
-          .filter(
-            (item) =>
-              item.Description.toLowerCase().includes(search.toLowerCase()) &&
-              (gameFilter === null ||
-                gameFilter === undefined ||
-                item.Account.Game_ID === gameFilter) &&
-              (userNameFilter === null ||
-                userNameFilter === undefined ||
-                item.Account.User_ID === userNameFilter)
-          )
-          .map((item) => (
-            <Grid
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Grid key={item.ID} width={"90%"}>
-                <div className="post">
-                  <div className="post-header">
-                    <img
-                      src={item.User.Profile_Picture}
-                      alt={`${item.User.Profile_Name}'s profile`}
-                    />
-                    <div className="post-author">
-                      <a
-                        href={`/profile/${item.User.Email}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {item.User.Profile_Name}
-                      </a>
-                    </div>
-                    <div className="post-timestamp">
-                      {moment(item.CreatedAt).format("DD/MM/YYYY hh:mm A")}
-                    </div>
-                  </div>
-                  <div className="post-content">{item.Description}</div>
-                  <div className="post-price">
-                    <h4>Price {item.Account.Price} ฿</h4>
-                  </div>
-                  {item.Advertising_image && (
-                    <img
-                      src={item.Advertising_image}
-                      alt="Posted content"
-                      className="post-image"
-                    />
-                  )}
-                  <div className="container-reserve">
-                    <button
-                      className="button-reserve"
-                      onClick={() => handleReserveButtonClick(item)}
-                    >
-                      <svg
-                        width="180px"
-                        height="60px"
-                        viewBox="0 0 180 60"
-                        className="svg-reserve"
-                      >
-                        <polyline
-                          points="179,1 179,59 1,59 1,1 179,1"
-                          className="bg-line"
-                        />
-                        <polyline
-                          points="179,1 179,59 1,59 1,1 179,1"
-                          className="hl-line"
-                        />
-                      </svg>
-                      <span>Reserve</span>
-                    </button>
-                  </div>
-                </div>
-              </Grid>
+      <Grid container>
+        <Grid item xs={2} sx={{ marginTop: 1 }}>
+          <Grid sx={{ margin: 1 }} style={{ border: "1px solid #ccc" }}>
+            <Grid sx={{ margin: 1 }}>Search a post by description</Grid>
+            <Grid sx={{ margin: 1 }}>
+              <textarea
+                ref={textareaRef}
+                style={styles.textareaDefaultStyle}
+                onChange={textAreaChange}
+              >
+                {search}
+              </textarea>
             </Grid>
-          ))}
+            <Grid sx={{ margin: 1 }}>Search a post by game name</Grid>
+            <Grid sx={{ margin: 1 }}>
+              <Autocomplete
+                id="game-autocomplete"
+                options={game}
+                size="small"
+                value={
+                  gameFilter
+                    ? game.find((option) => option.ID === gameFilter)
+                    : null
+                }
+                onChange={(event: any, value) => {
+                  setGameFilter(value?.ID);
+                }}
+                getOptionLabel={(option: any) => `${option.Name}`}
+                renderInput={(params: any) => {
+                  return (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      placeholder="Search game name"
+                    />
+                  );
+                }}
+                renderOption={(props: any, option: any) => {
+                  return (
+                    <li {...props} value={option.ID} key={option.ID}>
+                      {option.Name}
+                    </li>
+                  );
+                }}
+                isOptionEqualToValue={isOptionEqualToValue}
+              />
+            </Grid>
+            <Grid sx={{ margin: 1 }}>Search a post by user name</Grid>
+            <Grid sx={{ margin: 1 }}>
+              <Autocomplete
+                id="username-autocomplete"
+                options={listUserName}
+                size="small"
+                value={
+                  userNameFilter
+                    ? listUserName.find(
+                        (option) => option.ID === userNameFilter
+                      )
+                    : null
+                }
+                onChange={(event: any, value) => {
+                  setUserNameFilter(value?.ID);
+                }}
+                getOptionLabel={(option: any) => `${option.Profile_Name}`}
+                renderInput={(params: any) => {
+                  return (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      placeholder="Search user name"
+                    />
+                  );
+                }}
+                renderOption={(props: any, option: any) => {
+                  return (
+                    <li {...props} value={option.ID} key={option.ID}>
+                      {option.Profile_Name}
+                    </li>
+                  );
+                }}
+                isOptionEqualToValue={isOptionEqualToValue}
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+
+        <Grid item xs={10}>
+          {post
+            .filter(
+              (item) =>
+                item.Description.toLowerCase().includes(search.toLowerCase()) &&
+                (gameFilter === null ||
+                  gameFilter === undefined ||
+                  item.Account.Game_ID === gameFilter) &&
+                (userNameFilter === null ||
+                  userNameFilter === undefined ||
+                  item.Account.User_ID === userNameFilter)
+            )
+            .map((item) => (
+              <Grid
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                sx={{ margin: 1 }}
+              >
+                <Grid key={item.ID} width={"100%"}>
+                  <div className="post">
+                    <div className="post-header">
+                      <img
+                        src={item.User.Profile_Picture}
+                        alt={`${item.User.Profile_Name}'s profile`}
+                      />
+                      <div className="post-author">
+                        <a
+                          href={`/profile/${item.User.Email}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {item.User.Profile_Name}
+                        </a>
+                      </div>
+                      <div className="post-timestamp">
+                        {moment(item.CreatedAt).format("DD/MM/YYYY hh:mm A")}
+                      </div>
+                    </div>
+                    <div className="post-content">{item.Description}</div>
+                    <div className="post-price">
+                      <h4>Price {item.Account.Price} ฿</h4>
+                    </div>
+                    {item.Advertising_image && (
+                      <img
+                        src={item.Advertising_image}
+                        alt="Posted content"
+                        className="post-image"
+                      />
+                    )}
+                    <div className="container-reserve">
+                      <button
+                        className="button-reserve"
+                        onClick={() => handleReserveButtonClick(item)}
+                      >
+                        <svg
+                          width="180px"
+                          height="60px"
+                          viewBox="0 0 180 60"
+                          className="svg-reserve"
+                        >
+                          <polyline
+                            points="179,1 179,59 1,59 1,1 179,1"
+                            className="bg-line"
+                          />
+                          <polyline
+                            points="179,1 179,59 1,59 1,1 179,1"
+                            className="hl-line"
+                          />
+                        </svg>
+                        <span>Reserve</span>
+                      </button>
+                    </div>
+                  </div>
+                </Grid>
+              </Grid>
+            ))}
+        </Grid>
       </Grid>
 
       <Dialog

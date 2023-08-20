@@ -69,7 +69,6 @@ export default function All_My_Account_UI() {
   const [description, setDescription] = React.useState<String>("");
   const [buttonDialogAccount, setButtonDialogAccount] =
     React.useState<String>("");
-  //const [buttonDialogPost, setButtonDialogPost] = React.useState<String>("");
 
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
