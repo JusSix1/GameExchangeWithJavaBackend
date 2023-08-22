@@ -50,6 +50,11 @@ function UserFullAppBar() {
           <ListItemText primary="My Order" sx={{ paddingLeft: 1 }} />
         </ListItem>
 
+        <ListItem button component={RouterLink} to="/MyReserve">
+          <ViewListIcon />
+          <ListItemText primary="My Reserve" sx={{ paddingLeft: 1 }} />
+        </ListItem>
+
         <ListItem button component={RouterLink} to="/MyRevenueAccount">
           <ViewListIcon />
           <ListItemText primary="Revenue Account" sx={{ paddingLeft: 1 }} />

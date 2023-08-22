@@ -53,7 +53,9 @@ func main() {
 
 			protected.POST("/order/:email", order_controller.CreateOrder)
 			// protected.GET("/order/:email", order_controller.GetOrder)
-			// protected.PATCH("/order", order_controller.UpdateOrder)
+			protected.GET("/myreserve/:email", order_controller.GetReserve)
+			protected.PATCH("/orderslip", order_controller.UpdateOrderSlip)
+			protected.DELETE("/order", order_controller.DeleteOrder)
 
 			protected.POST("/revenue/:email", revenue_controller.CreateRevenue)
 			protected.GET("/revenue/:email", revenue_controller.GetRevenue)

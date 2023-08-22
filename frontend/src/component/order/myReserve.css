@@ -1,0 +1,145 @@
+.post {
+    border: 1px solid #ccc;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.post-header img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.post-author {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.post-timestamp {
+    color: #888;
+}
+
+.post-content {
+    margin-top: 5px;
+    white-space: pre-line;
+}
+
+.post-price {
+    margin-top: 5px;
+}
+
+.post-image {
+    max-width: 100%;
+    margin: 0 auto;
+    display: block;
+}
+
+.container-btn-slip {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    margin: 10px;
+  }
+
+.button-slip {
+    align-items: center;
+    border-radius: 100px;
+    background-color: #2bff00;
+    border: 2px solid #2bff00;
+    box-sizing: border-box;
+    color: #000000;
+    cursor: pointer;
+    display: inline-flex;
+    fill: #2bff00;
+    font-family: Inter, sans-serif;
+    font-size: 16px;
+    font-weight: 550;
+    height: 36px;
+    justify-content: center;
+    letter-spacing: -0.8px;
+    line-height: 24px;
+    min-width: 140px;
+    outline: 0;
+    padding: 0 17px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.button-slip:focus {
+    color: #171e29;
+}
+
+.button-slip:hover {
+    border-color: #1dac00;
+    color: #000000;
+    fill: #1dac00;
+}
+
+.button-slip:active {
+    border-color: #1dac00;
+    color: #1dac00;
+    fill: #1dac00;
+}
+
+.button-cancel {
+    align-items: center;
+    border-radius: 100px;
+    background-color: #ff0000;
+    border: 2px solid #ff0000;
+    box-sizing: border-box;
+    color: #000000;
+    cursor: pointer;
+    display: inline-flex;
+    fill: #ff0000;
+    font-family: Inter, sans-serif;
+    font-size: 16px;
+    font-weight: 550;
+    height: 36px;
+    justify-content: center;
+    letter-spacing: -0.8px;
+    line-height: 24px;
+    min-width: 140px;
+    outline: 0;
+    padding: 0 17px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    margin-inline: 10px;
+}
+
+.button-cancel:focus {
+    color: #171e29;
+}
+
+.button-cancel:hover {
+    border-color: #ad0000;
+    color: #000000;
+    fill: #ad0000;
+}
+
+.button-cancel:active {
+    border-color: #ad0000;
+    color: #ad0000;
+    fill: #ad0000;
+}
+
+@media (min-width: 768px) {
+    .button-slip {
+        min-width: 150px;
+    }
+    .button-cancel {
+        min-width: 150px;
+    }
+}

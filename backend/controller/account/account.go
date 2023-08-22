@@ -155,7 +155,7 @@ func DeleteAccount(c *gin.Context) {
 	for i := 0; i < len(deleteAccount); i++ {
 
 		if tx := entity.DB().Exec("DELETE FROM accounts WHERE id = ?", deleteAccount[i].ID); tx.RowsAffected == 0 {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "basket not found"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Account not found"})
 			return
 		}
 

@@ -10,6 +10,7 @@ import All_My_Account_UI from "./component/account/All_My_Account_UI";
 import My_Revenue_Account_UI from "./component/RevenueAccount/myRevenueAccount";
 import UserFullAppBar from "./component/FullAppBar/UserFullAppBar";
 import Edit_post_UI from "./component/Edit_post/Edit_post";
+import My_Reserve_UI from "./component/order/myReserve";
 
 export default function App() {
   const [token, setToken] = React.useState<String>("");
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/edit_post/:id" element={<Edit_post_UI/>} /> {/** Edit Post */}
         {/**<Route path="/MyOrder" element={<My_Order_UI/>} />  My Order */}
         <Route path="/MyRevenueAccount" element={<My_Revenue_Account_UI />} /> {/** My Revenue */}
+        <Route path="/MyReserve" element={<My_Reserve_UI />} /> {/** My Revenue */}
       </Routes></>
     );
   }
