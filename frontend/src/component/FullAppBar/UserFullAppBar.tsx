@@ -17,6 +17,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import GradingIcon from '@mui/icons-material/Grading';
+import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 
 import { Link as RouterLink } from "react-router-dom";
 import { UsersInterface } from '../../models/user/IUser';
@@ -51,7 +52,7 @@ function UserFullAppBar() {
         </ListItem>
 
         <ListItem button component={RouterLink} to="/MyReserve">
-          <ViewListIcon />
+          <ShoppingBasketIcon />
           <ListItemText primary="My Reserve" sx={{ paddingLeft: 1 }} />
         </ListItem>
 

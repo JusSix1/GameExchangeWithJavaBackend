@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/JusSix1/GameExchange/entity"
 	"github.com/asaskevich/govalidator"
@@ -68,6 +69,7 @@ func CreateOrder(c *gin.Context) {
 	newOrder := entity.Order{
 		User_ID:         &user.ID,
 		Account_ID:      &account.ID,
+		Slip_Create_At:  time.Now(),
 		Slip:            order.Slip,
 		Is_Slip_Confirm: false,
 		Is_Receive:      false,
@@ -79,6 +81,32 @@ func CreateOrder(c *gin.Context) {
 	}
 
 	if err := entity.DB().Create(&newOrder).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": order})
+}
+
+// GET /myorder/:email
+func GetOrder(c *gin.Context) {
+	var userCheckID entity.User
+	var order []entity.Order
+	var user []entity.User
+	var account []entity.Account
+
+	email := c.Param("email")
+
+	if tx := entity.DB().Where("email = ?", email).First(&userCheckID); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+
+	if err := entity.DB().Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "profile_name", "email").Find(&user)
+	}).Preload("Account", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "game_account").Find(&account)
+	}).Raw("SELECT * FROM orders INNER JOIN accounts ON orders.account_id = accounts.id AND accounts.user_id = ? ORDER BY id DESC", userCheckID.ID).Find(&order).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

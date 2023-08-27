@@ -52,7 +52,7 @@ func main() {
 			protected.PATCH("/post", post_controller.UpdatePost)
 
 			protected.POST("/order/:email", order_controller.CreateOrder)
-			// protected.GET("/order/:email", order_controller.GetOrder)
+			protected.GET("/myorder/:email", order_controller.GetOrder)
 			protected.GET("/myreserve/:email", order_controller.GetReserve)
 			protected.PATCH("/orderslip", order_controller.UpdateOrderSlip)
 			protected.DELETE("/order", order_controller.DeleteOrder)

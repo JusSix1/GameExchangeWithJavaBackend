@@ -96,14 +96,15 @@ export default function My_Reserve_UI() {
     };
     await fetch(apiUrl, requestOptions)
       .then((response) => response.json())
-      .then((res) => {
+      .then(async (res) => {
         if (res.dataReserve) {
-          setReserve(res.dataReserve);
+          await setReserve(res.dataReserve);
         }
         if (res.dataPosts) {
-          setPosts(res.dataPosts);
+          await setPosts(res.dataPosts);
+        } else {
+          await setPosts([]);
         }
-        console.log(res)
       });
   };
 
@@ -128,11 +129,11 @@ export default function My_Reserve_UI() {
         if (res.data) {
           setSuccess(true);
           getReserve();
-          handleCloseSlipDialog();
         } else {
           setError(true);
           setErrorMsg(" - " + res.error);
         }
+        handleCloseSlipDialog();
       });
   };
 
@@ -140,9 +141,9 @@ export default function My_Reserve_UI() {
     setDialogLoadOpen(true);
 
     let data = {
-        Order_ID: reserveForUploadSlip.ID,
-        Post_ID: postID,
-      };
+      Order_ID: reserveForUploadSlip.ID,
+      Post_ID: postID,
+    };
 
     const apiUrl = ip_address() + "/order"; //ส่งขอการแก้ไข
     const requestOptions = {
@@ -160,12 +161,12 @@ export default function My_Reserve_UI() {
         if (res.data) {
           setSuccess(true);
           handleDialogDeleteClickClose();
+          getReserve();
         } else {
           setError(true);
           setErrorMsg(" - " + res.error);
         }
       });
-
     setDialogLoadOpen(false);
   };
 
@@ -262,7 +263,11 @@ export default function My_Reserve_UI() {
                   >
                     Upload Slip
                   </button>
-                  <button className="button-cancel" role="button" onClick={() => handleDialogDeleteClickOpen(item.ID)}>
+                  <button
+                    className="button-cancel"
+                    role="button"
+                    onClick={() => handleDialogDeleteClickOpen(item.ID)}
+                  >
                     Cancel Reserve
                   </button>
                 </div>
@@ -300,29 +305,24 @@ export default function My_Reserve_UI() {
         </DialogActions>
       </Dialog>
 
-      <Dialog  //Delete
-          open={dialogDeleteOpen}
-          onClose={handleDialogDeleteClickClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          fullWidth={true}
-          maxWidth="sm"
-        >
-          <DialogTitle id="alert-dialog-title">{"Delete Account"}</DialogTitle>
-          <DialogActions>
-            <Button size="small" onClick={handleDialogDeleteClickClose}>
-              Cancel
-            </Button>
-            <Button
-              size="small"
-              onClick={DeleteOrder}
-              color="error"
-              autoFocus
-            >
-              Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
+      <Dialog //Delete
+        open={dialogDeleteOpen}
+        onClose={handleDialogDeleteClickClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth={true}
+        maxWidth="sm"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete Account"}</DialogTitle>
+        <DialogActions>
+          <Button size="small" onClick={handleDialogDeleteClickClose}>
+            Cancel
+          </Button>
+          <Button size="small" onClick={DeleteOrder} color="error" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
