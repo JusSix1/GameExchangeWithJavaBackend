@@ -143,7 +143,7 @@ func GetReserve(c *gin.Context) {
 		if err := entity.DB().Preload("Account", func(db *gorm.DB) *gorm.DB {
 			return db.Select("id", "price").Find(&accountPost)
 		}).Preload("User", func(db *gorm.DB) *gorm.DB {
-			return db.Select("id", "profile_name", "profile_picture", "email").Find(&userPost)
+			return db.Select("id", "profile_name", "profile_picture", "email", "bank_account").Find(&userPost)
 		}).Raw("SELECT * FROM posts WHERE account_id = ? ORDER BY created_at DESC", o.Account_ID).Find(&orderPosts).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -180,7 +180,33 @@ func UpdateOrderSlip(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": order})
 }
 
-// DELETE /account
+// PATCH /orderslipconfirm
+func UpdateOrderSlipConfirm(c *gin.Context) {
+	var order entity.Order
+
+	if err := c.ShouldBindJSON(&order); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updateOrder := entity.Order{
+		Is_Slip_Confirm: true,
+	}
+
+	if _, err := govalidator.ValidateStruct(updateOrder); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := entity.DB().Where("id = ?", order.ID).Updates(&updateOrder).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": order})
+}
+
+// DELETE /order
 func DeleteOrder(c *gin.Context) {
 
 	type OrderDelete struct {
@@ -208,138 +234,31 @@ func DeleteOrder(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": order})
 }
 
-// import (
-// 	"net/http"
+// DELETE /cancelorder
+func CancelOrder(c *gin.Context) {
 
-// 	"github.com/JusSix1/GameExchange/entity"
-// 	"github.com/asaskevich/govalidator"
-// 	"github.com/gin-gonic/gin"
-// )
+	var order entity.Order
+	var post entity.Post
 
-// // POST /order/:email
-// func CreateOrder(c *gin.Context) {
-// 	var user entity.User
-// 	var order entity.Order
-// 	var accoountStatus entity.Account_Status
+	if err := c.ShouldBindJSON(&order); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-// 	email := c.Param("email")
+	if tx := entity.DB().Exec("SELECT * FROM posts INNER JOIN orders ON orders.id = ? and orders.account_id = posts.account_id", order.ID).First(&post); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Post not found"})
+		return
+	}
 
-// 	type AccountToOrder struct {
-// 		Account_ID uint
-// 	}
+	if tx := entity.DB().Exec("UPDATE posts SET is_reserve = false WHERE id = ?", post.ID); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Post not found"})
+		return
+	}
 
-// 	var payload struct {
-// 		AccountToOrder []AccountToOrder `json:"accountToOrder"`
-// 		DataSlip       struct {
-// 			Slip string `json:"Slip"`
-// 		} `json:"dataSlip"`
-// 	}
+	if tx := entity.DB().Exec("DELETE FROM orders WHERE id = ?", order.ID); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Order not found"})
+		return
+	}
 
-// 	if err := c.ShouldBindJSON(&payload); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	if tx := entity.DB().Where("email = ?", email).First(&user); tx.RowsAffected == 0 {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
-// 		return
-// 	}
-
-// 	// create new object for create new record
-// 	newOrder := entity.Order{
-// 		User_ID: &user.ID,
-// 		Slip:    payload.DataSlip.Slip,
-// 	}
-
-// 	if err := entity.DB().Create(&newOrder).Error; err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	if err := entity.DB().Raw("SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC LIMIT 1", user.ID).Find(&order).Error; err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	for i := 0; i < len(payload.AccountToOrder); i++ {
-
-// 		if err := entity.DB().Raw("SELECT * FROM account_statuses WHERE status = 'Sold'").Find(&accoountStatus).Error; err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 			return
-// 		}
-
-// 		// create new object for create new record
-// 		updateAccount := entity.Account{
-// 			Account_Status_ID: &accoountStatus.ID,
-// 			Order_ID:          &order.ID,
-// 		}
-
-// 		if err := entity.DB().Where("id = ?", payload.AccountToOrder[i].Account_ID).Updates(&updateAccount).Error; err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 			return
-// 		}
-
-// 	}
-
-// 	c.JSON(http.StatusOK, gin.H{"data": order})
-// }
-
-// // GET /order/:email
-// func GetOrder(c *gin.Context) {
-// 	var user entity.User
-// 	var order []entity.Order
-
-// 	email := c.Param("email")
-
-// 	if tx := entity.DB().Where("email = ?", email).First(&user); tx.RowsAffected == 0 {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
-// 		return
-// 	}
-
-// 	if err := entity.DB().Raw("SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC", user.ID).Find(&order).Error; err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, gin.H{"data": order})
-// }
-
-// // PATCH /order
-// func UpdateOrder(c *gin.Context) {
-// 	var order entity.Order
-
-// 	if err := c.ShouldBindJSON(&order); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	// update user fields that are allowed to be updated
-// 	updateOrder := entity.Order{
-// 		Slip: order.Slip,
-// 	}
-
-// 	// validate user
-// 	if _, err := govalidator.ValidateStruct(updateOrder); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	if err := entity.DB().Where("id = ?", order.ID).Updates(&updateOrder).Error; err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, gin.H{"data": order})
-// }
-
-// // GET /all-order-admin
-// func GetOrderAdmin(c *gin.Context) {
-// 	var order []entity.Order
-
-// 	if err := entity.DB().Raw("SELECT * FROM orders").Find(&order).Error; err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, gin.H{"data": order})
-// }
+	c.JSON(http.StatusOK, gin.H{"data": order})
+}

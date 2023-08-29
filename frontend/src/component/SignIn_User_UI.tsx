@@ -70,6 +70,7 @@ function SignIn_User() {
   );
   const [genders, setGenders] = React.useState<GendersInterface[]>([]);
   const [phoneNumber, setPhoneNumber] = React.useState<string | null>(null);
+  const [bankAccount, setBankAccount] = React.useState<string | null>(null);
   // Sign in
   const [signin, setSignin] = useState<Partial<SigninUserInterface>>({});
   const [success, setSuccess] = useState(false);
@@ -186,6 +187,7 @@ function SignIn_User() {
         Profile_Picture: imageString,
         Birthday: birthday,
         Phone_number: phoneNumber,
+        Bank_Account: bankAccount,
         Gender_ID: gender_id,
       };
 
@@ -435,6 +437,17 @@ function SignIn_User() {
                       variant="outlined"
                       onChange={(event) =>
                         setAddress(String(event.target.value))
+                      }
+                    />
+                  </Grid>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="bank_account"
+                      label="Bank account number"
+                      variant="outlined"
+                      onChange={(event) =>
+                        setBankAccount(String(event.target.value))
                       }
                     />
                   </Grid>

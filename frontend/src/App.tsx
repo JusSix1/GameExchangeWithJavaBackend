@@ -12,6 +12,7 @@ import UserFullAppBar from "./component/FullAppBar/UserFullAppBar";
 import Edit_post_UI from "./component/Edit_post/Edit_post";
 import My_Reserve_UI from "./component/order/myReserve";
 import My_Order_UI from "./component/order/myOrder";
+import My_Profile_UI from "./component/user/My_Profile_UI";
 
 export default function App() {
   const [token, setToken] = React.useState<String>("");
@@ -32,10 +33,11 @@ export default function App() {
       <><UserFullAppBar />
       <Routes>
         <Route path="/" element={<Home_User_UI />} /> {/** home */}
-        <Route path="/profile/:email" element={<User_Profile_UI />} /> {/** user profile */}
+        <Route path="/MyProfile" element={<My_Profile_UI />} /> {/** My profile */}
+        <Route path="/Profile/:profile_name" element={<User_Profile_UI />} /> {/** user profile */}
         <Route path="/AllMyAccount" element={<All_My_Account_UI />} /> {/** All Account */}
         <Route path="/edit_post/:id" element={<Edit_post_UI/>} /> {/** Edit Post */}
-        *<Route path="/MyOrder" element={<My_Order_UI/>} />  My Order
+        <Route path="/MyOrder" element={<My_Order_UI/>} />  {/* My Order */}
         <Route path="/MyRevenueAccount" element={<My_Revenue_Account_UI />} /> {/** My Revenue */}
         <Route path="/MyReserve" element={<My_Reserve_UI />} /> {/** My Revenue */}
       </Routes></>

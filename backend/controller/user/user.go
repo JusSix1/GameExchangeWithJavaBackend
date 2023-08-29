@@ -46,7 +46,8 @@ func CreateUser(c *gin.Context) {
 		Profile_Picture: user.Profile_Picture,
 		Gender:          gender,
 		Birthday:        user.Birthday,
-		Phone_number:    user.Phone_number,
+		Phone_Number:    user.Phone_Number,
+		Bank_Account:    user.Bank_Account,
 	}
 
 	// validate user
@@ -73,7 +74,7 @@ func CreateUser(c *gin.Context) {
 
 }
 
-// GET /all-user-admin
+// GET /usernamelist
 func GetUserNameList(c *gin.Context) {
 	var user []entity.User
 
@@ -85,12 +86,25 @@ func GetUserNameList(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
-// GET /user/:email
-func GetUser(c *gin.Context) {
+// GET /myinfo/:email
+func GetMyInfo(c *gin.Context) {
 	var user entity.User
 	email := c.Param("email")
 
-	if err := entity.DB().Preload("Gender").Raw("SELECT id,email,first_name,last_name,profile_name,profile_picture,birthday,gender_id,phone_number FROM users WHERE email = ? AND deleted_at IS NULL", email).Find(&user).Error; err != nil {
+	if err := entity.DB().Preload("Gender").Raw("SELECT id,email,first_name,last_name,profile_name,profile_picture,birthday,gender_id,phone_number,address,personal_id,bank_account  FROM users WHERE email = ? AND deleted_at IS NULL", email).Find(&user).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": user})
+}
+
+// GET /user/:email
+func GetUser(c *gin.Context) {
+	var user entity.User
+	profilename := c.Param("profilename")
+
+	if err := entity.DB().Preload("Gender").Raw("SELECT id,email,first_name,last_name,profile_name,profile_picture,gender_id,phone_number FROM users WHERE profile_name = ? AND deleted_at IS NULL", profilename).Find(&user).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -133,8 +147,10 @@ func UpdateUser(c *gin.Context) {
 		Profile_Name    string    `valid:"maxstringlength(50)~Must be no more than 50 characters long,required~Profile name is blank"`
 		Profile_Picture string    `valid:"image_valid~Please change the picture"`
 		Birthday        time.Time `valid:"NotFutureTime~The day must not be the future,MoreThan18YearsAgo~You must be over 18 years old"`
-		Phone_number    string    `valid:"required~Phone number is blank,matches([0-9]{10})~Phone number invalid format"`
-	}{FirstName: user.FirstName, LastName: user.LastName, Profile_Name: user.Profile_Name, Profile_Picture: user.Profile_Picture, Birthday: user.Birthday, Phone_number: user.Phone_number}
+		PersonalID      string    `valid:"minstringlength(13)~Personal ID must be 13 characters,maxstringlength(13)~Personal ID must be 13 characters,matches([0-9]{10})~Personal ID invalid format,required~Personal ID is blank"`
+		Phone_Number    string    `valid:"required~Phone number is blank,matches([0-9]{10})~Phone number invalid format"`
+		Bank_Account    string    `valid:"required~Bank account number is blank,matches([0-9]{10})~Bank account number invalid format"`
+	}{FirstName: user.FirstName, LastName: user.LastName, Profile_Name: user.Profile_Name, Profile_Picture: user.Profile_Picture, Birthday: user.Birthday, PersonalID: user.PersonalID, Phone_Number: user.Phone_Number, Bank_Account: user.Bank_Account}
 
 	// validate user
 	if _, err := govalidator.ValidateStruct(validateUser); err != nil {
@@ -150,7 +166,9 @@ func UpdateUser(c *gin.Context) {
 		Profile_Picture: user.Profile_Picture,
 		Gender:          gender,
 		Birthday:        user.Birthday,
-		Phone_number:    user.Phone_number,
+		PersonalID:      user.PersonalID,
+		Phone_Number:    user.Phone_Number,
+		Bank_Account:    user.Bank_Account,
 	}
 
 	if err := entity.DB().Where("email = ?", user.Email).Updates(&updateUser).Error; err != nil {

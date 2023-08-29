@@ -2,6 +2,7 @@ package main
 
 import (
 	account_controller "github.com/JusSix1/GameExchange/controller/account"
+	game_controller "github.com/JusSix1/GameExchange/controller/game"
 	login_controller "github.com/JusSix1/GameExchange/controller/login"
 	order_controller "github.com/JusSix1/GameExchange/controller/order"
 	post_controller "github.com/JusSix1/GameExchange/controller/post"
@@ -29,7 +30,8 @@ func main() {
 	{
 		protected := routerUser.Use(middlewares.AuthorizesUser())
 		{
-			protected.GET("/user/:email", user_controller.GetUser)
+			protected.GET("/myinfo/:email", user_controller.GetMyInfo)
+			protected.GET("/user/:profilename", user_controller.GetUser)
 			protected.GET("/usersprofilepicture/:email", user_controller.GetUserProfilePicture)
 			protected.GET("/usernamelist", user_controller.GetUserNameList)
 			protected.PATCH("/users", user_controller.UpdateUser)
@@ -38,13 +40,12 @@ func main() {
 
 			protected.POST("/account/:email", account_controller.CreateAccount)
 			protected.GET("/all-account/:email", account_controller.GetAllAccount)
-			// protected.GET("/account-in-order/:id", account_controller.GetAccountInOrder)
 			protected.PATCH("/account", account_controller.UpdateAccount)
 			protected.DELETE("/account", account_controller.DeleteAccount)
 
-			protected.POST("/game", account_controller.CreateGame)
-			protected.GET("/games", account_controller.ListGame)
-			protected.GET("/newgame", account_controller.NewGame)
+			protected.POST("/game", game_controller.CreateGame)
+			protected.GET("/games", game_controller.ListGame)
+			protected.GET("/newgame", game_controller.NewGame)
 
 			protected.POST("/post", post_controller.CreatePost)
 			protected.GET("/posts", post_controller.ListPost)
@@ -55,7 +56,9 @@ func main() {
 			protected.GET("/myorder/:email", order_controller.GetOrder)
 			protected.GET("/myreserve/:email", order_controller.GetReserve)
 			protected.PATCH("/orderslip", order_controller.UpdateOrderSlip)
+			protected.PATCH("/orderslipconfirm", order_controller.UpdateOrderSlipConfirm)
 			protected.DELETE("/order", order_controller.DeleteOrder)
+			protected.DELETE("/cancelorder", order_controller.CancelOrder)
 
 			protected.POST("/revenue/:email", revenue_controller.CreateRevenue)
 			protected.GET("/revenue/:email", revenue_controller.GetRevenue)

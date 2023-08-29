@@ -184,7 +184,7 @@ export default function Edit_post_UI() {
               />
               <div className="post-author">
                 <a
-                  href={`/profile/${post.User?.Email}`}
+                  href={`/profile/${post.User?.Profile_Name}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

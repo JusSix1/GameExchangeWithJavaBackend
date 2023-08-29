@@ -339,7 +339,7 @@ export default function Home_User_UI() {
                       />
                       <div className="post-author">
                         <a
-                          href={`/profile/${item.User.Email}`}
+                          href={`/profile/${item.User.Profile_Name}`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >

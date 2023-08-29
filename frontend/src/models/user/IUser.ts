@@ -11,7 +11,8 @@ export interface UsersInterface {
   Profile_Name: string;
   Profile_Picture: string;
   Birthday: Date;
-  Phone_number: string;
+  Phone_Number: string;
+  Bank_Account: string;
   Gender_ID: number;
   Gender: GendersInterface;
 }

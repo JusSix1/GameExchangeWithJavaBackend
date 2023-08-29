@@ -67,7 +67,7 @@ function UserFullAppBar() {
 
   function myProfileUser() {
       return (
-        <MenuItem onClick={handleClose} component={RouterLink} to={"/profile/" + localStorage.getItem("email")} >My Profile</MenuItem>
+        <MenuItem onClick={handleClose} component={RouterLink} to={"/MyProfile/" + localStorage.getItem("email")} >My Profile</MenuItem>
       )
   }
 

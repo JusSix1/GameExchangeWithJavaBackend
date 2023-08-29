@@ -233,7 +233,7 @@ export default function My_Reserve_UI() {
                   />
                   <div className="post-author">
                     <a
-                      href={`/profile/${item.User.Email}`}
+                      href={`/profile/${item.User.Profile_Name}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -247,6 +247,7 @@ export default function My_Reserve_UI() {
                 <div className="post-content">{item.Description}</div>
                 <div className="post-price">
                   <h4>Price {item.Account.Price} ฿</h4>
+                  <h4>Bank account number: {item.User.Bank_Account}</h4>
                 </div>
                 {item.Advertising_image && (
                   <img
