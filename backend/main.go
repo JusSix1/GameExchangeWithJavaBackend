@@ -47,7 +47,7 @@ func main() {
 			protected.GET("/games", game_controller.ListGame)
 			protected.GET("/newgame", game_controller.NewGame)
 
-			protected.POST("/post", post_controller.CreatePost)
+			protected.POST("/post/:email", post_controller.CreatePost)
 			protected.GET("/posts", post_controller.ListPost)
 			protected.GET("/post/:email/:id", post_controller.GetPost)
 			protected.PATCH("/post", post_controller.UpdatePost)
@@ -55,8 +55,10 @@ func main() {
 			protected.POST("/order/:email", order_controller.CreateOrder)
 			protected.GET("/myorder/:email", order_controller.GetOrder)
 			protected.GET("/myreserve/:email", order_controller.GetReserve)
+			protected.GET("/mybought/:email", order_controller.GetBought)
 			protected.PATCH("/orderslip", order_controller.UpdateOrderSlip)
 			protected.PATCH("/orderslipconfirm", order_controller.UpdateOrderSlipConfirm)
+			protected.PATCH("/orderreive", order_controller.UpdateOrderReceive)
 			protected.DELETE("/order", order_controller.DeleteOrder)
 			protected.DELETE("/cancelorder", order_controller.CancelOrder)
 

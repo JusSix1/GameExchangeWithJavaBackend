@@ -5,16 +5,13 @@ import {
   Button,
   Dialog,
   DialogActions,
-  DialogContent,
   DialogTitle,
   Grid,
   Snackbar,
 } from "@mui/material";
-import Moment from "moment";
 
 import ip_address from "../ip";
 import { OrdersInterface } from "../../models/order/IOrder";
-import moment from "moment";
 import {
   GridToolbarContainer,
   GridToolbarColumnsButton,
@@ -27,24 +24,16 @@ import {
   GetColumnForNewFilterArgs,
 } from "@mui/x-data-grid";
 
-export default function My_Order_UI() {
+export default function My_Bought_UI() {
   const [order, setOrder] = React.useState<OrdersInterface[]>([]);
 
-  const [imageString, setImageString] = React.useState<
-    string | ArrayBuffer | null
-  >(null);
   const [orderID, setOrderID] = React.useState<Number>();
 
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
   const [dialogLoadOpen, setDialogLoadOpen] = React.useState(false);
-  const [dialogSlipOpen, setDialogSlipOpen] = React.useState(false);
-  const [dialogConfirmSlipOpen, setDialogConfirmSlipOpen] =
-    React.useState(false);
-  const [dialogCancelOpen, setDialogCancelOpen] = React.useState(false);
-
-  Moment.locale("th");
+  const [dialogReceiveOpen, setDialogReceiveOpen] = React.useState(false);
 
   function CustomToolbar() {
     return (
@@ -63,83 +52,44 @@ export default function My_Order_UI() {
   }
 
   const columns: GridColDef[] = [
+    { field: "ID", headerName: "Order ID", width: 70 },
     {
-      field: "ID",
-      headerName: "ID",
-      width: 70,
-    },
-    {
-      field: "User",
-      headerName: "Buyer",
-      width: 200,
-      renderCell: (params) => (
-        <a
-          href={`/profile/${String(params?.value.Profile_Name)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {String(params?.value.Profile_Name)}
-        </a>
-      ),
-    },
-    {
-      field: "Account",
+      field: "Game_Account",
       headerName: "Account name",
       width: 200,
-      valueFormatter: (params) => String(params?.value.Game_Account),
+      renderCell: (params) => params.row.Account.Game_Account,
     },
     {
-      field: "Slip_Create_At",
-      headerName: "Slip Created At",
+      field: "Game_Password",
+      headerName: "Account Password",
       width: 200,
-      valueFormatter: (params) =>
-        moment(params?.value).format("DD/MM/YYYY hh:mm A"),
+      renderCell: (params) => params.row.Account.Game_Password,
     },
     {
-      field: "Slip",
-      headerName: "Slip",
+      field: "Email",
+      headerName: "Email",
+      width: 200,
+      renderCell: (params) => params.row.Account.Email,
+    },
+    {
+      field: "Email_Password",
+      headerName: "Email Password",
+      width: 200,
+      renderCell: (params) => params.row.Account.Email_Password,
+    },
+    {
+      field: "Received",
+      headerName: "Received",
       width: 150,
       renderCell: (params) => (
         <Button
-          disabled={!params.row.Slip}
-          size="small"
-          variant="contained"
-          color="inherit"
-          onClick={() => handleSlipButtonClick(params.row.Slip)}
-        >
-          View Slip
-        </Button>
-      ),
-    },
-    {
-      field: "confirm",
-      headerName: "Confirm",
-      width: 150,
-      renderCell: (params) => (
-        <Button
-          disabled={!(params.row.Slip && !params.row.Is_Slip_Confirm)}
+          disabled={params.row.Is_Receive}
           size="small"
           variant="contained"
           color="primary"
-          onClick={() => handleConfirmButtonClick(params.row.ID)}
+          onClick={() => handleReceiveButtonClick(params.row.ID)}
         >
-          Confirm Slip
-        </Button>
-      ),
-    },
-    {
-      field: "cancel",
-      headerName: "cancel",
-      width: 150,
-      renderCell: (params) => (
-        <Button
-          disabled={!!params.row.Is_Slip_Confirm}
-          size="small"
-          variant="contained"
-          color="error"
-          onClick={() => handleCanelButtonClick(params.row.ID)}
-        >
-          cancel
+          Confirm receive
         </Button>
       ),
     },
@@ -186,47 +136,17 @@ export default function My_Order_UI() {
     setErrorMsg("");
   };
 
-  const handleSlipButtonClick = (slipBase64: string) => {
-    setImageString(slipBase64);
-    setDialogSlipOpen(true);
-  };
-
-  const handleCloseSlipDialog = () => {
-    setDialogSlipOpen(false);
-    setImageString(null);
-  };
-
-  const handleConfirmButtonClick = (ID: Number) => {
+  const handleReceiveButtonClick = (ID: Number) => {
     setOrderID(ID);
-    setDialogConfirmSlipOpen(true);
+    setDialogReceiveOpen(true);
   };
 
-  const handleDialogConfrimClickClose = () => {
-    setDialogConfirmSlipOpen(false);
+  const handleDialogReceiveClickClose = () => {
+    setDialogReceiveOpen(false);
   };
 
-  const handleCanelButtonClick = (ID: Number) => {
-    setOrderID(ID);
-    setDialogCancelOpen(true);
-    console.log(ID)
-  };
-
-  const handleDialogCancelClickClose = () => {
-    setDialogCancelOpen(false);
-  };
-
-  const handleSlip = () => {
-    if (imageString) {
-      return (
-        <img src={`${imageString}`} alt="Slip" width="100%" height="auto" />
-      );
-    } else {
-      return <Grid>No slip upload</Grid>;
-    }
-  };
-
-  const getMyOrder = async () => {
-    const apiUrl = ip_address() + "/myorder/" + localStorage.getItem("email"); // email คือ email ที่ผ่านเข้ามาทาง parameter
+  const getMyBought = async () => {
+    const apiUrl = ip_address() + "/mybought/" + localStorage.getItem("email"); // email คือ email ที่ผ่านเข้ามาทาง parameter
     const requestOptions = {
       method: "GET",
       headers: {
@@ -245,11 +165,11 @@ export default function My_Order_UI() {
       });
   };
 
-  const ConfirmSlip = () => {
+  const Confirmreceive = () => {
     let data = {
       ID: orderID,
     };
-    const apiUrl = ip_address() + "/orderslipconfirm"; //ส่งขอการแก้ไข
+    const apiUrl = ip_address() + "/orderreive"; //ส่งขอการแก้ไข
     const requestOptions = {
       method: "PATCH",
       headers: {
@@ -264,52 +184,19 @@ export default function My_Order_UI() {
       .then(async (res) => {
         if (res.data) {
           setSuccess(true);
-          getMyOrder();
-          setDialogConfirmSlipOpen(false);
-        } else {
-          setError(true);
-          setErrorMsg(" - " + res.error);
-        }
-        handleCloseSlipDialog();
-      });
-  };
-
-  const CancelOrder = async () => {
-    setDialogLoadOpen(true);
-
-    let data = {
-      ID: orderID,
-    };
-
-    const apiUrl = ip_address() + "/cancelorder"; //ส่งขอการแก้ไข
-    const requestOptions = {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    };
-
-    await fetch(apiUrl, requestOptions)
-      .then((response) => response.json())
-      .then(async (res) => {
-        if (res.data) {
-          setSuccess(true);
-          handleDialogCancelClickClose();
-          getMyOrder();
+          getMyBought();
+          setDialogReceiveOpen(false);
         } else {
           setError(true);
           setErrorMsg(" - " + res.error);
         }
       });
-    setDialogLoadOpen(false);
   };
 
   React.useEffect(() => {
     const fetchData = async () => {
       setDialogLoadOpen(true);
-      await getMyOrder();
+      await getMyBought();
       setDialogLoadOpen(false);
     };
     fetchData();
@@ -341,7 +228,7 @@ export default function My_Order_UI() {
 
       <Grid container sx={{ padding: 2 }}>
         {" "}
-        {/* ตารางแสดงผล */}{" "}
+        {/* ตารางแสดงผล */}
         <div style={{ height: 540, width: "100%" }}>
           <DataGrid
             rows={order}
@@ -360,60 +247,35 @@ export default function My_Order_UI() {
         </div>
       </Grid>
 
-      <Dialog open={dialogSlipOpen} onClose={handleCloseSlipDialog}>
-        {/* view slip */}
-        <DialogTitle>Slip Image</DialogTitle>
-        <DialogContent>{handleSlip()}</DialogContent>
-        <DialogActions>
-          <Button size="small" onClick={handleCloseSlipDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog //confirm
-        open={dialogConfirmSlipOpen}
-        onClose={handleDialogConfrimClickClose}
+      <Dialog //receive
+        open={dialogReceiveOpen}
+        onClose={handleDialogReceiveClickClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         fullWidth={true}
         maxWidth="sm"
       >
-        <DialogTitle id="alert-dialog-title">{"Confirm slip"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Confirm Receive"}</DialogTitle>
         <DialogActions>
           <Button
             size="small"
-            onClick={handleDialogConfrimClickClose}
+            onClick={handleDialogReceiveClickClose}
             color="inherit"
           >
             Cancel
           </Button>
-          <Button size="small" onClick={ConfirmSlip} color="primary" autoFocus>
-            Confirm
+          <Button
+            size="small"
+            onClick={Confirmreceive}
+            color="primary"
+            autoFocus
+          >
+            Receive
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog //Cancel
-        open={dialogCancelOpen}
-        onClose={handleDialogCancelClickClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        fullWidth={true}
-        maxWidth="sm"
-      >
-        <DialogTitle id="alert-dialog-title">{"Cancel order"}</DialogTitle>
-        <DialogActions>
-          <Button size="small" onClick={handleDialogCancelClickClose}>
-            Cancel
-          </Button>
-          <Button size="small" onClick={CancelOrder} color="error" autoFocus>
-            Cancel Order
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
+      <Dialog //load
         open={dialogLoadOpen}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"

@@ -2,7 +2,6 @@ package controller
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/JusSix1/GameExchange/entity"
 	"github.com/asaskevich/govalidator"
@@ -69,7 +68,6 @@ func CreateOrder(c *gin.Context) {
 	newOrder := entity.Order{
 		User_ID:         &user.ID,
 		Account_ID:      &account.ID,
-		Slip_Create_At:  time.Now(),
 		Slip:            order.Slip,
 		Is_Slip_Confirm: false,
 		Is_Receive:      false,
@@ -106,7 +104,7 @@ func GetOrder(c *gin.Context) {
 		return db.Select("id", "profile_name", "email").Find(&user)
 	}).Preload("Account", func(db *gorm.DB) *gorm.DB {
 		return db.Select("id", "game_account").Find(&account)
-	}).Raw("SELECT * FROM orders INNER JOIN accounts ON orders.account_id = accounts.id AND accounts.user_id = ? ORDER BY id DESC", userCheckID.ID).Find(&order).Error; err != nil {
+	}).Raw("SELECT orders.id, orders.user_id, orders.account_id, orders.slip, orders.slip_create_at, orders.is_slip_confirm, orders.is_receive FROM orders INNER JOIN accounts ON orders.account_id = accounts.id AND accounts.user_id = ? ORDER BY (orders.id AND orders.is_slip_confirm)", userCheckID.ID).Find(&order).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -129,7 +127,7 @@ func GetReserve(c *gin.Context) {
 
 	if err := entity.DB().Preload("Account", func(db *gorm.DB) *gorm.DB {
 		return db.Select("id", "game_id", "user_id", "price").Find(&accountOrder)
-	}).Raw("SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC", userCheckID.ID).Find(&order).Error; err != nil {
+	}).Raw("SELECT * FROM orders WHERE user_id = ? and is_slip_confirm = false ORDER BY id DESC", userCheckID.ID).Find(&order).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -152,6 +150,29 @@ func GetReserve(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"dataReserve": order, "dataPosts": orderPostJSON})
+}
+
+// GET /mybought/:email
+func GetBought(c *gin.Context) {
+	var userCheckID entity.User
+	var order []entity.Order
+	var accountOrder []entity.Account
+
+	email := c.Param("email")
+
+	if tx := entity.DB().Where("email = ?", email).First(&userCheckID); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+
+	if err := entity.DB().Preload("Account", func(db *gorm.DB) *gorm.DB {
+		return db.Preload("Game").Select("id", "game_id", "game_account", "game_password", "email", "email_password").Find(&accountOrder)
+	}).Raw("SELECT * FROM orders WHERE user_id = ? and is_slip_confirm = true ORDER BY id DESC", userCheckID.ID).Find(&order).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": order})
 }
 
 // PATCH /orderslip
@@ -206,6 +227,32 @@ func UpdateOrderSlipConfirm(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": order})
 }
 
+// PATCH /orderreive
+func UpdateOrderReceive(c *gin.Context) {
+	var order entity.Order
+
+	if err := c.ShouldBindJSON(&order); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updateOrder := entity.Order{
+		Is_Receive: true,
+	}
+
+	if _, err := govalidator.ValidateStruct(updateOrder); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := entity.DB().Where("id = ?", order.ID).Updates(&updateOrder).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": order})
+}
+
 // DELETE /order
 func DeleteOrder(c *gin.Context) {
 
@@ -238,19 +285,13 @@ func DeleteOrder(c *gin.Context) {
 func CancelOrder(c *gin.Context) {
 
 	var order entity.Order
-	var post entity.Post
 
 	if err := c.ShouldBindJSON(&order); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if tx := entity.DB().Exec("SELECT * FROM posts INNER JOIN orders ON orders.id = ? and orders.account_id = posts.account_id", order.ID).First(&post); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Post not found"})
-		return
-	}
-
-	if tx := entity.DB().Exec("UPDATE posts SET is_reserve = false WHERE id = ?", post.ID); tx.RowsAffected == 0 {
+	if tx := entity.DB().Exec("UPDATE posts SET is_reserve = false WHERE id IN (SELECT posts.id FROM posts INNER JOIN orders ON orders.id = ? and orders.account_id = posts.account_id);", order.ID); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Post not found"})
 		return
 	}

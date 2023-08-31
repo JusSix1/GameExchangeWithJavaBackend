@@ -9,13 +9,21 @@ import (
 	"gorm.io/gorm"
 )
 
-// POST /post
+// POST /post/:email
 func CreatePost(c *gin.Context) {
 	var post entity.Post
 	var account entity.Account
+	var user entity.User
+
+	email := c.Param("email")
 
 	if err := c.ShouldBindJSON(&post); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if tx := entity.DB().Where("email = ?", email).First(&user); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
 	}
 
@@ -26,6 +34,7 @@ func CreatePost(c *gin.Context) {
 
 	// create new object for create new record
 	newPost := entity.Post{
+		User_ID:           &user.ID,
 		Account_ID:        post.Account_ID,
 		Description:       post.Description,
 		Advertising_image: post.Advertising_image,

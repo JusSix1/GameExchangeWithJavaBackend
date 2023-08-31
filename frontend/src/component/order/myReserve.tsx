@@ -301,7 +301,7 @@ export default function My_Reserve_UI() {
             Cancel
           </Button>
           <Button size="small" onClick={PatchOrder} color="success" autoFocus>
-            Save
+            Upload
           </Button>
         </DialogActions>
       </Dialog>

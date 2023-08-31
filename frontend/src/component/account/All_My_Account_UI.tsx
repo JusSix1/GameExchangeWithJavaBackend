@@ -24,7 +24,6 @@ import {
   Paper,
   Snackbar,
   TextField,
-  Typography,
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import Moment from "moment";
@@ -112,6 +111,7 @@ export default function All_My_Account_UI() {
     { field: "Game_Password", headerName: "Game password", width: 200 },
     { field: "Email", headerName: "Email", width: 200 },
     { field: "Email_Password", headerName: "Email password", width: 200 },
+    { field: "Price", headerName: "Price", width: 100 },
     {
       field: "A",
       headerName: "Post",
@@ -123,7 +123,8 @@ export default function All_My_Account_UI() {
               size="small"
               variant="contained"
               color="warning"
-              component={RouterLink} to={"/edit_post/" + params.row.ID}
+              component={RouterLink}
+              to={"/edit_post/" + params.row.ID}
             >
               Edit Post
             </Button>
@@ -301,9 +302,9 @@ export default function All_My_Account_UI() {
 
     await fetch(apiUrl, requestOptions)
       .then((response) => response.json())
-      .then((res) => {
+      .then(async (res) => {
         if (res.data) {
-          setGame(res.data);
+          await setGame(res.data);
         }
       });
   };
@@ -399,6 +400,7 @@ export default function All_My_Account_UI() {
       Email: importAccount.Email,
       Email_Password: importAccount.Email_Password,
       Game_ID: importAccount.Game_ID,
+      Price: importAccount.Price,
     };
 
     const apiUrl = ip_address() + "/account"; //ส่งขอการเพิ่ม
@@ -480,7 +482,7 @@ export default function All_My_Account_UI() {
       Advertising_image: imageString,
     };
 
-    const apiUrl = ip_address() + "/post"; //ส่งขอการเพิ่ม
+    const apiUrl = ip_address() + "/post/" + localStorage.getItem("email"); //ส่งขอการเพิ่ม
     const requestOptions = {
       method: "POST",
       headers: {
@@ -552,7 +554,9 @@ export default function All_My_Account_UI() {
           </Alert>
         </Snackbar>
 
-        <Grid container sx={{ padding: 2 }} > {/* ตารางแสดงผล */}
+        <Grid container sx={{ padding: 2 }}>
+          {" "}
+          {/* ตารางแสดงผล */}
           <div style={{ height: 540, width: "100%" }}>
             <DataGrid
               rows={account}
@@ -577,7 +581,9 @@ export default function All_My_Account_UI() {
           </div>
         </Grid>
 
-        <Grid container sx={{ padding: 2 }}> {/* ปุ่ม Import, Delete */}
+        <Grid container sx={{ padding: 2 }}>
+          {" "}
+          {/* ปุ่ม Import, Delete */}
           <Grid sx={{ padding: 2 }}>
             <button
               className="AddAccBtn"
@@ -596,7 +602,7 @@ export default function All_My_Account_UI() {
           </Grid>
         </Grid>
 
-        <Dialog  //Account
+        <Dialog //Account
           open={dialogCreateOpen}
           onClose={handleDialogCreateClickClose}
           aria-labelledby="alert-dialog-title"
@@ -614,7 +620,7 @@ export default function All_My_Account_UI() {
                       <Grid margin={1} item xs={5}>
                         <Autocomplete
                           id="game-autocomplete"
-                          options={game}
+                          options={[{ ID: -1, Name: "Other..." }, ...game]}
                           fullWidth
                           size="small"
                           value={
@@ -626,11 +632,15 @@ export default function All_My_Account_UI() {
                               : null
                           }
                           onChange={(event: any, value) => {
-                            setImportAccount({
-                              ...importAccount,
-                              Game_ID: value?.ID,
-                            });
-                            setNewGame(""); // Clear the new game input when a game is selected
+                            if (value && value.ID === -1) {
+                              handleDialogAddGameClickOpen();
+                            } else {
+                              setImportAccount({
+                                ...importAccount,
+                                Game_ID: value?.ID,
+                              });
+                              setNewGame("");
+                            }
                           }}
                           getOptionLabel={(option: any) => `${option.Name}`}
                           renderInput={(params: any) => {
@@ -651,15 +661,6 @@ export default function All_My_Account_UI() {
                           }}
                           isOptionEqualToValue={isOptionEqualToValue}
                         />
-                      </Grid>
-                      <Grid marginTop={3} item xs={2}>
-                        <Typography
-                          variant="button"
-                          onClick={handleDialogAddGameClickOpen}
-                          sx={{ cursor: "pointer" }}
-                        >
-                          Add game
-                        </Typography>
                       </Grid>
                     </Grid>
                   </Grid>
@@ -783,7 +784,7 @@ export default function All_My_Account_UI() {
           </DialogActions>
         </Dialog>
 
-        <Dialog  //Delete
+        <Dialog //Delete
           open={dialogDeleteOpen}
           onClose={handleDialogDeleteClickClose}
           aria-labelledby="alert-dialog-title"
@@ -807,7 +808,7 @@ export default function All_My_Account_UI() {
           </DialogActions>
         </Dialog>
 
-        <Dialog   //post
+        <Dialog //post
           open={dialogPostOpen}
           onClose={handleDialogPostClickClose}
           aria-labelledby="alert-dialog-title"
@@ -864,7 +865,7 @@ export default function All_My_Account_UI() {
           </DialogActions>
         </Dialog>
 
-        <Dialog   //Add game
+        <Dialog //Add game
           open={dialogAddGameOpen}
           onClose={handleDialogAddGameClickClose}
           aria-labelledby="alert-dialog-title"
@@ -905,7 +906,7 @@ export default function All_My_Account_UI() {
           </DialogActions>
         </Dialog>
 
-        <Dialog   //Load
+        <Dialog //Load
           open={dialogLoadOpen}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
