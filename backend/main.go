@@ -2,6 +2,7 @@ package main
 
 import (
 	account_controller "github.com/JusSix1/GameExchange/controller/account"
+	comment_controller "github.com/JusSix1/GameExchange/controller/comment"
 	game_controller "github.com/JusSix1/GameExchange/controller/game"
 	login_controller "github.com/JusSix1/GameExchange/controller/login"
 	order_controller "github.com/JusSix1/GameExchange/controller/order"
@@ -65,6 +66,10 @@ func main() {
 			protected.POST("/revenue/:email", revenue_controller.CreateRevenue)
 			protected.GET("/revenue/:email", revenue_controller.GetRevenue)
 			protected.PATCH("/revenue", revenue_controller.UpdateRevenue)
+
+			protected.POST("/comment/:email", comment_controller.CreateComment)
+			protected.GET("/comment/:profile_name", comment_controller.GetComment)
+			protected.GET("/mycomment/:email", comment_controller.GetMyComment)
 		}
 	}
 

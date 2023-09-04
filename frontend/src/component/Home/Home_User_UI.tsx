@@ -342,6 +342,7 @@ export default function Home_User_UI() {
                           href={`/profile/${item.User.Profile_Name}`}
                           target="_blank"
                           rel="noopener noreferrer"
+                          style={{ color: 'black' }}
                         >
                           {item.User.Profile_Name}
                         </a>
@@ -381,7 +382,7 @@ export default function Home_User_UI() {
                             className="hl-line"
                           />
                         </svg>
-                        <span>Reserve</span>
+                        <span>Add to Basket</span>
                       </button>
                     </div>
                   </div>

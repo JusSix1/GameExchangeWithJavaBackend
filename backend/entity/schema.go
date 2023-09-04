@@ -33,6 +33,8 @@ type User struct {
 	Order           []Order   `gorm:"foreignKey:User_ID"`
 	Revenue         []Revenue `gorm:"foreignKey:User_ID"`
 	Post            []Post    `gorm:"foreignKey:User_ID"`
+	Commenter       []Comment `gorm:"foreignKey:Commenter_ID"`
+	Victim          []Comment `gorm:"foreignKey:Victim_ID"`
 }
 
 type Game struct {
@@ -54,6 +56,7 @@ type Account struct {
 	Game_ID        *uint   `valid:"-"`
 	Game           Game    `gorm:"references:id" valid:"-"`
 	Is_Post        bool    `valid:"-"`
+	Is_Sell        bool    `valid:"-"`
 	Order          []Order `gorm:"foreignKey:Account_ID"`
 	Post           []Post  `gorm:"foreignKey:Account_ID"`
 }
@@ -80,13 +83,22 @@ type Revenue struct {
 type Post struct {
 	gorm.Model
 	User_ID           *uint   `valid:"-"`
-	User              User    `valid:"-"`
+	User              User    `gorm:"references:id" valid:"-"`
 	Account_ID        *uint   `valid:"-"`
 	Account           Account `gorm:"references:id" valid:"-"`
 	Description       string  `valid:"required~Description is blank"`
 	Advertising_image string  `valid:"image_valid~Please change the image"`
 	Is_Reserve        bool    `valid:"-"`
-	Is_Sell           bool    `valid:"-"`
+}
+
+type Comment struct {
+	gorm.Model
+	Commenter_ID *uint  `valid:"-"`
+	Commenter    User   `gorm:"references:id" valid:"-"`
+	Victim_ID    *uint  `valid:"-"`
+	Victim       User   `gorm:"references:id" valid:"-"`
+	Comment_Text string `valid:"-"`
+	Is_Positive  bool   `valid:"-"`
 }
 
 func init() {

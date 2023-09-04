@@ -241,6 +241,7 @@ function SignIn_User() {
             Succes
           </Alert>
         </Snackbar>
+
         <Snackbar
           id="error"
           open={errorUser}
@@ -252,6 +253,7 @@ function SignIn_User() {
             Email or Password invalid
           </Alert>
         </Snackbar>
+
         <Snackbar
           id="error"
           open={errorAdmin}
@@ -276,6 +278,7 @@ function SignIn_User() {
             Register succes
           </Alert>
         </Snackbar>
+        
         <Snackbar
           id="error"
           open={registerError}

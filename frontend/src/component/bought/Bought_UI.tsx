@@ -54,6 +54,12 @@ export default function My_Bought_UI() {
   const columns: GridColDef[] = [
     { field: "ID", headerName: "Order ID", width: 70 },
     {
+      field: "Game_Name",
+      headerName: "Game",
+      width: 200,
+      renderCell: (params) => params.row.Account.Game.Name,
+    },
+    {
       field: "Game_Account",
       headerName: "Account name",
       width: 200,

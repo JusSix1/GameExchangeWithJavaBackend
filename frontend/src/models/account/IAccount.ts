@@ -17,4 +17,5 @@ export interface AccountsInterface {
 	Order_ID: 		   	number,
 	Order: 			   	OrdersInterface,
 	Is_Post:			boolean,
+	Is_Sell:			boolean,
 }

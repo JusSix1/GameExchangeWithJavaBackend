@@ -120,6 +120,7 @@ export default function All_My_Account_UI() {
         <>
           {params.row.Is_Post ? (
             <Button
+              disabled={params.row.Is_Sell}
               size="small"
               variant="contained"
               color="warning"

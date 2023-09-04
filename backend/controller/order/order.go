@@ -44,6 +44,7 @@ func CreateOrder(c *gin.Context) {
 
 	if post.Is_Reserve {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Account already reserved"})
+		return
 	}
 
 	if tx := entity.DB().Where("email = ?", email).First(&user); tx.RowsAffected == 0 {
@@ -104,7 +105,10 @@ func GetOrder(c *gin.Context) {
 		return db.Select("id", "profile_name", "email").Find(&user)
 	}).Preload("Account", func(db *gorm.DB) *gorm.DB {
 		return db.Select("id", "game_account").Find(&account)
-	}).Raw("SELECT orders.id, orders.user_id, orders.account_id, orders.slip, orders.slip_create_at, orders.is_slip_confirm, orders.is_receive FROM orders INNER JOIN accounts ON orders.account_id = accounts.id AND accounts.user_id = ? ORDER BY (orders.id AND orders.is_slip_confirm)", userCheckID.ID).Find(&order).Error; err != nil {
+	}).Table("orders").
+		Select("orders.id, orders.user_id, orders.account_id, orders.slip, orders.slip_create_at, orders.is_slip_confirm, orders.is_receive").
+		Joins("INNER JOIN accounts ON orders.account_id = accounts.id AND accounts.user_id = ?", userCheckID.ID).
+		Order("orders.id, orders.is_slip_confirm").Find(&order).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -204,6 +208,7 @@ func UpdateOrderSlip(c *gin.Context) {
 // PATCH /orderslipconfirm
 func UpdateOrderSlipConfirm(c *gin.Context) {
 	var order entity.Order
+	var orderCheckID entity.Order
 
 	if err := c.ShouldBindJSON(&order); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -214,12 +219,21 @@ func UpdateOrderSlipConfirm(c *gin.Context) {
 		Is_Slip_Confirm: true,
 	}
 
-	if _, err := govalidator.ValidateStruct(updateOrder); err != nil {
+	if err := entity.DB().Where("id = ?", order.ID).Updates(&updateOrder).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := entity.DB().Where("id = ?", order.ID).Updates(&updateOrder).Error; err != nil {
+	if tx := entity.DB().Where("id = ?", order.ID).First(&orderCheckID); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Order not found"})
+		return
+	}
+
+	updateAccount := entity.Account{
+		Is_Sell: true,
+	}
+
+	if err := entity.DB().Where("id = ?", orderCheckID.Account_ID).Updates(&updateAccount).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/no-redundant-roles */
 import React from "react";
-import "./myReserve.css";
+import "./myBasket.css";
 import {
   Snackbar,
   Alert,
@@ -17,7 +17,7 @@ import { OrdersInterface } from "../../models/order/IOrder";
 import ip_address from "../ip";
 import { PostsInterface } from "../../models/post/IPost";
 
-export default function My_Reserve_UI() {
+export default function My_Basket_UI() {
   const [reserve, setReserve] = React.useState<OrdersInterface[]>([]);
   const [reserveForUploadSlip, setReserveForUploadSlip] = React.useState<
     Partial<OrdersInterface>
@@ -109,32 +109,39 @@ export default function My_Reserve_UI() {
   };
 
   const PatchOrder = () => {
-    let data = {
-      ID: reserveForUploadSlip.ID,
-      Slip: reserveForUploadSlip.Slip,
-    };
-    const apiUrl = ip_address() + "/orderslip"; //ส่งขอการแก้ไข
-    const requestOptions = {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    };
+    if (reserveForUploadSlip.Slip === "") {
+      setError(true);
+      setErrorMsg(" - Please enter the slip.");
+    } else {
+      let data = {
+        ID: reserveForUploadSlip.ID,
+        Slip: reserveForUploadSlip.Slip,
+      };
+      console.log(data)
+      const apiUrl = ip_address() + "/orderslip"; //ส่งขอการแก้ไข
+      const requestOptions = {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      };
 
-    fetch(apiUrl, requestOptions)
-      .then((response) => response.json())
-      .then(async (res) => {
-        if (res.data) {
-          setSuccess(true);
-          getReserve();
-        } else {
-          setError(true);
-          setErrorMsg(" - " + res.error);
-        }
-        handleCloseSlipDialog();
-      });
+      fetch(apiUrl, requestOptions)
+        .then((response) => response.json())
+        .then(async (res) => {
+          if (res.data) {
+            setSuccess(true);
+            getReserve();
+            setReserveForUploadSlip({});
+          } else {
+            setError(true);
+            setErrorMsg(" - " + res.error);
+          }
+          handleCloseSlipDialog();
+        });
+    }
   };
 
   const DeleteOrder = async () => {
@@ -211,7 +218,7 @@ export default function My_Reserve_UI() {
       </Dialog>
 
       <Grid container justifyContent={"center"}>
-        <h1>My Reserve</h1>
+        <h1>My Basket</h1>
       </Grid>
 
       <Grid>

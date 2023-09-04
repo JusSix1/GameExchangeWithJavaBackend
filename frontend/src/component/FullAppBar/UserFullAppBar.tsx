@@ -51,9 +51,9 @@ function UserFullAppBar() {
           <ListItemText primary="My Order" sx={{ paddingLeft: 1 }} />
         </ListItem>
 
-        <ListItem button component={RouterLink} to="/MyReserve">
+        <ListItem button component={RouterLink} to="/MyBasket">
           <ShoppingBasketIcon />
-          <ListItemText primary="My Reserve" sx={{ paddingLeft: 1 }} />
+          <ListItemText primary="My Basket" sx={{ paddingLeft: 1 }} />
         </ListItem>
 
         <ListItem button component={RouterLink} to="/MyBought">
@@ -72,7 +72,7 @@ function UserFullAppBar() {
 
   function myProfileUser() {
       return (
-        <MenuItem onClick={handleClose} component={RouterLink} to={"/MyProfile/" + localStorage.getItem("email")} >My Profile</MenuItem>
+        <MenuItem onClick={handleClose} component={RouterLink} to={"/MyProfile"} >My Profile</MenuItem>
       )
   }
 
@@ -90,7 +90,7 @@ function UserFullAppBar() {
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
 
   const getUserProfilePicture = async () => {
-    const apiUrl = ip_address() + "/usersprofilepicture/" + localStorage.getItem('email') ; // email คือ email ที่ผ่านเข้ามาทาง parameter
+    const apiUrl = ip_address() + "/usersprofilepicture/" + localStorage.getItem('email') ;
     const requestOptions = {
         method: "GET",
         headers: {

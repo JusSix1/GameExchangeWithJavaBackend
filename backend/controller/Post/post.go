@@ -39,7 +39,6 @@ func CreatePost(c *gin.Context) {
 		Description:       post.Description,
 		Advertising_image: post.Advertising_image,
 		Is_Reserve:        false,
-		Is_Sell:           false,
 	}
 
 	// validate post
@@ -101,8 +100,8 @@ func GetPost(c *gin.Context) {
 		return
 	}
 
-	if tx := entity.DB().Where("id = ?", id).First(&accountCheck); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Account not found"})
+	if tx := entity.DB().Where("id = ? AND is_sell = false", id).First(&accountCheck); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Account not found or already sold"})
 		return
 	}
 

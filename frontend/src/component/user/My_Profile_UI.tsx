@@ -5,6 +5,8 @@ import * as React from "react";
 import {
   Alert,
   Button,
+  Card,
+  CardContent,
   Container,
   FormControl,
   FormControlLabel,
@@ -15,7 +17,10 @@ import {
   RadioGroup,
   Snackbar,
   TextField,
+  Typography,
 } from "@mui/material";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import { Box, Grid, Paper } from "@mui/material";
 import Moment from "moment";
 import Menu from "@mui/material/Menu";
@@ -34,6 +39,8 @@ import { GendersInterface } from "../../models/user/IGender";
 
 import { UsersInterface } from "../../models/user/IUser";
 import ip_address from "../ip";
+import moment from "moment";
+import { CommentsInterface } from "../../models/comment/IComment";
 
 const ITEM_HEIGHT = 40;
 
@@ -41,6 +48,8 @@ function My_Profile() {
   const [user, setUser] = React.useState<Partial<UsersInterface>>({});
   const [userEdit, setUserEdit] = React.useState<Partial<UsersInterface>>({});
   const [genders, setGenders] = React.useState<GendersInterface[]>([]);
+  const [commentList, setCommentList] = React.useState<CommentsInterface[]>([]);
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [imageString, setImageString] = React.useState<
     string | ArrayBuffer | null
@@ -52,6 +61,8 @@ function My_Profile() {
   const [confirm_password, setConfirm_password] = React.useState<string | null>(
     null
   );
+  const [countPositive, setCountPositive] = React.useState<number>(0);
+  const [countNegative, setCountNegative] = React.useState<number>(0);
 
   const openOption = Boolean(anchorEl);
   const [success, setSuccess] = React.useState(false);
@@ -156,6 +167,39 @@ function My_Profile() {
       .then((res) => {
         if (res.data) {
           setGenders(res.data);
+        }
+      });
+  };
+
+  const getMyComment = async () => {
+    const apiUrl = ip_address() + "/mycomment/" + localStorage.getItem("email");
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    let countPositiveIn = 0;
+    let countNegativeIn = 0;
+
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then(async (res) => {
+        if (res.data) {
+          res.data.forEach((comment: { Is_Positive: any }) => {
+            if (comment.Is_Positive) {
+              countPositiveIn++;
+            } else {
+              countNegativeIn++;
+            }
+          });
+
+          await setCountPositive(countPositiveIn);
+          await setCountNegative(countNegativeIn);
+
+          await setCommentList(res.data);
         }
       });
   };
@@ -270,6 +314,7 @@ function My_Profile() {
     const fetchData = async () => {
       await getUser();
       await getGender();
+      await getMyComment();
     };
     fetchData();
   }, []);
@@ -347,7 +392,6 @@ function My_Profile() {
                   {"Gender: " + user.Gender?.Gender + "\n\n"}
                   {"Address: " + user.Address + "\n\n"}
                   {"Bank account number: " + user.Bank_Account + "\n\n"}
-
                 </Box>
               </Grid>
             </Grid>
@@ -387,6 +431,85 @@ function My_Profile() {
               </Menu>
             </Grid>
           </Grid>
+        </Grid>
+        <Grid>
+          <Card>
+            <CardContent>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {countPositive >= countNegative ? (
+                  <div style={{ color: "green" }}>
+                    Most of the comments were positive.
+                  </div>
+                ) : (
+                  <div style={{ color: "red" }}>
+                    Most of the comments were negative.
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid sx={{ marginTop: 2 }}>
+          {commentList.map((item) => (
+            <section>
+              <Container style={{ maxWidth: "100%" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  <img
+                    style={{
+                      borderRadius: "50%",
+                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                      marginRight: "0.75rem",
+                    }}
+                    src={item.Commenter.Profile_Picture}
+                    alt={`${item.Commenter.Profile_Name}'s profile`}
+                    width="65"
+                    height="65"
+                  />
+                  <Card style={{ width: "100%" }}>
+                    <CardContent
+                      style={{
+                        padding: "1rem",
+                      }}
+                    >
+                      <div>
+                        <Typography>
+                          <a
+                            href={`/profile/${item.Commenter.Profile_Name}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: "black" }}
+                          >
+                            {item.Commenter.Profile_Name + " "}
+                            {item.Is_Positive ? (
+                              <ThumbUpAltIcon style={{ color: "green" }} />
+                            ) : (
+                              <ThumbDownAltIcon style={{ color: "red" }} />
+                            )}
+                          </a>
+                        </Typography>
+                        <p className="small">
+                          {moment(item.CreatedAt).format("DD/MM/YYYY hh:mm A")}
+                        </p>
+                        <p>{item.Comment_Text}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </Container>
+            </section>
+          ))}
         </Grid>
 
         <Dialog
@@ -433,50 +556,50 @@ function My_Profile() {
                       />
                     </Grid>
                     <Grid margin={1} item xs={12}>
-                    <TextField
-                      fullWidth
-                      id="personalID"
-                      label="Personal ID"
-                      variant="outlined"
-                      defaultValue={user.PersonalID}
-                      onChange={(event) =>
-                        setUserEdit({
-                          ...userEdit,
-                          PersonalID: event.target.value,
-                        })
-                      }
-                    />
-                  </Grid>
-                  <Grid margin={1} item xs={12}>
-                    <TextField
-                      fullWidth
-                      id="address"
-                      label="Address"
-                      variant="outlined"
-                      defaultValue={user.Address}
-                      onChange={(event) =>
-                        setUserEdit({
-                          ...userEdit,
-                          Address: event.target.value,
-                        })
-                      }
-                    />
-                  </Grid>
-                  <Grid margin={1} item xs={12}>
-                    <TextField
-                      fullWidth
-                      id="bank_account"
-                      label="Bank account number"
-                      variant="outlined"
-                      defaultValue={user.Bank_Account}
-                      onChange={(event) =>
-                        setUserEdit({
-                          ...userEdit,
-                          Bank_Account: event.target.value,
-                        })
-                      }
-                    />
-                  </Grid>
+                      <TextField
+                        fullWidth
+                        id="personalID"
+                        label="Personal ID"
+                        variant="outlined"
+                        defaultValue={user.PersonalID}
+                        onChange={(event) =>
+                          setUserEdit({
+                            ...userEdit,
+                            PersonalID: event.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid margin={1} item xs={12}>
+                      <TextField
+                        fullWidth
+                        id="address"
+                        label="Address"
+                        variant="outlined"
+                        defaultValue={user.Address}
+                        onChange={(event) =>
+                          setUserEdit({
+                            ...userEdit,
+                            Address: event.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid margin={1} item xs={12}>
+                      <TextField
+                        fullWidth
+                        id="bank_account"
+                        label="Bank account number"
+                        variant="outlined"
+                        defaultValue={user.Bank_Account}
+                        onChange={(event) =>
+                          setUserEdit({
+                            ...userEdit,
+                            Bank_Account: event.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
                   </Grid>
 
                   <Grid container>
