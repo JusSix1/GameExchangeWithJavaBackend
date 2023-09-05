@@ -246,13 +246,32 @@ export default function Edit_post_UI() {
         </Grid>
       </Grid>
 
-      <Dialog
-        open={dialogLoadOpen}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Loading..."}</DialogTitle>
-      </Dialog>
+      <Dialog //Load
+          open={dialogLoadOpen}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div className="custom-loader"/>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div>Loading...</div>
+            </div>
+          </DialogTitle>
+        </Dialog>
     </>
   );
 }

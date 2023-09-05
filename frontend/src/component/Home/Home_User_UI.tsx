@@ -31,7 +31,6 @@ const styles: { [name: string]: React.CSSProperties } = {
     height: "100%",
     display: "block",
     resize: "none",
-    backgroundColor: "#F",
     fontSize: 16,
   },
 };
@@ -224,8 +223,15 @@ export default function Home_User_UI() {
       </Snackbar>
 
       <Grid container>
-        <Grid item xs={2} sx={{ marginTop: 1 }}>
-          <Grid sx={{ margin: 1 }} style={{ border: "1px solid #ccc" }}>
+        <Grid //Search
+          item
+          xs={2}
+          sx={{ marginTop: 1 }}
+        >
+          <Grid
+            sx={{ margin: 1 }}
+            style={{ border: "1px solid #ccc", minWidth: "300px" }}
+          >
             <Grid sx={{ margin: 1 }}>Search a post by description</Grid>
             <Grid sx={{ margin: 1 }}>
               <textarea
@@ -309,7 +315,10 @@ export default function Home_User_UI() {
           </Grid>
         </Grid>
 
-        <Grid item xs={10}>
+        <Grid //Post
+          item
+          xs={10}
+        >
           {post
             .filter(
               (item) =>
@@ -342,7 +351,7 @@ export default function Home_User_UI() {
                           href={`/profile/${item.User.Profile_Name}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{ color: 'black' }}
+                          style={{ color: "black" }}
                         >
                           {item.User.Profile_Name}
                         </a>
@@ -392,15 +401,7 @@ export default function Home_User_UI() {
         </Grid>
       </Grid>
 
-      <Dialog
-        open={dialogLoadOpen}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Loading..."}</DialogTitle>
-      </Dialog>
-
-      <Dialog
+      <Dialog //Reserve
         open={dialogReserveOpen}
         onClose={handleDialogReserveClickClose}
         aria-labelledby="alert-dialog-title"
@@ -421,6 +422,33 @@ export default function Home_User_UI() {
             Reserve
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog //Load
+        open={dialogLoadOpen}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div className="custom-loader" />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div>Loading...</div>
+          </div>
+        </DialogTitle>
       </Dialog>
     </>
   );

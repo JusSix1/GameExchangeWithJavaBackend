@@ -77,10 +77,11 @@ a:hover {
   height: 60px;
   cursor: pointer;
   background: transparent;
-  background-color: #c9e5ff;
-  border: 1px solid #003cff;
+  background-color: #00ADB5;
+  border: 1px solid #006469;
   outline: none;
   transition: 1s ease-in-out;
+  cursor: pointer;
 }
 
 .svg-reserve {

@@ -17,7 +17,6 @@ import {
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
-  GridToolbarExport,
   GridColDef,
   DataGrid,
   FilterColumnsArgs,
@@ -38,15 +37,9 @@ export default function My_Bought_UI() {
   function CustomToolbar() {
     return (
       <GridToolbarContainer>
-        <GridToolbarColumnsButton />
-        <GridToolbarFilterButton />
-        <GridToolbarDensitySelector />
-        <GridToolbarExport
-          csvOptions={{
-            fileName: "MyAccountGame",
-            utf8WithBom: true,
-          }}
-        />
+        <GridToolbarColumnsButton sx={{ color: "#00ADB5" }} />
+        <GridToolbarFilterButton sx={{ color: "#00ADB5" }} />
+        <GridToolbarDensitySelector sx={{ color: "#00ADB5" }} />
       </GridToolbarContainer>
     );
   }
@@ -92,6 +85,7 @@ export default function My_Bought_UI() {
           disabled={params.row.Is_Receive}
           size="small"
           variant="contained"
+          sx={{ backgroundColor: "#00ADB5" }}
           color="primary"
           onClick={() => handleReceiveButtonClick(params.row.ID)}
         >
@@ -232,10 +226,11 @@ export default function My_Bought_UI() {
         </Alert>
       </Snackbar>
 
-      <Grid container sx={{ padding: 2 }}>
-        {" "}
-        {/* ตารางแสดงผล */}
-        <div style={{ height: 540, width: "100%" }}>
+      <Grid //ตารางแสดงผล
+        container
+        sx={{ padding: 2 }}
+      >
+        <div style={{ height: "90vh", width: "100%" }}>
           <DataGrid
             rows={order}
             getRowId={(row) => row.ID}
@@ -273,6 +268,7 @@ export default function My_Bought_UI() {
           <Button
             size="small"
             onClick={Confirmreceive}
+            sx={{ color: "#00ADB5" }}
             color="primary"
             autoFocus
           >
@@ -281,12 +277,31 @@ export default function My_Bought_UI() {
         </DialogActions>
       </Dialog>
 
-      <Dialog //load
+      <Dialog //Load
         open={dialogLoadOpen}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Loading..."}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div className="custom-loader" />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div>Loading...</div>
+          </div>
+        </DialogTitle>
       </Dialog>
     </>
   );

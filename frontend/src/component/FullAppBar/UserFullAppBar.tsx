@@ -1,6 +1,5 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
@@ -9,7 +8,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Drawer from '@mui/material/Drawer';
-import TwitterIcon from '@mui/icons-material/Twitter';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 
 // User Icon
 import IconButton from '@mui/material/IconButton';
@@ -18,10 +17,10 @@ import HomeIcon from '@mui/icons-material/Home';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import GradingIcon from '@mui/icons-material/Grading';
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
+import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 
 import { Link as RouterLink } from "react-router-dom";
 import { UsersInterface } from '../../models/user/IUser';
-// import { AdminsInterface } from '../models/admin/IAdmin';
 import ip_address from '../ip';
 import { Avatar } from '@mui/material';
 
@@ -57,13 +56,8 @@ function UserFullAppBar() {
         </ListItem>
 
         <ListItem button component={RouterLink} to="/MyBought">
-          <ShoppingBasketIcon />
+          <DownloadDoneIcon />
           <ListItemText primary="My Bought" sx={{ paddingLeft: 1 }} />
-        </ListItem>
-
-        <ListItem button component={RouterLink} to="/MyRevenueAccount">
-          <ViewListIcon />
-          <ListItemText primary="Revenue Account" sx={{ paddingLeft: 1 }} />
         </ListItem>
 
       </List>
@@ -117,9 +111,7 @@ function UserFullAppBar() {
   }, []);
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-
-      <AppBar position="static">
+      <AppBar position="static" sx={{ backgroundColor: "#222831"}}>
         <Toolbar>
           <IconButton
             edge="start"
@@ -132,14 +124,14 @@ function UserFullAppBar() {
 
           <Drawer open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
 
-            <TwitterIcon color="primary" sx={{ fontSize: 150, margin: 1, padding: 2 }} />
+            <SportsEsportsIcon color="primary" sx={{ fontSize: 150, margin: 1, padding: 2, color: "#222831" }}  />
             {/** List of Drawer Divided by position */}
             {drawerList()}
 
           </Drawer>
 
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            EnterAcc
+            GameExchange
           </Typography>
 
           {auth && (                                                                               /* รูป Icon Profild */
@@ -177,9 +169,6 @@ function UserFullAppBar() {
 
         </Toolbar>
       </AppBar>
-
-    </Box>
-
   );
 }
 

@@ -20,7 +20,6 @@ import {
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
-  GridToolbarExport,
   GridColDef,
   DataGrid,
   FilterColumnsArgs,
@@ -49,15 +48,9 @@ export default function My_Order_UI() {
   function CustomToolbar() {
     return (
       <GridToolbarContainer>
-        <GridToolbarColumnsButton />
-        <GridToolbarFilterButton />
-        <GridToolbarDensitySelector />
-        <GridToolbarExport
-          csvOptions={{
-            fileName: "MyAccountGame",
-            utf8WithBom: true,
-          }}
-        />
+        <GridToolbarColumnsButton sx={{ color: "#00ADB5" }}/>
+        <GridToolbarFilterButton sx={{ color: "#00ADB5" }}/>
+        <GridToolbarDensitySelector sx={{ color: "#00ADB5" }}/>
       </GridToolbarContainer>
     );
   }
@@ -121,6 +114,7 @@ export default function My_Order_UI() {
           size="small"
           variant="contained"
           color="primary"
+          sx={{ backgroundColor: "#00ADB5" }}
           onClick={() => handleConfirmButtonClick(params.row.ID)}
         >
           Confirm Slip
@@ -137,6 +131,7 @@ export default function My_Order_UI() {
           size="small"
           variant="contained"
           color="error"
+          sx={{ backgroundColor: "#ff753e" }}
           onClick={() => handleCanelButtonClick(params.row.ID)}
         >
           cancel
@@ -208,7 +203,6 @@ export default function My_Order_UI() {
   const handleCanelButtonClick = (ID: Number) => {
     setOrderID(ID);
     setDialogCancelOpen(true);
-    console.log(ID)
   };
 
   const handleDialogCancelClickClose = () => {
@@ -339,10 +333,11 @@ export default function My_Order_UI() {
         </Alert>
       </Snackbar>
 
-      <Grid container sx={{ padding: 2 }}>
-        {" "}
-        {/* ตารางแสดงผล */}{" "}
-        <div style={{ height: 540, width: "100%" }}>
+      <Grid //ตารางแสดงผล
+        container
+        sx={{ padding: 2 }}
+      >
+        <div style={{ height: "90vh", width: "100%" }}>
           <DataGrid
             rows={order}
             getRowId={(row) => row.ID}
@@ -360,12 +355,14 @@ export default function My_Order_UI() {
         </div>
       </Grid>
 
-      <Dialog open={dialogSlipOpen} onClose={handleCloseSlipDialog}>
-        {/* view slip */}
+      <Dialog //view slip
+        open={dialogSlipOpen}
+        onClose={handleCloseSlipDialog}
+      >
         <DialogTitle>Slip Image</DialogTitle>
         <DialogContent>{handleSlip()}</DialogContent>
         <DialogActions>
-          <Button size="small" onClick={handleCloseSlipDialog} color="primary">
+          <Button size="small" onClick={handleCloseSlipDialog} color="inherit">
             Close
           </Button>
         </DialogActions>
@@ -388,7 +385,7 @@ export default function My_Order_UI() {
           >
             Cancel
           </Button>
-          <Button size="small" onClick={ConfirmSlip} color="primary" autoFocus>
+          <Button size="small" onClick={ConfirmSlip} sx={{ color: "#00ADB5"}} color="primary" autoFocus>
             Confirm
           </Button>
         </DialogActions>
@@ -407,18 +404,37 @@ export default function My_Order_UI() {
           <Button size="small" onClick={handleDialogCancelClickClose}>
             Cancel
           </Button>
-          <Button size="small" onClick={CancelOrder} color="error" autoFocus>
+          <Button size="small" onClick={CancelOrder} sx={{ color: "#ff753e" }} color="error" autoFocus>
             Cancel Order
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog
+      <Dialog //Load
         open={dialogLoadOpen}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Loading..."}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div className="custom-loader" />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div>Loading...</div>
+          </div>
+        </DialogTitle>
       </Dialog>
     </>
   );

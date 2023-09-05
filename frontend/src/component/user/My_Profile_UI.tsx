@@ -72,6 +72,7 @@ function My_Profile() {
   const [dialogEditPasswordOpen, setDialogEditPasswordOpen] =
     React.useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = React.useState(false);
+  const [dialogLoadOpen, setDialogLoadOpen] = React.useState(false);
 
   Moment.locale("th");
 
@@ -172,6 +173,7 @@ function My_Profile() {
   };
 
   const getMyComment = async () => {
+    setDialogLoadOpen(true);
     const apiUrl = ip_address() + "/mycomment/" + localStorage.getItem("email");
     const requestOptions = {
       method: "GET",
@@ -202,9 +204,11 @@ function My_Profile() {
           await setCommentList(res.data);
         }
       });
+    setDialogLoadOpen(false);
   };
 
   const EditUser = () => {
+    setDialogLoadOpen(true);
     let data = {
       Email: localStorage.getItem("email"),
       FirstName: userEdit.FirstName,
@@ -240,9 +244,11 @@ function My_Profile() {
           setErrorMsg(" - " + res.error);
         }
       });
+    setDialogLoadOpen(false);
   };
 
   const EditPasswordAccount = async () => {
+    setDialogLoadOpen(true);
     if (new_password === confirm_password) {
       let data = {
         Email: localStorage.getItem("email"),
@@ -275,9 +281,11 @@ function My_Profile() {
       setError(true);
       setErrorMsg("รหัสผ่านไม่ตรงกัน");
     }
+    setDialogLoadOpen(false);
   };
 
   const DeleteAccount = async () => {
+    setDialogLoadOpen(true);
     let data = {
       Password: password,
     };
@@ -303,6 +311,7 @@ function My_Profile() {
           setErrorMsg(" - " + res.error);
         }
       });
+    setDialogLoadOpen(false);
   };
 
   const signout = () => {
@@ -312,9 +321,11 @@ function My_Profile() {
 
   React.useEffect(() => {
     const fetchData = async () => {
+      setDialogLoadOpen(true);
       await getUser();
       await getGender();
       await getMyComment();
+      setDialogLoadOpen(false);
     };
     fetchData();
   }, []);
@@ -343,7 +354,9 @@ function My_Profile() {
             Error {errorMsg}
           </Alert>
         </Snackbar>
-        <Grid>
+
+        <Grid //User
+        >
           <Grid container>
             <Grid margin={2}>
               <img src={`${user.Profile_Picture}`} width="250" height="250" />{" "}
@@ -432,30 +445,63 @@ function My_Profile() {
             </Grid>
           </Grid>
         </Grid>
-        <Grid>
+
+        <Grid //CommentCompare
+        >
           <Card>
             <CardContent>
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginTop: "1rem",
                 }}
               >
-                {countPositive >= countNegative ? (
-                  <div style={{ color: "green" }}>
-                    Most of the comments were positive.
-                  </div>
-                ) : (
-                  <div style={{ color: "red" }}>
-                    Most of the comments were negative.
-                  </div>
-                )}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  Positive: {countPositive}
+                  <ThumbUpAltIcon style={{ color: "green" }} />
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {countPositive >= countNegative ? (
+                    <div style={{ color: "green" }}>
+                      Most of the comments were positive.
+                    </div>
+                  ) : (
+                    <div style={{ color: "red" }}>
+                      Most of the comments were negative.
+                    </div>
+                  )}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  Negative: {countNegative}
+                  <ThumbDownAltIcon style={{ color: "red" }} />
+                </div>
               </div>
             </CardContent>
           </Card>
         </Grid>
-        <Grid sx={{ marginTop: 2 }}>
+
+        <Grid //CommentList
+          sx={{ marginTop: 2 }}
+        >
           {commentList.map((item) => (
             <section>
               <Container style={{ maxWidth: "100%" }}>
@@ -512,7 +558,7 @@ function My_Profile() {
           ))}
         </Grid>
 
-        <Dialog
+        <Dialog //Edit
           open={dialogEditOpen}
           onClose={handleDialogEditClickClose}
           aria-labelledby="alert-dialog-title"
@@ -693,16 +739,16 @@ function My_Profile() {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button size="small" onClick={handleDialogEditClickClose}>
+            <Button size="small" color="inherit" onClick={handleDialogEditClickClose}>
               Cancel
             </Button>
-            <Button size="small" onClick={EditUser} color="error" autoFocus>
+            <Button size="small" onClick={EditUser} sx={{ color: "#00ADB5" }} color="error" autoFocus>
               Update Data
             </Button>
           </DialogActions>
         </Dialog>
 
-        <Dialog
+        <Dialog //ChangePassword
           open={dialogEditPasswordOpen}
           onClose={handleDialogEditPasswordClickClose}
           aria-labelledby="alert-dialog-title"
@@ -757,13 +803,14 @@ function My_Profile() {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button size="small" onClick={handleDialogEditPasswordClickClose}>
+            <Button size="small" color="inherit" onClick={handleDialogEditPasswordClickClose}>
               Cancel
             </Button>
             <Button
               size="small"
               onClick={EditPasswordAccount}
               color="error"
+              sx={{ color: "#ff753e" }}
               autoFocus
             >
               Change Password
@@ -771,7 +818,7 @@ function My_Profile() {
           </DialogActions>
         </Dialog>
 
-        <Dialog
+        <Dialog //DeleteAccount
           open={dialogDeleteOpen}
           onClose={handleDialogDeleteClickClose}
           aria-labelledby="alert-dialog-title"
@@ -800,12 +847,13 @@ function My_Profile() {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button size="small" onClick={handleDialogDeleteClickClose}>
+            <Button size="small" color="inherit" onClick={handleDialogDeleteClickClose}>
               Cancel
             </Button>
             <Button
               size="small"
               onClick={DeleteAccount}
+              sx={{ color: "#ff753e" }}
               color="error"
               autoFocus
             >
@@ -814,6 +862,33 @@ function My_Profile() {
           </DialogActions>
         </Dialog>
       </Container>
+
+      <Dialog //Load
+        open={dialogLoadOpen}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div className="custom-loader" />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div>Loading...</div>
+          </div>
+        </DialogTitle>
+      </Dialog>
     </>
   );
 }

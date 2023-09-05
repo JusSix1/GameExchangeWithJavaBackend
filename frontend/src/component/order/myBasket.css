@@ -49,16 +49,13 @@
 .button-slip {
     align-items: center;
     border-radius: 100px;
-    background-color: #2bff00;
-    border: 2px solid #2bff00;
+    background-color: #00ADB5;
+    border: 2px solid #00ADB5;
     box-sizing: border-box;
     color: #000000;
     cursor: pointer;
     display: inline-flex;
-    fill: #2bff00;
-    font-family: Inter, sans-serif;
-    font-size: 16px;
-    font-weight: 550;
+    fill: #00ADB5;
     height: 36px;
     justify-content: center;
     letter-spacing: -0.8px;
@@ -79,30 +76,27 @@
 }
 
 .button-slip:hover {
-    border-color: #1dac00;
+    border-color: #006b70;
     color: #000000;
-    fill: #1dac00;
+    fill: #006b70;
 }
 
 .button-slip:active {
-    border-color: #1dac00;
-    color: #1dac00;
-    fill: #1dac00;
+    border-color: #006b70;
+    color: #006b70;
+    fill: #006b70;
 }
 
 .button-cancel {
     align-items: center;
     border-radius: 100px;
-    background-color: #ff0000;
-    border: 2px solid #ff0000;
+    background-color: #ff753e;
+    border: 2px solid #ff753e;
     box-sizing: border-box;
     color: #000000;
     cursor: pointer;
     display: inline-flex;
-    fill: #ff0000;
-    font-family: Inter, sans-serif;
-    font-size: 16px;
-    font-weight: 550;
+    fill: #ff753e;
     height: 36px;
     justify-content: center;
     letter-spacing: -0.8px;

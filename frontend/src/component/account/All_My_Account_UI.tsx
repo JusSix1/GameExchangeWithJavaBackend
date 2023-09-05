@@ -7,7 +7,6 @@ import {
   GridColDef,
   GridRowSelectionModel,
   GridToolbarContainer,
-  GridToolbarExport,
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
@@ -86,15 +85,9 @@ export default function All_My_Account_UI() {
   function CustomToolbar() {
     return (
       <GridToolbarContainer>
-        <GridToolbarColumnsButton />
-        <GridToolbarFilterButton />
-        <GridToolbarDensitySelector />
-        <GridToolbarExport
-          csvOptions={{
-            fileName: "MyAccountGame",
-            utf8WithBom: true,
-          }}
-        />
+        <GridToolbarColumnsButton sx={{ color: "#00ADB5" }} />
+        <GridToolbarFilterButton sx={{ color: "#00ADB5" }} />
+        <GridToolbarDensitySelector sx={{ color: "#00ADB5" }} />
       </GridToolbarContainer>
     );
   }
@@ -123,6 +116,7 @@ export default function All_My_Account_UI() {
               disabled={params.row.Is_Sell}
               size="small"
               variant="contained"
+              sx={{ backgroundColor: "#393E46" }}
               color="warning"
               component={RouterLink}
               to={"/edit_post/" + params.row.ID}
@@ -133,7 +127,7 @@ export default function All_My_Account_UI() {
             <Button
               size="small"
               variant="contained"
-              color="primary"
+              sx={{ backgroundColor: "#00ADB5" }}
               onClick={() => handlePostButtonClick(params.row.ID)}
             >
               Post
@@ -150,7 +144,7 @@ export default function All_My_Account_UI() {
         <Button
           size="small"
           variant="contained"
-          color="primary"
+          sx={{ backgroundColor: "#00ADB5" }}
           onClick={() => handleEditButtonClick(params.row)}
         >
           Edit
@@ -555,10 +549,11 @@ export default function All_My_Account_UI() {
           </Alert>
         </Snackbar>
 
-        <Grid container sx={{ padding: 2 }}>
-          {" "}
-          {/* ตารางแสดงผล */}
-          <div style={{ height: 540, width: "100%" }}>
+        <Grid //ตารางแสดงผล
+          container
+          sx={{ padding: 2 }}
+        >
+          <div style={{ height: "80vh", width: "100%" }}>
             <DataGrid
               rows={account}
               getRowId={(row) => row.ID}
@@ -582,9 +577,10 @@ export default function All_My_Account_UI() {
           </div>
         </Grid>
 
-        <Grid container sx={{ padding: 2 }}>
-          {" "}
-          {/* ปุ่ม Import, Delete */}
+        <Grid //ปุ่ม Import, Delete
+          container
+          sx={{ padding: 2 }}
+        >
           <Grid sx={{ padding: 2 }}>
             <button
               className="AddAccBtn"
@@ -768,7 +764,7 @@ export default function All_My_Account_UI() {
             <Button
               size="small"
               onClick={handleDialogCreateClickClose}
-              color="error"
+              color="inherit"
             >
               Cancel
             </Button>
@@ -777,7 +773,7 @@ export default function All_My_Account_UI() {
               onClick={
                 buttonDialogAccount === "Import" ? CreateAccount : EditAccount
               }
-              color="info"
+              sx={{ color: "#00ADB5" }}
               autoFocus
             >
               {buttonDialogAccount}
@@ -801,6 +797,7 @@ export default function All_My_Account_UI() {
             <Button
               size="small"
               onClick={DeleteAccount}
+              sx={{ color: "#ff753e" }}
               color="error"
               autoFocus
             >
@@ -912,7 +909,26 @@ export default function All_My_Account_UI() {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{"Loading..."}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div className="custom-loader" />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div>Loading...</div>
+            </div>
+          </DialogTitle>
         </Dialog>
       </Grid>
     </>

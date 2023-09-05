@@ -360,14 +360,31 @@ function User_Profile() {
                         alignItems: "center",
                       }}
                     >
+                      Positive: {countPositive}<ThumbUpAltIcon style={{ color: "green" }} />
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
                       {countPositive >= countNegative ? (
                         <div style={{ color: "green" }}>Most of the comments were positive.</div>
                       ) : (
                         <div style={{ color: "red" }}>Most of the comments were negative.</div>
                       )}
                     </div>
-
-                    <Button variant="contained" onClick={() => CreateComment()}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      Negative: {countNegative}<ThumbDownAltIcon style={{ color: "red" }} />
+                    </div>
+                    <Button variant="contained" sx={{backgroundColor: "#00ADB5"}} onClick={() => CreateComment()}>
                       Comment
                     </Button>
                   </div>
@@ -438,12 +455,31 @@ function User_Profile() {
       </Container>
 
       <Dialog //Load
-        open={dialogLoadOpen}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Loading..."}</DialogTitle>
-      </Dialog>
+          open={dialogLoadOpen}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div className="custom-loader"/>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div>Loading...</div>
+            </div>
+          </DialogTitle>
+        </Dialog>
     </>
   );
 }

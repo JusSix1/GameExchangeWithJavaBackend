@@ -1,8 +1,8 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/alt-text */
 import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
@@ -11,7 +11,6 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
   Dialog,
   DialogTitle,
@@ -31,9 +30,29 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 
-import { SigninUserInterface } from "../models/ISignIn_User";
-import { GendersInterface } from "../models/user/IGender";
-import ip_address from "./ip";
+import { SigninUserInterface } from "../../models/ISignIn_User";
+import { GendersInterface } from "../../models/user/IGender";
+import ip_address from "../ip";
+import styled from "styled-components";
+
+const SignInContainer = styled.div`
+  background-image: -moz-radial-gradient(
+    center,
+    ellipse closest-corner,
+    #00ADB5,
+    #393E46    
+  );
+  background-image: -webkit-radial-gradient(
+    center,
+    ellipse closest-corner,
+    #00ADB5,
+    #393E46
+  );
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -41,8 +60,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 ) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-
-const theme = createTheme();
 
 function SignIn_User() {
   // Register
@@ -75,7 +92,6 @@ function SignIn_User() {
   const [signin, setSignin] = useState<Partial<SigninUserInterface>>({});
   const [success, setSuccess] = useState(false);
   const [errorUser, setErrorUser] = useState(false);
-  const [errorAdmin, setErrorAdmin] = useState(false);
 
   async function LoginUser(data: SigninUserInterface) {
     const apiUrl = ip_address();
@@ -133,7 +149,6 @@ function SignIn_User() {
     }
     setSuccess(false);
     setErrorUser(false);
-    setErrorAdmin(false);
     setRegisterSuccess(false);
     setRegisterError(false);
   };
@@ -163,7 +178,7 @@ function SignIn_User() {
       setSuccess(true);
       setTimeout(() => {
         window.location.reload();
-      }, 1000);
+      }, 2000);
     } else {
       setErrorUser(true);
     }
@@ -190,8 +205,6 @@ function SignIn_User() {
         Bank_Account: bankAccount,
         Gender_ID: gender_id,
       };
-
-      console.log(data);
 
       const apiUrl = ip_address() + "/users"; // create user
       const requestOptions = {
@@ -226,153 +239,130 @@ function SignIn_User() {
   }, []);
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
+      <Snackbar
+        id="success"
+        open={success}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleClose} severity="success">
+          Succes
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        id="error"
+        open={errorUser}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleClose} severity="error">
+          Email or Password invalid
+        </Alert>
+      </Snackbar>
+
+      {/** Register Alert */}
+      <Snackbar
+        id="success"
+        open={registerSuccess}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleClose} severity="success">
+          Register succes
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        id="error"
+        open={registerError}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleClose} severity="error">
+          {errorMsg}
+        </Alert>
+      </Snackbar>
+
       {/** Sign In */}
-      <Grid container component="main" sx={{ height: "100vh" }}>
-        {/** Sign In Alert*/}
-        <Snackbar
-          id="success"
-          open={success}
-          autoHideDuration={3000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert onClose={handleClose} severity="success">
-            Succes
-          </Alert>
-        </Snackbar>
-
-        <Snackbar
-          id="error"
-          open={errorUser}
-          autoHideDuration={3000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert onClose={handleClose} severity="error">
-            Email or Password invalid
-          </Alert>
-        </Snackbar>
-
-        <Snackbar
-          id="error"
-          open={errorAdmin}
-          autoHideDuration={3000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert onClose={handleClose} severity="error">
-            Admin Name or Password invalid
-          </Alert>
-        </Snackbar>
-
-        {/** Register Alert */}
-        <Snackbar
-          id="success"
-          open={registerSuccess}
-          autoHideDuration={3000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert onClose={handleClose} severity="success">
-            Register succes
-          </Alert>
-        </Snackbar>
-        
-        <Snackbar
-          id="error"
-          open={registerError}
-          autoHideDuration={3000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert onClose={handleClose} severity="error">
-            {errorMsg}
-          </Alert>
-        </Snackbar>
-
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
-          sx={{
-            backgroundImage:
-              "url(https://bs-uploads.toptal.io/blackfish-uploads/components/seo/content/og_image_file/og_image/1264081/0712-Bad_Practices_in_Database_Design_-_Are_You_Making_These_Mistakes_Dan_Social-754bc73011e057dc76e55a44a954e0c3.png)",
-            backgroundRepeat: "no-repeat",
-            backgroundColor: (t) =>
-              t.palette.mode === "light"
-                ? t.palette.grey[50]
-                : t.palette.grey[900],
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+      <SignInContainer>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
-        />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <Box
-            sx={{
-              my: 8,
-              mx: 4,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              alignSelf: "center",
-            }}
-          >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
-            <Box sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="Email"
-                label="Email"
-                name="Email"
-                autoComplete="Email"
-                autoFocus
-                value={signin.Email || ""}
-                onChange={handleInputChange}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="Password"
-                autoComplete="current-password"
-                value={signin.Password || ""}
-                onChange={handleInputChange}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                onClick={submitUser}
-              >
-                Sign In
-              </Button>
-              <Grid container item direction={"row-reverse"}>
-                <Typography
-                  variant="button"
-                  onClick={handleDialogRegisterClickOpen}
-                  sx={{ cursor: "pointer" }}
+        >
+          <Grid item component={Paper} elevation={6} square>
+            <Box
+              sx={{
+                my: 8,
+                mx: 4,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                alignSelf: "center",
+              }}
+            >
+              <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Sign in
+              </Typography>
+              <Box sx={{ mt: 1 }}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="Email"
+                  label="Email"
+                  name="Email"
+                  autoComplete="Email"
+                  autoFocus
+                  value={signin.Email || ""}
+                  onChange={handleInputChange}
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="Password"
+                  autoComplete="current-password"
+                  value={signin.Password || ""}
+                  onChange={handleInputChange}
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                  onClick={submitUser}
                 >
-                  Register
-                </Typography>
-              </Grid>
+                  Sign In
+                </Button>
+                <Grid container item direction={"row-reverse"}>
+                  <Typography
+                    variant="button"
+                    onClick={handleDialogRegisterClickOpen}
+                    sx={{ cursor: "pointer" }}
+                  >
+                    Register
+                  </Typography>
+                </Grid>
+              </Box>
             </Box>
-          </Box>
-        </Grid>
-      </Grid>
+          </Grid>
+        </div>
+      </SignInContainer>
 
       {/** register dialog */}
       <Dialog
@@ -568,13 +558,13 @@ function SignIn_User() {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogRegisterClose}>Cancel</Button>
-          <Button onClick={createAccount} color="error" autoFocus>
+          <Button onClick={handleDialogRegisterClose} color="inherit">Cancel</Button>
+          <Button onClick={createAccount}  autoFocus>
             Submit
           </Button>
         </DialogActions>
       </Dialog>
-    </ThemeProvider>
+    </>
   );
 }
 

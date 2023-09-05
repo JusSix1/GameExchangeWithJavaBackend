@@ -117,7 +117,7 @@ export default function My_Basket_UI() {
         ID: reserveForUploadSlip.ID,
         Slip: reserveForUploadSlip.Slip,
       };
-      console.log(data)
+      console.log(data);
       const apiUrl = ip_address() + "/orderslip"; //ส่งขอการแก้ไข
       const requestOptions = {
         method: "PATCH",
@@ -209,19 +209,12 @@ export default function My_Basket_UI() {
         </Alert>
       </Snackbar>
 
-      <Dialog
-        open={dialogLoadOpen}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Loading..."}</DialogTitle>
-      </Dialog>
-
       <Grid container justifyContent={"center"}>
         <h1>My Basket</h1>
       </Grid>
 
-      <Grid>
+      <Grid //post
+      >
         {posts.map((item) => (
           <Grid
             style={{
@@ -285,7 +278,7 @@ export default function My_Basket_UI() {
         ))}
       </Grid>
 
-      <Dialog
+      <Dialog //Slip
         open={dialogSlipOpen}
         onClose={handleCloseSlipDialog}
         aria-labelledby="alert-dialog-title"
@@ -307,7 +300,13 @@ export default function My_Basket_UI() {
           <Button size="small" onClick={handleCloseSlipDialog} color="inherit">
             Cancel
           </Button>
-          <Button size="small" onClick={PatchOrder} color="success" autoFocus>
+          <Button
+            size="small"
+            onClick={PatchOrder}
+            sx={{ color: "#00ADB5" }}
+            color="success"
+            autoFocus
+          >
             Upload
           </Button>
         </DialogActions>
@@ -323,13 +322,40 @@ export default function My_Basket_UI() {
       >
         <DialogTitle id="alert-dialog-title">{"Delete Account"}</DialogTitle>
         <DialogActions>
-          <Button size="small" onClick={handleDialogDeleteClickClose}>
+          <Button size="small" onClick={handleDialogDeleteClickClose} color="inherit">
             Cancel
           </Button>
-          <Button size="small" onClick={DeleteOrder} color="error" autoFocus>
+          <Button size="small" onClick={DeleteOrder} sx={{ color: "#ff753e"}} color="error" autoFocus>
             Delete
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog //Load
+        open={dialogLoadOpen}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div className="custom-loader" />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div>Loading...</div>
+          </div>
+        </DialogTitle>
       </Dialog>
     </>
   );
