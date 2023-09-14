@@ -33,26 +33,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { SigninUserInterface } from "../../models/ISignIn_User";
 import { GendersInterface } from "../../models/user/IGender";
 import ip_address from "../ip";
-import styled from "styled-components";
-
-const SignInContainer = styled.div`
-  background-image: -moz-radial-gradient(
-    center,
-    ellipse closest-corner,
-    #00ADB5,
-    #393E46    
-  );
-  background-image: -webkit-radial-gradient(
-    center,
-    ellipse closest-corner,
-    #00ADB5,
-    #393E46
-  );
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
+import "./SignIn_User.css"
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -178,7 +159,7 @@ function SignIn_User() {
       setSuccess(true);
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 1000);
     } else {
       setErrorUser(true);
     }
@@ -236,6 +217,7 @@ function SignIn_User() {
       await getGender();
     };
     fetchData();
+    document.title = "Sign In Game Change";
   }, []);
 
   return (
@@ -290,15 +272,8 @@ function SignIn_User() {
       </Snackbar>
 
       {/** Sign In */}
-      <SignInContainer>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Grid item component={Paper} elevation={6} square>
+      <div className="SignInContainer">
+        <div className="Login-Box">
             <Box
               sx={{
                 my: 8,
@@ -360,9 +335,8 @@ function SignIn_User() {
                 </Grid>
               </Box>
             </Box>
-          </Grid>
         </div>
-      </SignInContainer>
+      </div>
 
       {/** register dialog */}
       <Dialog

@@ -9,7 +9,6 @@ import {
   Dialog,
   DialogActions,
   DialogTitle,
-  Grid,
   Snackbar,
   TextField,
 } from "@mui/material";
@@ -18,22 +17,6 @@ import Moment from "moment";
 import moment from "moment";
 import { GamesInterface } from "../../models/account/IGame";
 import { UsersInterface } from "../../models/user/IUser";
-
-const styles: { [name: string]: React.CSSProperties } = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  textareaDefaultStyle: {
-    padding: 1,
-    width: "100%",
-    height: "100%",
-    display: "block",
-    resize: "none",
-    fontSize: 16,
-  },
-};
 
 export default function Home_User_UI() {
   const [post, setPost] = React.useState<PostsInterface[]>([]);
@@ -191,6 +174,7 @@ export default function Home_User_UI() {
       };
       fetchData();
       setCount(1);
+      document.title = "Game Exchange";
     }
     if (textareaRef && textareaRef.current) {
       textareaRef.current.style.height = "0px";
@@ -222,32 +206,26 @@ export default function Home_User_UI() {
         </Alert>
       </Snackbar>
 
-      <Grid container>
-        <Grid //Search
-          item
-          xs={2}
-          sx={{ marginTop: 1 }}
-        >
-          <Grid
-            sx={{ margin: 1 }}
-            style={{ border: "1px solid #ccc", minWidth: "300px" }}
-          >
-            <Grid sx={{ margin: 1 }}>Search a post by description</Grid>
-            <Grid sx={{ margin: 1 }}>
+      <div className="div-body">
+        <div className="search">
+          <div className="search-body">
+            <div className="search-component">Description</div>
+            <div className="search-component">
               <textarea
+                className="textareaDescription"
                 ref={textareaRef}
-                style={styles.textareaDefaultStyle}
                 onChange={textAreaChange}
               >
                 {search}
               </textarea>
-            </Grid>
-            <Grid sx={{ margin: 1 }}>Search a post by game name</Grid>
-            <Grid sx={{ margin: 1 }}>
+            </div>
+            <div className="search-component">Game name</div>
+            <div className="search-component">
               <Autocomplete
                 id="game-autocomplete"
                 options={game}
                 size="small"
+                style={{ backgroundColor: "#e4e6eb", borderRadius: "5px" }}
                 value={
                   gameFilter
                     ? game.find((option) => option.ID === gameFilter)
@@ -275,13 +253,14 @@ export default function Home_User_UI() {
                 }}
                 isOptionEqualToValue={isOptionEqualToValue}
               />
-            </Grid>
-            <Grid sx={{ margin: 1 }}>Search a post by user name</Grid>
-            <Grid sx={{ margin: 1 }}>
+            </div>
+            <div className="search-component">User name</div>
+            <div className="search-component">
               <Autocomplete
                 id="username-autocomplete"
                 options={listUserName}
                 size="small"
+                style={{ backgroundColor: "#e4e6eb", borderRadius: "5px" }}
                 value={
                   userNameFilter
                     ? listUserName.find(
@@ -311,14 +290,11 @@ export default function Home_User_UI() {
                 }}
                 isOptionEqualToValue={isOptionEqualToValue}
               />
-            </Grid>
-          </Grid>
-        </Grid>
+            </div>
+          </div>
+        </div>
 
-        <Grid //Post
-          item
-          xs={10}
-        >
+        <div style={{ width: "100%" }}>
           {post
             .filter(
               (item) =>
@@ -331,75 +307,49 @@ export default function Home_User_UI() {
                   item.Account.User_ID === userNameFilter)
             )
             .map((item) => (
-              <Grid
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                sx={{ margin: 1 }}
-              >
-                <Grid key={item.ID} width={"100%"}>
-                  <div className="post">
-                    <div className="post-header">
-                      <img
-                        src={item.User.Profile_Picture}
-                        alt={`${item.User.Profile_Name}'s profile`}
-                      />
-                      <div className="post-author">
-                        <a
-                          href={`/profile/${item.User.Profile_Name}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: "black" }}
-                        >
-                          {item.User.Profile_Name}
-                        </a>
-                      </div>
-                      <div className="post-timestamp">
-                        {moment(item.CreatedAt).format("DD/MM/YYYY hh:mm A")}
-                      </div>
-                    </div>
-                    <div className="post-content">{item.Description}</div>
-                    <div className="post-price">
-                      <h4>Price {item.Account.Price} ฿</h4>
-                    </div>
-                    {item.Advertising_image && (
-                      <img
-                        src={item.Advertising_image}
-                        alt="Posted content"
-                        className="post-image"
-                      />
-                    )}
-                    <div className="container-reserve">
-                      <button
-                        className="button-reserve"
-                        onClick={() => handleReserveButtonClick(item)}
-                      >
-                        <svg
-                          width="180px"
-                          height="60px"
-                          viewBox="0 0 180 60"
-                          className="svg-reserve"
-                        >
-                          <polyline
-                            points="179,1 179,59 1,59 1,1 179,1"
-                            className="bg-line"
-                          />
-                          <polyline
-                            points="179,1 179,59 1,59 1,1 179,1"
-                            className="hl-line"
-                          />
-                        </svg>
-                        <span>Add to Basket</span>
-                      </button>
-                    </div>
+              <div key={item.ID} className="post">
+                <div className="post-header">
+                  <img
+                    src={item.User.Profile_Picture}
+                    alt={`${item.User.Profile_Name}'s profile`}
+                  />
+                  <div className="post-author">
+                    <a
+                      href={`/profile/${item.User.Profile_Name}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "#FFF" }}
+                    >
+                      {item.User.Profile_Name}
+                    </a>
                   </div>
-                </Grid>
-              </Grid>
+                  <div className="post-timestamp">
+                    {moment(item.CreatedAt).format("DD/MM/YYYY hh:mm A")}
+                  </div>
+                </div>
+                <div className="post-content">{item.Description}</div>
+                <div className="post-price">
+                  <h4 style={{color: "#FFF"}}>Price {item.Account.Price} ฿</h4>
+                </div>
+                {item.Advertising_image && (
+                  <img
+                    src={item.Advertising_image}
+                    alt="Posted content"
+                    className="post-image"
+                  />
+                )}
+                <div className="container-reserve">
+                  <button
+                    className="button-reserve"
+                    onClick={() => handleReserveButtonClick(item)}
+                  >
+                    Add to basket
+                  </button>
+                </div>
+              </div>
             ))}
-        </Grid>
-      </Grid>
+        </div>
+      </div>
 
       <Dialog //Reserve
         open={dialogReserveOpen}

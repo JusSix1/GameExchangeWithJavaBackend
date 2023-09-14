@@ -1,0 +1,19 @@
+.SignInContainer {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url("login_backgroud.jpg") no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.Login-Box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: aliceblue;
+  border: 2px;
+  border-radius: 25px;
+  box-shadow: -5px -5px 10px rgba(255,94,247, 0.5),5px 5px 5px rgba(2,245,255, 0.5);
+}

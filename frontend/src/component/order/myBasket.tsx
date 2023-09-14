@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/no-redundant-roles */
 import React from "react";
-import "./myBasket.css";
 import {
   Snackbar,
   Alert,
@@ -16,6 +15,8 @@ import moment from "moment";
 import { OrdersInterface } from "../../models/order/IOrder";
 import ip_address from "../ip";
 import { PostsInterface } from "../../models/post/IPost";
+import "./myBasket.css"
+import "../Home/Home_User_UI.css"
 
 export default function My_Basket_UI() {
   const [reserve, setReserve] = React.useState<OrdersInterface[]>([]);

@@ -55,9 +55,9 @@ function UserFullAppBar() {
           <ListItemText primary="My Basket" sx={{ paddingLeft: 1 }} />
         </ListItem>
 
-        <ListItem button component={RouterLink} to="/MyBought">
+        <ListItem button component={RouterLink} to="/AlreadyBought">
           <DownloadDoneIcon />
-          <ListItemText primary="My Bought" sx={{ paddingLeft: 1 }} />
+          <ListItemText primary="Already bought" sx={{ paddingLeft: 1 }} />
         </ListItem>
 
       </List>
@@ -111,7 +111,7 @@ function UserFullAppBar() {
   }, []);
 
   return (
-      <AppBar position="static" sx={{ backgroundColor: "#222831"}}>
+      <AppBar sx={{ backgroundColor: "#242526", position: "sticky", boxShadow: "0px 5px 10px rgba(255,94,247, 0.1),0px 2px 5px rgba(2,245,255, 0.1)"}}>
         <Toolbar>
           <IconButton
             edge="start"
