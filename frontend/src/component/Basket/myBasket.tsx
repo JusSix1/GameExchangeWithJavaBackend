@@ -211,7 +211,7 @@ export default function My_Basket_UI() {
       </Snackbar>
 
       <Grid container justifyContent={"center"}>
-        <h1>My Basket</h1>
+        <h1 className="head-text">My Basket</h1>
       </Grid>
 
       <Grid //post
@@ -247,8 +247,8 @@ export default function My_Basket_UI() {
                 </div>
                 <div className="post-content">{item.Description}</div>
                 <div className="post-price">
-                  <h4>Price {item.Account.Price} ฿</h4>
-                  <h4>Bank account number: {item.User.Bank_Account}</h4>
+                  <h4 style={{ color: "#FFF" }}>Price {item.Account.Price} ฿</h4>
+                  <h4 style={{ color: "#FFF" }}>Bank account number: {item.User.Bank_Account}</h4>
                 </div>
                 {item.Advertising_image && (
                   <img

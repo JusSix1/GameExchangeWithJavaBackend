@@ -216,29 +216,14 @@ export default function Edit_post_UI() {
                   />
                 </div>
                 <div>
-                  <input type="file" onChange={handleImageChange} />
+                  <input type="file" onChange={handleImageChange} style={{ color: "#FFF"}} />
                 </div>
               </>
             )}
             {post.Description && (
               <div className="container-save">
                 <button className="button-save" onClick={UpdatePost}>
-                  <svg
-                    width="180px"
-                    height="60px"
-                    viewBox="0 0 180 60"
-                    className="svg-save"
-                  >
-                    <polyline
-                      points="179,1 179,59 1,59 1,1 179,1"
-                      className="bg-line"
-                    />
-                    <polyline
-                      points="179,1 179,59 1,59 1,1 179,1"
-                      className="hl-line"
-                    />
-                  </svg>
-                  <span>Save</span>
+                  Save
                 </button>
               </div>
             )}

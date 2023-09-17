@@ -9,13 +9,12 @@ import Home_User_UI from "./component/Home/Home_User_UI";
 import All_My_Account_UI from "./component/account/All_My_Account_UI";
 import UserFullAppBar from "./component/FullAppBar/UserFullAppBar";
 import Edit_post_UI from "./component/Edit_post/Edit_post";
-import My_Basket_UI from "./component/order/myBasket";
+import My_Basket_UI from "./component/Basket/myBasket";
 import My_Order_UI from "./component/order/myOrder";
 import My_Profile_UI from "./component/user/My_Profile_UI";
 import My_Bought_UI from "./component/bought/Bought_UI";
 
 export default function App() {
-  
   const [token, setToken] = React.useState<String>("");
 
   React.useEffect(() => {
@@ -29,10 +28,12 @@ export default function App() {
   if (token) {
     return (
       <Router>
-        <div className="div-AppBar">
-          <UserFullAppBar />
+        <div className="background-all">
+          <div className="div-AppBar">
+            <UserFullAppBar />
+          </div>
+          <div>{routeList()}</div>
         </div>
-        <div>{routeList()}</div>
       </Router>
     );
   }

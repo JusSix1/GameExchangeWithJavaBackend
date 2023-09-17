@@ -18,10 +18,10 @@ import {
   Snackbar,
   Typography,
 } from "@mui/material";
-import { Box, Grid } from "@mui/material";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import Moment from "moment";
+import "./My_Profile_UI.css";
 
 import { useParams } from "react-router-dom";
 
@@ -194,292 +194,255 @@ function User_Profile() {
 
   return (
     <>
-      <Container>
-        <Snackbar //ป้ายบันทึกสำเร็จ
-          open={success}
-          autoHideDuration={6000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        >
-          <Alert onClose={handleClose} severity="success">
-            Succes
-          </Alert>
-        </Snackbar>
+      <Snackbar //ป้ายบันทึกสำเร็จ
+        open={success}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={handleClose} severity="success">
+          Succes
+        </Alert>
+      </Snackbar>
 
-        <Snackbar //ป้ายบันทึกไม่สำเร็จ
-          open={error}
-          autoHideDuration={6000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        >
-          <Alert onClose={handleClose} severity="error">
-            Error {errorMsg}
-          </Alert>
-        </Snackbar>
+      <Snackbar //ป้ายบันทึกไม่สำเร็จ
+        open={error}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={handleClose} severity="error">
+          Error {errorMsg}
+        </Alert>
+      </Snackbar>
 
-        <Grid //แสดงผลข้อมูล User
-        >
-          <Grid container>
-            <Grid margin={2}>
-              <img src={`${user.Profile_Picture}`} width="250" height="250" />{" "}
-              {/** show base64 picture from string variable (that contain base64 picture data) */}
-            </Grid>
-            <Grid marginLeft={1} item xs={12}>
-              <Grid>
-                <h2>{user.Profile_Name}</h2>
-              </Grid>
-              <Grid item>
-                {" "}
-                {/** เอา Grid มาล็อคไม่ให้ component มันเด้งไปที่อื่น */}
-                <Box
-                  component="div"
-                  sx={{
-                    width: "100%",
-                    textOverflow: "ellipsis",
-                    overflow: "hidden",
-                    whiteSpace: "break-spaces",
-                    my: 2,
-                    p: 1,
-                    bgcolor: (theme) =>
-                      theme.palette.mode === "dark" ? "#101010" : "grey.100",
-                    color: (theme) =>
-                      theme.palette.mode === "dark" ? "grey.300" : "grey.800",
-                    border: "1px solid",
-                    borderColor: (theme) =>
-                      theme.palette.mode === "dark" ? "grey.800" : "grey.300",
-                    borderRadius: 2,
-                    fontSize: "0.875rem",
-                    fontWeight: "700",
+      <div className="user">
+        <div className="picture">
+          <img
+            src={`${user.Profile_Picture}`}
+            width="250"
+            height="250"
+            style={{ borderRadius: "15px" }}
+          />
+        </div>
+        <div className="username">
+          <h2>{user.Profile_Name}</h2>
+        </div>
+        <div className="info">
+          {"Full name: " + user.FirstName + " " + user.LastName + "\n\n"}
+          {"Email: " + user.Email + "\n\n"}
+          {"Phone number: " + user.Phone_Number + "\n\n"}
+          {"Gender: " + user.Gender?.Gender + "\n\n"}
+        </div>
+      </div>
+
+      <div className="comment">
+        <Card style={{ background: "#c1c1c1" }}>
+          <CardContent>
+            <div className="comment-header">
+              <div style={{ width: "100%" }}>
+                <Typography sx={{ marginBottom: 1 }}>Add a comment</Typography>
+
+                <FormControl>
+                  <FormLabel id="demo-controlled-radio-buttons-group">
+                    Satisfaction
+                  </FormLabel>
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                    onChange={handleRadioChange}
+                    value={value}
+                  >
+                    <FormControlLabel
+                      value="1"
+                      control={
+                        <Radio
+                          sx={{
+                            color: "green",
+                            "&.Mui-checked": { color: "green" },
+                          }}
+                        />
+                      }
+                      label="Positive"
+                    />
+                    <FormControlLabel
+                      value="2"
+                      control={
+                        <Radio
+                          sx={{
+                            color: "red",
+                            "&.Mui-checked": { color: "red" },
+                          }}
+                        />
+                      }
+                      label="Negative"
+                    />
+                  </RadioGroup>
+                </FormControl>
+
+                <div>
+                  <textarea
+                    ref={textareaRef}
+                    style={{
+                      padding: 5,
+                      marginTop: 10,
+                      width: "98%",
+                      height: "100%",
+                      display: "block",
+                      resize: "none",
+                      backgroundColor: "#F",
+                      fontSize: 16,
+                    }}
+                    onChange={textAreaChange}
+                    value={commentText}
+                  ></textarea>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginTop: "1rem",
                   }}
                 >
-                  {/** กำหนดให้เว้นบรรทัด auto จาก white space */}
-                  {"Full name: " +
-                    user.FirstName +
-                    " " +
-                    user.LastName +
-                    "\n\n"}
-                  {"Email: " + user.Email + "\n\n"}
-                  {"Phone number: " + user.Phone_Number + "\n\n"}
-                  {"Gender: " + user.Gender?.Gender + "\n\n"}
-                </Box>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-
-        <Grid //Comment
-          sx={{ marginTop: 1 }}
-        >
-          <Card>
-            <CardContent>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  width: "100%",
-                }}
-              >
-                <div style={{ width: "100%" }}>
-                  <Typography sx={{ marginBottom: 1 }}>
-                    Add a comment
-                  </Typography>
-
-                  <FormControl>
-                    <FormLabel id="demo-controlled-radio-buttons-group">
-                      Satisfaction
-                    </FormLabel>
-                    <RadioGroup
-                      row
-                      aria-labelledby="demo-controlled-radio-buttons-group"
-                      name="controlled-radio-buttons-group"
-                      onChange={handleRadioChange}
-                      value={value}
-                    >
-                      <FormControlLabel
-                        value="1"
-                        control={
-                          <Radio
-                            sx={{
-                              color: "green",
-                              "&.Mui-checked": { color: "green" },
-                            }}
-                          />
-                        }
-                        label="Positive"
-                      />
-                      <FormControlLabel
-                        value="2"
-                        control={
-                          <Radio
-                            sx={{
-                              color: "red",
-                              "&.Mui-checked": { color: "red" },
-                            }}
-                          />
-                        }
-                        label="Negative"
-                      />
-                    </RadioGroup>
-                  </FormControl>
-
-                  <Grid container>
-                    <textarea
-                      ref={textareaRef}
-                      style={{
-                        padding: 5,
-                        marginTop: 10,
-                        width: "98%",
-                        height: "100%",
-                        display: "block",
-                        resize: "none",
-                        backgroundColor: "#F",
-                        fontSize: 16,
-                      }}
-                      onChange={textAreaChange}
-                      value={commentText}
-                    ></textarea>
-                  </Grid>
-
+                  <Button
+                    color="inherit"
+                    onClick={() => setShowComments(!showComments)}
+                  >
+                    {showComments ? "Hide comment" : "Show comment"}
+                  </Button>
                   <div
                     style={{
                       display: "flex",
-                      justifyContent: "space-between",
-                      marginTop: "1rem",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
-                    <Button
-                      color="inherit"
-                      onClick={() => setShowComments(!showComments)}
-                    >
-                      {showComments ? "Hide comment" : "Show comment"}
-                    </Button>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      Positive: {countPositive}<ThumbUpAltIcon style={{ color: "green" }} />
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      {countPositive >= countNegative ? (
-                        <div style={{ color: "green" }}>Most of the comments were positive.</div>
-                      ) : (
-                        <div style={{ color: "red" }}>Most of the comments were negative.</div>
-                      )}
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      Negative: {countNegative}<ThumbDownAltIcon style={{ color: "red" }} />
-                    </div>
-                    <Button variant="contained" sx={{backgroundColor: "#00ADB5"}} onClick={() => CreateComment()}>
-                      Comment
-                    </Button>
+                    Positive: {countPositive}
+                    <ThumbUpAltIcon style={{ color: "green" }} />
                   </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {countPositive >= countNegative ? (
+                      <div style={{ color: "green" }}>
+                        Most of the comments were positive.
+                      </div>
+                    ) : (
+                      <div style={{ color: "red" }}>
+                        Most of the comments were negative.
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    Negative: {countNegative}
+                    <ThumbDownAltIcon style={{ color: "red" }} />
+                  </div>
+                  <Button
+                    variant="contained"
+                    sx={{ backgroundColor: "#00ADB5" }}
+                    onClick={() => CreateComment()}
+                  >
+                    Comment
+                  </Button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-          <Grid sx={{ marginTop: 2 }}>
-            {showComments &&
-              commentList.map((item) => (
-                <section>
-                  <Container style={{ maxWidth: "100%" }}>
-                    <div
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="comment-list">
+          {showComments &&
+            commentList.map((item) => (
+              <section>
+                <Container style={{ maxWidth: "100%" }}>
+                  <div className="comment-body">
+                    <img
                       style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        marginBottom: "1rem",
+                        borderRadius: "50%",
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                        marginRight: "0.75rem",
                       }}
-                    >
-                      <img
+                      src={item.Commenter.Profile_Picture}
+                      alt={`${item.Commenter.Profile_Name}'s profile`}
+                      width="65"
+                      height="65"
+                    />
+                    <Card style={{ width: "100%", background: "#c1c1c1" }}>
+                      <CardContent
                         style={{
-                          borderRadius: "50%",
-                          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                          marginRight: "0.75rem",
+                          padding: "1rem",
                         }}
-                        src={item.Commenter.Profile_Picture}
-                        alt={`${item.Commenter.Profile_Name}'s profile`}
-                        width="65"
-                        height="65"
-                      />
-                      <Card style={{ width: "100%" }}>
-                        <CardContent
-                          style={{
-                            padding: "1rem",
-                          }}
-                        >
-                          <div>
-                            <Typography>
-                              <a
-                                href={`/profile/${item.Commenter.Profile_Name}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ color: "black" }}
-                              >
-                                {item.Commenter.Profile_Name + " "}
-                                {item.Is_Positive ? (
-                                  <ThumbUpAltIcon style={{ color: "green" }} />
-                                ) : (
-                                  <ThumbDownAltIcon style={{ color: "red" }} />
-                                )}
-                              </a>
-                            </Typography>
-                            <p className="small">
-                              {moment(item.CreatedAt).format(
-                                "DD/MM/YYYY hh:mm A"
+                      >
+                        <div>
+                          <Typography>
+                            <a
+                              href={`/profile/${item.Commenter.Profile_Name}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ color: "black" }}
+                            >
+                              {item.Commenter.Profile_Name + " "}
+                              {item.Is_Positive ? (
+                                <ThumbUpAltIcon style={{ color: "green" }} />
+                              ) : (
+                                <ThumbDownAltIcon style={{ color: "red" }} />
                               )}
-                            </p>
-                            <p>{item.Comment_Text}</p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </Container>
-                </section>
-              ))}
-          </Grid>
-        </Grid>
-      </Container>
+                            </a>
+                          </Typography>
+                          <p className="small">
+                            {moment(item.CreatedAt).format(
+                              "DD/MM/YYYY hh:mm A"
+                            )}
+                          </p>
+                          <p>{item.Comment_Text}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </Container>
+              </section>
+            ))}
+        </div>
+      </div>
 
       <Dialog //Load
-          open={dialogLoadOpen}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <div className="custom-loader"/>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <div>Loading...</div>
-            </div>
-          </DialogTitle>
-        </Dialog>
+        open={dialogLoadOpen}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div className="custom-loader" />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div>Loading...</div>
+          </div>
+        </DialogTitle>
+      </Dialog>
     </>
   );
 }

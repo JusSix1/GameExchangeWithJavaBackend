@@ -555,6 +555,7 @@ export default function All_My_Account_UI() {
         >
           <div style={{ height: "80vh", width: "100%" }}>
             <DataGrid
+              style={{ background: "#3a3b3c", color: "white" }}
               rows={account}
               getRowId={(row) => row.ID}
               slots={{ toolbar: CustomToolbar }}
@@ -583,7 +584,7 @@ export default function All_My_Account_UI() {
         >
           <Grid sx={{ padding: 2 }}>
             <button
-              className="AddAccBtn"
+              className="button-slip"
               onClick={() => handleDialogCreateClickOpen()}
             >
               Add Account
@@ -591,7 +592,7 @@ export default function All_My_Account_UI() {
           </Grid>
           <Grid sx={{ padding: 2 }}>
             <button
-              className="DeleAccBtn"
+              className="button-cancel"
               onClick={() => handleDialogDeleteClickOpen()}
             >
               Delete Account

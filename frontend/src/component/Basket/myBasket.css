@@ -1,0 +1,98 @@
+.head-text {
+    color: #fff;
+    text-shadow:
+        0 -40px 100px,
+        0 0 2px,
+        0 0 1em blueviolet,
+        0 0 0.5em blueviolet,
+        0 0 0.1em blueviolet,
+        0 10px 3px #000;
+}
+
+.container-btn-slip {
+    display: flex;
+    justify-content: right;
+    margin: 10px;
+}
+
+.button-slip {
+    margin: 0.5rem;
+    background: #21ebff;
+    line-height: 42px;
+    padding: 0;
+    border: none;
+}
+
+.button-slip:hover {
+    background: transparent;
+    color: #21ebff;
+}
+
+.button-slip:before,
+.button-slip:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 2px;
+    background: #21ebff;
+    width: 0;
+    box-shadow:
+        0 0 5px #21ebff,
+        0 0 5px #21ebff inset;
+    transition: 400ms ease all;
+}
+
+.button-slip:after {
+    right: inherit;
+    top: inherit;
+    left: 0;
+    bottom: 0;
+}
+
+.button-slip:hover:before,
+.button-slip:hover:after {
+    width: 100%;
+    transition: 800ms ease all;
+}
+
+.button-cancel {
+    margin: 0.5rem;
+    color: #ff9aff;
+    border: 1px solid#ff9aff;
+    box-shadow:
+        0 0 5px #ff9aff,
+        0 0 5px #ff9aff inset;
+    z-index: 1;
+}
+.button-cancel:after {
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: -1;
+    background: #ff9aff;
+    box-shadow: 0 0 20px #ff9aff;
+    transition: all 0.3s ease;
+}
+.button-cancel:hover {
+    color: #fff;
+}
+.button-cancel:hover:after {
+    left: 0;
+    width: 100%;
+}
+.button-cancel:active {
+    top: 2px;
+}
+
+@media (min-width: 768px) {
+    .button-slip {
+        min-width: 150px;
+    }
+    .button-cancel {
+        min-width: 150px;
+    }
+}

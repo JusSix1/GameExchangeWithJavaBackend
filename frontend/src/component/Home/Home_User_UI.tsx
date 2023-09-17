@@ -329,7 +329,9 @@ export default function Home_User_UI() {
                 </div>
                 <div className="post-content">{item.Description}</div>
                 <div className="post-price">
-                  <h4 style={{color: "#FFF"}}>Price {item.Account.Price} ฿</h4>
+                  <h4 style={{ color: "#FFF" }}>
+                    Price {item.Account.Price} ฿
+                  </h4>
                 </div>
                 {item.Advertising_image && (
                   <img

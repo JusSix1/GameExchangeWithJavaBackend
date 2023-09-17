@@ -1,14 +1,12 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Drawer from '@mui/material/Drawer';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import "./UserFullAppBar.css"
 
 // User Icon
 import IconButton from '@mui/material/IconButton';
@@ -18,6 +16,7 @@ import ViewListIcon from '@mui/icons-material/ViewList';
 import GradingIcon from '@mui/icons-material/Grading';
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 
 import { Link as RouterLink } from "react-router-dom";
 import { UsersInterface } from '../../models/user/IUser';
@@ -35,6 +34,7 @@ function UserFullAppBar() {
   function drawerList() {
     return (
       <List sx={{ width: "100%" }}>
+
         <ListItem button component={RouterLink} to="/">
           <HomeIcon />
           <ListItemText primary="Home" sx={{ paddingLeft: 1 }} />
@@ -111,7 +111,7 @@ function UserFullAppBar() {
   }, []);
 
   return (
-      <AppBar sx={{ backgroundColor: "#242526", position: "sticky", boxShadow: "0px 5px 10px rgba(255,94,247, 0.1),0px 2px 5px rgba(2,245,255, 0.1)"}}>
+      <nav className='nav-appbar'>
         <Toolbar>
           <IconButton
             edge="start"
@@ -119,20 +119,18 @@ function UserFullAppBar() {
             aria-label="menu"
             onClick={() => setIsDrawerOpen(true)}
           >
-            <MenuIcon />
+            <MenuIcon style={{color: "#FFF"}}/>
           </IconButton>
 
           <Drawer open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
 
-            <SportsEsportsIcon color="primary" sx={{ fontSize: 150, margin: 1, padding: 2, color: "#222831" }}  />
+            <SportsEsportsIcon color="primary" sx={{ fontSize: 150, margin: 1, padding: 2, color: "rgba(2, 245, 255, 1)" }}  />
             {/** List of Drawer Divided by position */}
             {drawerList()}
 
           </Drawer>
 
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            GameExchange
-          </Typography>
+          <div className="logo"><a href="/">G<span>a</span>meEx<span>ch</span>ange</a></div>
 
           {auth && (                                                                               /* รูป Icon Profild */
             <div>
@@ -144,7 +142,7 @@ function UserFullAppBar() {
                 onClick={handleMenu}
                 color="inherit"
               >
-                  <Avatar alt="Remy Sharp" src={`${user.Profile_Picture}`} />
+                  <Avatar alt="Remy Sharp" src={`${user.Profile_Picture}`} style={{boxShadow: "0px 0px 10px 5px #FFF01F"}} />
               </IconButton>
               <Menu
                 id="menu-appbar"
@@ -168,7 +166,7 @@ function UserFullAppBar() {
           )}
 
         </Toolbar>
-      </AppBar>
+      </nav>
   );
 }
 

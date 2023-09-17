@@ -1,97 +1,73 @@
 /* Post */
 
 .filter-container {
-    position: relative;
-    display: inline-block;
-    padding: 4px 8px;
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    margin-left: 10px;
+  position: relative;
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  margin-left: 10px;
 }
 
 .filter-input {
-    border: none;
-    background: none;
-    width: 100%;
+  border: none;
+  background: none;
+  width: 100%;
 }
 
 a {
-    color: inherit; 
-    text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }
 
 a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .container-save {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 10px;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+}
 
-  /* save button */
-
-@import url('https://fonts.googleapis.com/css?family=Lato:100&display=swap');
+/* save button */
 
 .button-save {
-  width: 180px;
-  height: 60px;
-  cursor: pointer;
-  background: transparent;
-  background-color: #b2ffab;
-  border: 1px solid #10bd00;
-  outline: none;
-  transition: 1s ease-in-out;
+  width: 150px;
+  color: #0bf4f3;
+  border: 1px solid #0bf4f3;
+  box-shadow:
+    0 0 5px #0bf4f3,
+    0 0 5px #0bf4f3 inset;
 }
-
-.svg-save {
-  position: absolute;
-  left: 0;
-  top: 0;
-  fill: none;
-  stroke: #fff;
-  stroke-dasharray: 150 480;
-  stroke-dashoffset: 150;
-  transition: 1s ease-in-out;
+.button-save::before {
+  height: 0%;
+  width: 2px;
 }
-
 .button-save:hover {
-  transition: 1s ease-in-out;
-  background: #3de02e;
-}
-
-.button-save:hover svg {
-  stroke-dashoffset: -480;
-}
-
-.button-save span {
-  color: rgb(0, 0, 0);
-  font-size: 18px;
-  font-weight: 100;
-}
-
-.button-save:hover span {
-    color: rgb(0, 0, 0);
-    transition: 1s ease-in-out;
+  color: #fff;
+  box-shadow:
+    inset 0 0 10px #0bf4f3,
+    0 0 20px #0bf4f3 inset,
+    0 0 20px #0bf4f3 inset;
 }
 
 /* textarea */
 
 .container-textarea {
-    margin-top: 50;
-    display: "flex";
-    flex-direction: "column";
-    align-items: "center";
-  }
+  margin-top: 50;
+  display: "flex";
+  flex-direction: "column";
+  align-items: "center";
+}
 
-  .textareaDefaultStyle {
-    padding: 5;
-    width: 100%;
-    height: 100%;
-    display: "block";
-    resize: "none";
-    background-color: "#F";
-    font-size: 16px;
-  }
+.textareaDefaultStyle {
+  padding: 5;
+  width: 100%;
+  height: 100%;
+  display: "block";
+  resize: "none";
+  background-color: "#F";
+  font-size: 16px;
+}

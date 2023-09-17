@@ -1,0 +1,76 @@
+.nav-appbar{
+  background-color: #242526;
+  position: "sticky";
+  animation: shadows-appbar 10s infinite;
+}
+
+@keyframes shadows-appbar {
+  0% {
+      box-shadow: 0px 0px 10px 5px #48abe0;
+  }
+  50% {
+      box-shadow: 0px 0px 10px 5px blueviolet;
+  }
+  75% {
+      box-shadow: 0px 0px 10px 5px rebeccapurple;
+  }
+  100% {
+      box-shadow: 0px 0px 10px 5px #48abe0;
+  }
+}
+
+@import url(//fonts.googleapis.com/css?family=Vibur);
+.logo {
+  width: 100%;
+  user-select: none;
+}
+
+.logo a {
+  font: 16 3vh "Vibur";
+  color: #fee;
+  text-shadow:
+    0 -40px 100px,
+    0 0 2px,
+    0 0 1em #48abe0,
+    0 0 0.5em #48abe0,
+    0 0 0.1em #48abe0,
+    0 10px 3px #000;
+}
+.logo a span {
+  animation: blink linear infinite 2s;
+}
+.logo a span:nth-of-type(2) {
+  animation: blink linear infinite 3s;
+}
+@keyframes blink {
+  78% {
+    color: inherit;
+    text-shadow: inherit;
+  }
+  79% {
+    color: rebeccapurple;
+  }
+  80% {
+    text-shadow: none;
+  }
+  81% {
+    color: inherit;
+    text-shadow: inherit;
+  }
+  82% {
+    color: rebeccapurple;
+    text-shadow: none;
+  }
+  83% {
+    color: inherit;
+    text-shadow: inherit;
+  }
+  92% {
+    color: rebeccapurple;
+    text-shadow: none;
+  }
+  92.5% {
+    color: inherit;
+    text-shadow: inherit;
+  }
+}

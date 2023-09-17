@@ -232,6 +232,7 @@ export default function My_Bought_UI() {
       >
         <div style={{ height: "90vh", width: "100%" }}>
           <DataGrid
+            style={{ background: "#3a3b3c", color: "white" }}
             rows={order}
             getRowId={(row) => row.ID}
             slots={{ toolbar: CustomToolbar }}

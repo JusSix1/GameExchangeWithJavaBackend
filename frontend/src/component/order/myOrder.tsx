@@ -48,9 +48,9 @@ export default function My_Order_UI() {
   function CustomToolbar() {
     return (
       <GridToolbarContainer>
-        <GridToolbarColumnsButton sx={{ color: "#00ADB5" }}/>
-        <GridToolbarFilterButton sx={{ color: "#00ADB5" }}/>
-        <GridToolbarDensitySelector sx={{ color: "#00ADB5" }}/>
+        <GridToolbarColumnsButton sx={{ color: "#00ADB5" }} />
+        <GridToolbarFilterButton sx={{ color: "#00ADB5" }} />
+        <GridToolbarDensitySelector sx={{ color: "#00ADB5" }} />
       </GridToolbarContainer>
     );
   }
@@ -98,6 +98,7 @@ export default function My_Order_UI() {
           size="small"
           variant="contained"
           color="inherit"
+          style={{color: "#000"}}
           onClick={() => handleSlipButtonClick(params.row.Slip)}
         >
           View Slip
@@ -234,7 +235,6 @@ export default function My_Order_UI() {
       .then((res) => {
         if (res.data) {
           setOrder(res.data);
-          console.log(res.data);
         }
       });
   };
@@ -339,6 +339,7 @@ export default function My_Order_UI() {
       >
         <div style={{ height: "90vh", width: "100%" }}>
           <DataGrid
+            style={{ background: "#3a3b3c", color: "white" }}
             rows={order}
             getRowId={(row) => row.ID}
             slots={{ toolbar: CustomToolbar }}
@@ -385,7 +386,13 @@ export default function My_Order_UI() {
           >
             Cancel
           </Button>
-          <Button size="small" onClick={ConfirmSlip} sx={{ color: "#00ADB5"}} color="primary" autoFocus>
+          <Button
+            size="small"
+            onClick={ConfirmSlip}
+            sx={{ color: "#00ADB5" }}
+            color="primary"
+            autoFocus
+          >
             Confirm
           </Button>
         </DialogActions>
@@ -404,7 +411,13 @@ export default function My_Order_UI() {
           <Button size="small" onClick={handleDialogCancelClickClose}>
             Cancel
           </Button>
-          <Button size="small" onClick={CancelOrder} sx={{ color: "#ff753e" }} color="error" autoFocus>
+          <Button
+            size="small"
+            onClick={CancelOrder}
+            sx={{ color: "#ff753e" }}
+            color="error"
+            autoFocus
+          >
             Cancel Order
           </Button>
         </DialogActions>

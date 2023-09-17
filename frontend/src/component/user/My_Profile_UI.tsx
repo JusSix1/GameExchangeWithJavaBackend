@@ -41,6 +41,7 @@ import { UsersInterface } from "../../models/user/IUser";
 import ip_address from "../ip";
 import moment from "moment";
 import { CommentsInterface } from "../../models/comment/IComment";
+import "./My_Profile_UI.css";
 
 const ITEM_HEIGHT = 40;
 
@@ -332,319 +333,310 @@ function My_Profile() {
 
   return (
     <>
-      <Container>
-        <Snackbar //ป้ายบันทึกสำเร็จ
-          open={success}
-          autoHideDuration={6000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        >
-          <Alert onClose={handleClose} severity="success">
-            Succes
-          </Alert>
-        </Snackbar>
+      <Snackbar //ป้ายบันทึกสำเร็จ
+        open={success}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={handleClose} severity="success">
+          Succes
+        </Alert>
+      </Snackbar>
 
-        <Snackbar //ป้ายบันทึกไม่สำเร็จ
-          open={error}
-          autoHideDuration={6000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        >
-          <Alert onClose={handleClose} severity="error">
-            Error {errorMsg}
-          </Alert>
-        </Snackbar>
+      <Snackbar //ป้ายบันทึกไม่สำเร็จ
+        open={error}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={handleClose} severity="error">
+          Error {errorMsg}
+        </Alert>
+      </Snackbar>
 
-        <Grid //User
-        >
-          <Grid container>
-            <Grid margin={2}>
-              <img src={`${user.Profile_Picture}`} width="250" height="250" />{" "}
-              {/** show base64 picture from string variable (that contain base64 picture data) */}
-            </Grid>
-            <Grid marginLeft={1} item xs={10}>
-              <Grid>
-                <h2>{user.Profile_Name}</h2>
-              </Grid>
-              <Grid item>
-                {" "}
-                {/** เอา Grid มาล็อคไม่ให้ component มันเด้งไปที่อื่น */}
-                <Box
-                  component="div"
-                  sx={{
-                    width: "100%",
-                    textOverflow: "ellipsis",
-                    overflow: "hidden",
-                    whiteSpace: "break-spaces",
-                    my: 2,
-                    p: 1,
-                    bgcolor: (theme) =>
-                      theme.palette.mode === "dark" ? "#101010" : "grey.100",
-                    color: (theme) =>
-                      theme.palette.mode === "dark" ? "grey.300" : "grey.800",
-                    border: "1px solid",
-                    borderColor: (theme) =>
-                      theme.palette.mode === "dark" ? "grey.800" : "grey.300",
-                    borderRadius: 2,
-                    fontSize: "0.875rem",
-                    fontWeight: "700",
-                  }}
-                >
-                  {/** กำหนดให้เว้นบรรทัด auto จาก white space */}
-                  {"Full name: " +
-                    user.FirstName +
-                    " " +
-                    user.LastName +
-                    "\n\n"}
-                  {"Personal ID: " + user.PersonalID + "\n\n"}
-                  {"Email: " + user.Email + "\n\n"}
-                  {"Birthday: " +
-                    `${Moment(user.Birthday).format("DD MMMM YYYY")}` +
-                    "\n\n"}
-                  {"Phone number: " + user.Phone_Number + "\n\n"}
-                  {"Gender: " + user.Gender?.Gender + "\n\n"}
-                  {"Address: " + user.Address + "\n\n"}
-                  {"Bank account number: " + user.Bank_Account + "\n\n"}
-                </Box>
-              </Grid>
-            </Grid>
-            <Grid item xs={1}>
-              <IconButton
-                aria-label="more"
-                id="long-button"
-                aria-controls={openOption ? "long-menu" : undefined}
-                aria-expanded={openOption ? "true" : undefined}
-                aria-haspopup="true"
-                onClick={handleClickOption}
-              >
-                <MoreVertIcon />
-              </IconButton>
-              <Menu
-                id="long-menu"
-                MenuListProps={{
-                  "aria-labelledby": "long-button",
-                }}
-                anchorEl={anchorEl}
-                open={openOption}
-                onClose={handleCloseOption}
-                PaperProps={{
-                  style: {
-                    maxHeight: ITEM_HEIGHT * 4.5,
-                    width: "20ch",
-                  },
-                }}
-              >
-                <MenuItem onClick={handleDialogEditClickOpen}>edit</MenuItem>
-                <MenuItem onClick={handleDialogEditPasswordClickOpen}>
-                  Change Password
-                </MenuItem>
-                <MenuItem onClick={handleDialogDeleteClickOpen}>
-                  Delete Account
-                </MenuItem>
-              </Menu>
-            </Grid>
-          </Grid>
-        </Grid>
+      <div className="user">
+        <div className="picture">
+          <img
+            src={`${user.Profile_Picture}`}
+            width="250"
+            height="250"
+            style={{ borderRadius: "15px" }}
+          />{" "}
+        </div>
+        <div className="username-btn">
+          <div className="username">
+            <h1>{user.Profile_Name}</h1>
+          </div>
+          <div className="div-btn">
+            <IconButton
+              aria-label="more"
+              id="long-button"
+              aria-controls={openOption ? "long-menu" : undefined}
+              aria-expanded={openOption ? "true" : undefined}
+              aria-haspopup="true"
+              onClick={handleClickOption}
+              style={{ color: "#FFF" }}
+            >
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              id="long-menu"
+              MenuListProps={{
+                "aria-labelledby": "long-button",
+              }}
+              anchorEl={anchorEl}
+              open={openOption}
+              onClose={handleCloseOption}
+              PaperProps={{
+                style: {
+                  maxHeight: ITEM_HEIGHT * 4.5,
+                  width: "20ch",
+                },
+              }}
+            >
+              <MenuItem onClick={handleDialogEditClickOpen}>edit</MenuItem>
+              <MenuItem onClick={handleDialogEditPasswordClickOpen}>
+                Change Password
+              </MenuItem>
+              <MenuItem onClick={handleDialogDeleteClickOpen}>
+                Delete Account
+              </MenuItem>
+            </Menu>
+          </div>
+        </div>
 
-        <Grid //CommentCompare
-        >
-          <Card>
-            <CardContent>
+        <div className="info">
+          {/** กำหนดให้เว้นบรรทัด auto จาก white space */}
+          {"Full name: " + user.FirstName + " " + user.LastName + "\n\n"}
+          {"Personal ID: " + user.PersonalID + "\n\n"}
+          {"Email: " + user.Email + "\n\n"}
+          {"Birthday: " +
+            `${Moment(user.Birthday).format("DD MMMM YYYY")}` +
+            "\n\n"}
+          {"Phone number: " + user.Phone_Number + "\n\n"}
+          {"Gender: " + user.Gender?.Gender + "\n\n"}
+          {"Address: " + user.Address + "\n\n"}
+          {"Bank account number: " + user.Bank_Account + "\n\n"}
+        </div>
+      </div>
+
+      <div className="comment">
+        <Card style={{ background: "#c1c1c1" }}>
+          <CardContent>
+            <div className="comment-header">
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "1rem",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  Positive: {countPositive}
-                  <ThumbUpAltIcon style={{ color: "green" }} />
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  {countPositive >= countNegative ? (
-                    <div style={{ color: "green" }}>
-                      Most of the comments were positive.
-                    </div>
-                  ) : (
-                    <div style={{ color: "red" }}>
-                      Most of the comments were negative.
-                    </div>
-                  )}
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  Negative: {countNegative}
-                  <ThumbDownAltIcon style={{ color: "red" }} />
-                </div>
+                Positive: {countPositive}
+                <ThumbUpAltIcon style={{ color: "green" }} />
               </div>
-            </CardContent>
-          </Card>
-        </Grid>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {countPositive >= countNegative ? (
+                  <div style={{ color: "green" }}>
+                    Most of the comments were positive.
+                  </div>
+                ) : (
+                  <div style={{ color: "red" }}>
+                    Most of the comments were negative.
+                  </div>
+                )}
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                Negative: {countNegative}
+                <ThumbDownAltIcon style={{ color: "red" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      <div className="div-btn"></div>
 
-        <Grid //CommentList
-          sx={{ marginTop: 2 }}
-        >
-          {commentList.map((item) => (
-            <section>
-              <Container style={{ maxWidth: "100%" }}>
-                <div
+      <div className="comment-list">
+        {commentList.map((item) => (
+          <section>
+            <Container style={{ maxWidth: "100%" }}>
+              <div className="comment-body">
+                <img
                   style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    marginBottom: "1rem",
+                    borderRadius: "50%",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                    marginRight: "0.75rem",
                   }}
-                >
-                  <img
+                  src={item.Commenter.Profile_Picture}
+                  alt={`${item.Commenter.Profile_Name}'s profile`}
+                  width="65"
+                  height="65"
+                />
+                <Card style={{ width: "100%", background: "#c1c1c1" }}>
+                  <CardContent
                     style={{
-                      borderRadius: "50%",
-                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                      marginRight: "0.75rem",
+                      padding: "1rem",
                     }}
-                    src={item.Commenter.Profile_Picture}
-                    alt={`${item.Commenter.Profile_Name}'s profile`}
-                    width="65"
-                    height="65"
-                  />
-                  <Card style={{ width: "100%" }}>
-                    <CardContent
-                      style={{
-                        padding: "1rem",
-                      }}
-                    >
-                      <div>
-                        <Typography>
-                          <a
-                            href={`/profile/${item.Commenter.Profile_Name}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ color: "black" }}
-                          >
-                            {item.Commenter.Profile_Name + " "}
-                            {item.Is_Positive ? (
-                              <ThumbUpAltIcon style={{ color: "green" }} />
-                            ) : (
-                              <ThumbDownAltIcon style={{ color: "red" }} />
-                            )}
-                          </a>
-                        </Typography>
-                        <p className="small">
-                          {moment(item.CreatedAt).format("DD/MM/YYYY hh:mm A")}
-                        </p>
-                        <p>{item.Comment_Text}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </Container>
-            </section>
-          ))}
-        </Grid>
+                  >
+                    <div>
+                      <Typography>
+                        <a
+                          href={`/profile/${item.Commenter.Profile_Name}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: "black" }}
+                        >
+                          {item.Commenter.Profile_Name + " "}
+                          {item.Is_Positive ? (
+                            <ThumbUpAltIcon style={{ color: "green" }} />
+                          ) : (
+                            <ThumbDownAltIcon style={{ color: "red" }} />
+                          )}
+                        </a>
+                      </Typography>
+                      <p className="small">
+                        {moment(item.CreatedAt).format("DD/MM/YYYY hh:mm A")}
+                      </p>
+                      <p>{item.Comment_Text}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </Container>
+          </section>
+        ))}
+      </div>
 
-        <Dialog //Edit
-          open={dialogEditOpen}
-          onClose={handleDialogEditClickClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Update Data"}</DialogTitle>
+      <Dialog //Edit
+        open={dialogEditOpen}
+        onClose={handleDialogEditClickClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Update Data"}</DialogTitle>
 
-          <DialogContent>
-            <Box>
-              <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+        <DialogContent>
+          <Box>
+            <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+              <Grid container>
                 <Grid container>
-                  <Grid container>
-                    <Grid margin={1} item xs={12}>
-                      <TextField
-                        fullWidth
-                        id="firstname"
-                        label="First name"
-                        variant="outlined"
-                        defaultValue={user.FirstName}
-                        onChange={(event) =>
-                          setUserEdit({
-                            ...userEdit,
-                            FirstName: event.target.value,
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid margin={1} item xs={12}>
-                      <TextField
-                        fullWidth
-                        id="lastname"
-                        label="Last name"
-                        variant="outlined"
-                        defaultValue={user.LastName}
-                        onChange={(event) =>
-                          setUserEdit({
-                            ...userEdit,
-                            LastName: event.target.value,
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid margin={1} item xs={12}>
-                      <TextField
-                        fullWidth
-                        id="personalID"
-                        label="Personal ID"
-                        variant="outlined"
-                        defaultValue={user.PersonalID}
-                        onChange={(event) =>
-                          setUserEdit({
-                            ...userEdit,
-                            PersonalID: event.target.value,
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid margin={1} item xs={12}>
-                      <TextField
-                        fullWidth
-                        id="address"
-                        label="Address"
-                        variant="outlined"
-                        defaultValue={user.Address}
-                        onChange={(event) =>
-                          setUserEdit({
-                            ...userEdit,
-                            Address: event.target.value,
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid margin={1} item xs={12}>
-                      <TextField
-                        fullWidth
-                        id="bank_account"
-                        label="Bank account number"
-                        variant="outlined"
-                        defaultValue={user.Bank_Account}
-                        onChange={(event) =>
-                          setUserEdit({
-                            ...userEdit,
-                            Bank_Account: event.target.value,
-                          })
-                        }
-                      />
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="firstname"
+                      label="First name"
+                      variant="outlined"
+                      defaultValue={user.FirstName}
+                      onChange={(event) =>
+                        setUserEdit({
+                          ...userEdit,
+                          FirstName: event.target.value,
+                        })
+                      }
+                    />
+                  </Grid>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="lastname"
+                      label="Last name"
+                      variant="outlined"
+                      defaultValue={user.LastName}
+                      onChange={(event) =>
+                        setUserEdit({
+                          ...userEdit,
+                          LastName: event.target.value,
+                        })
+                      }
+                    />
+                  </Grid>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="personalID"
+                      label="Personal ID"
+                      variant="outlined"
+                      defaultValue={user.PersonalID}
+                      onChange={(event) =>
+                        setUserEdit({
+                          ...userEdit,
+                          PersonalID: event.target.value,
+                        })
+                      }
+                    />
+                  </Grid>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="address"
+                      label="Address"
+                      variant="outlined"
+                      defaultValue={user.Address}
+                      onChange={(event) =>
+                        setUserEdit({
+                          ...userEdit,
+                          Address: event.target.value,
+                        })
+                      }
+                    />
+                  </Grid>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="bank_account"
+                      label="Bank account number"
+                      variant="outlined"
+                      defaultValue={user.Bank_Account}
+                      onChange={(event) =>
+                        setUserEdit({
+                          ...userEdit,
+                          Bank_Account: event.target.value,
+                        })
+                      }
+                    />
+                  </Grid>
+                </Grid>
+
+                <Grid container>
+                  <Grid margin={1} item xs={5}>
+                    <TextField
+                      fullWidth
+                      id="profile-name"
+                      label="Profile Name"
+                      variant="outlined"
+                      defaultValue={user.Profile_Name}
+                      onChange={(event) =>
+                        setUserEdit({
+                          ...userEdit,
+                          Profile_Name: event.target.value,
+                        })
+                      }
+                    />
+                  </Grid>
+
+                  <Grid marginTop={1}>
+                    <Grid>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                          label="Birthday"
+                          value={dayjs(user.Birthday)}
+                          onChange={(newValue) => {
+                            setBirthday(newValue);
+                          }}
+                        />
+                      </LocalizationProvider>
                     </Grid>
                   </Grid>
 
@@ -652,216 +644,198 @@ function My_Profile() {
                     <Grid margin={1} item xs={5}>
                       <TextField
                         fullWidth
-                        id="profile-name"
-                        label="Profile Name"
+                        id="phonr-number"
+                        label="Phone number"
                         variant="outlined"
-                        defaultValue={user.Profile_Name}
+                        defaultValue={user.Phone_Number}
                         onChange={(event) =>
                           setUserEdit({
                             ...userEdit,
-                            Profile_Name: event.target.value,
+                            Phone_Number: event.target.value,
                           })
                         }
                       />
                     </Grid>
-
                     <Grid marginTop={1}>
-                      <Grid>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
-                            label="Birthday"
-                            value={dayjs(user.Birthday)}
-                            onChange={(newValue) => {
-                              setBirthday(newValue);
-                            }}
-                          />
-                        </LocalizationProvider>
-                      </Grid>
-                    </Grid>
-
-                    <Grid container>
-                      <Grid margin={1} item xs={5}>
-                        <TextField
-                          fullWidth
-                          id="phonr-number"
-                          label="Phone number"
-                          variant="outlined"
-                          defaultValue={user.Phone_Number}
+                      <FormControl>
+                        <FormLabel id="radio-buttons-group-gender">
+                          Gender
+                        </FormLabel>
+                        <RadioGroup
+                          aria-labelledby="radio-buttons-group-gender"
+                          name="radio-buttons-group-gender"
                           onChange={(event) =>
                             setUserEdit({
                               ...userEdit,
-                              Phone_Number: event.target.value,
+                              Gender_ID: Number(event.target.value),
                             })
                           }
-                        />
-                      </Grid>
-                      <Grid marginTop={1}>
-                        <FormControl>
-                          <FormLabel id="radio-buttons-group-gender">
-                            Gender
-                          </FormLabel>
-                          <RadioGroup
-                            aria-labelledby="radio-buttons-group-gender"
-                            name="radio-buttons-group-gender"
-                            onChange={(event) =>
-                              setUserEdit({
-                                ...userEdit,
-                                Gender_ID: Number(event.target.value),
-                              })
-                            }
-                            defaultValue={user.Gender_ID}
-                          >
-                            {genders.map((o) => (
-                              <FormControlLabel
-                                value={o.ID} // <---- pass a primitive id value, don't pass the whole object here
-                                control={<Radio size="small" />}
-                                label={o.Gender}
-                              />
-                            ))}
-                          </RadioGroup>
-                        </FormControl>
-                      </Grid>
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <h4>Profile Picture</h4>
-                      <Grid>
-                        <img src={`${imageString}`} width="250" height="250" />
-                      </Grid>
-                      <input type="file" onChange={handleImageChange} />
-                      <FormHelperText>
-                        recommend size is 250*250 pixels
-                      </FormHelperText>
+                          defaultValue={user.Gender_ID}
+                        >
+                          {genders.map((o) => (
+                            <FormControlLabel
+                              value={o.ID} // <---- pass a primitive id value, don't pass the whole object here
+                              control={<Radio size="small" />}
+                              label={o.Gender}
+                            />
+                          ))}
+                        </RadioGroup>
+                      </FormControl>
                     </Grid>
                   </Grid>
+
+                  <Grid item xs={12}>
+                    <h4>Profile Picture</h4>
+                    <Grid>
+                      <img src={`${imageString}`} width="250" height="250" />
+                    </Grid>
+                    <input type="file" onChange={handleImageChange} />
+                    <FormHelperText>
+                      recommend size is 250*250 pixels
+                    </FormHelperText>
+                  </Grid>
                 </Grid>
-              </Paper>
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button size="small" color="inherit" onClick={handleDialogEditClickClose}>
-              Cancel
-            </Button>
-            <Button size="small" onClick={EditUser} sx={{ color: "#00ADB5" }} color="error" autoFocus>
-              Update Data
-            </Button>
-          </DialogActions>
-        </Dialog>
+              </Grid>
+            </Paper>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            size="small"
+            color="inherit"
+            onClick={handleDialogEditClickClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            size="small"
+            onClick={EditUser}
+            sx={{ color: "#00ADB5" }}
+            color="error"
+            autoFocus
+          >
+            Update Data
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-        <Dialog //ChangePassword
-          open={dialogEditPasswordOpen}
-          onClose={handleDialogEditPasswordClickClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Change Password"}</DialogTitle>
+      <Dialog //ChangePassword
+        open={dialogEditPasswordOpen}
+        onClose={handleDialogEditPasswordClickClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Change Password"}</DialogTitle>
 
-          <DialogContent>
-            <Box>
-              <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+        <DialogContent>
+          <Box>
+            <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+              <Grid container>
                 <Grid container>
-                  <Grid container>
-                    <Grid margin={1} item xs={12}>
-                      <TextField
-                        fullWidth
-                        id="old_password"
-                        label="Old Password"
-                        variant="outlined"
-                        type="password"
-                        onChange={(event) =>
-                          setOld_password(event.target.value)
-                        }
-                      />
-                    </Grid>
-                    <Grid margin={1} item xs={12}>
-                      <TextField
-                        fullWidth
-                        id="new_password"
-                        label="New Password"
-                        variant="outlined"
-                        type="password"
-                        onChange={(event) =>
-                          setNew_password(event.target.value)
-                        }
-                      />
-                    </Grid>
-                    <Grid margin={1} item xs={12}>
-                      <TextField
-                        fullWidth
-                        id="confirnm_password"
-                        label="Confirm New Password"
-                        variant="outlined"
-                        type="password"
-                        onChange={(event) =>
-                          setConfirm_password(event.target.value)
-                        }
-                      />
-                    </Grid>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="old_password"
+                      label="Old Password"
+                      variant="outlined"
+                      type="password"
+                      onChange={(event) => setOld_password(event.target.value)}
+                    />
+                  </Grid>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="new_password"
+                      label="New Password"
+                      variant="outlined"
+                      type="password"
+                      onChange={(event) => setNew_password(event.target.value)}
+                    />
+                  </Grid>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="confirnm_password"
+                      label="Confirm New Password"
+                      variant="outlined"
+                      type="password"
+                      onChange={(event) =>
+                        setConfirm_password(event.target.value)
+                      }
+                    />
                   </Grid>
                 </Grid>
-              </Paper>
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button size="small" color="inherit" onClick={handleDialogEditPasswordClickClose}>
-              Cancel
-            </Button>
-            <Button
-              size="small"
-              onClick={EditPasswordAccount}
-              color="error"
-              sx={{ color: "#ff753e" }}
-              autoFocus
-            >
-              Change Password
-            </Button>
-          </DialogActions>
-        </Dialog>
+              </Grid>
+            </Paper>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            size="small"
+            color="inherit"
+            onClick={handleDialogEditPasswordClickClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            size="small"
+            onClick={EditPasswordAccount}
+            color="error"
+            sx={{ color: "#ff753e" }}
+            autoFocus
+          >
+            Change Password
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-        <Dialog //DeleteAccount
-          open={dialogDeleteOpen}
-          onClose={handleDialogDeleteClickClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Delete Account"}</DialogTitle>
+      <Dialog //DeleteAccount
+        open={dialogDeleteOpen}
+        onClose={handleDialogDeleteClickClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete Account"}</DialogTitle>
 
-          <DialogContent>
-            <Box>
-              <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+        <DialogContent>
+          <Box>
+            <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+              <Grid container>
                 <Grid container>
-                  <Grid container>
-                    <Grid margin={1} item xs={12}>
-                      <TextField
-                        fullWidth
-                        id="password"
-                        label="Password"
-                        variant="outlined"
-                        type="password"
-                        onChange={(event) => setPassword(event.target.value)}
-                      />
-                    </Grid>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="password"
+                      label="Password"
+                      variant="outlined"
+                      type="password"
+                      onChange={(event) => setPassword(event.target.value)}
+                    />
                   </Grid>
                 </Grid>
-              </Paper>
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button size="small" color="inherit" onClick={handleDialogDeleteClickClose}>
-              Cancel
-            </Button>
-            <Button
-              size="small"
-              onClick={DeleteAccount}
-              sx={{ color: "#ff753e" }}
-              color="error"
-              autoFocus
-            >
-              Delete Password
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Container>
+              </Grid>
+            </Paper>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            size="small"
+            color="inherit"
+            onClick={handleDialogDeleteClickClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            size="small"
+            onClick={DeleteAccount}
+            sx={{ color: "#ff753e" }}
+            color="error"
+            autoFocus
+          >
+            Delete Password
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog //Load
         open={dialogLoadOpen}
