@@ -189,3 +189,10 @@
     );
     transition: 0.5s;
 }
+
+.not-found {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #FFF;
+}

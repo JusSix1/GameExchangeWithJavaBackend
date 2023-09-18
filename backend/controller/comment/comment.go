@@ -21,6 +21,7 @@ func CreateComment(c *gin.Context) {
 	var comment CommentCreate
 	var commenter entity.User
 	var victim entity.User
+	var order entity.Order
 
 	email := c.Param("email")
 
@@ -36,6 +37,19 @@ func CreateComment(c *gin.Context) {
 
 	if tx := entity.DB().Where("profile_name = ?", comment.Profile_Name).First(&victim); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+
+	if commenter.ID == victim.ID {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You cannot comment for yourself."})
+		return
+	}
+
+	if tx := entity.DB().Table("orders").
+		Select("orders.id").
+		Joins("INNER JOIN accounts ON orders.user_id = ? AND accounts.user_id = ? AND accounts.id = orders.account_id", commenter.ID, victim.ID).
+		Find(&order); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You have never traded with this user"})
 		return
 	}
 

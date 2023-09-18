@@ -29,6 +29,7 @@ export default function Home_User_UI() {
   const [userNameFilter, setUserNameFilter] = React.useState<number>();
   const [postID, setPostID] = React.useState<number>();
   const [accountID, setAccountID] = React.useState<number>();
+  const [sortFilter, setSortFilter] = React.useState<number>(0);
 
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -291,6 +292,46 @@ export default function Home_User_UI() {
                 isOptionEqualToValue={isOptionEqualToValue}
               />
             </div>
+            <div className="search-component">Sort by</div>
+            <div className="search-component">
+              <div className="search-component">
+                <input
+                  type="radio"
+                  name="priceFilter"
+                  defaultChecked
+                  onChange={(event) => setSortFilter(1)}
+                />
+                <label>newest</label>
+                <br />
+              </div>
+              <div className="search-component">
+                <input
+                  type="radio"
+                  name="priceFilter"
+                  onChange={(event) => setSortFilter(2)}
+                />
+                <label>oldest</label>
+                <br />
+              </div>
+              <div className="search-component">
+                <input
+                  type="radio"
+                  name="priceFilter"
+                  onChange={(event) => setSortFilter(3)}
+                />
+                <label>Cheapest - most expensive</label>
+                <br />
+              </div>
+              <div className="search-component">
+                <input
+                  type="radio"
+                  name="priceFilter"
+                  onChange={(event) => setSortFilter(4)}
+                />
+                <label>Most expensive - cheapest</label>
+                <br />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -306,6 +347,19 @@ export default function Home_User_UI() {
                   userNameFilter === undefined ||
                   item.Account.User_ID === userNameFilter)
             )
+            .sort((a, b) => {
+              if (sortFilter === 1) {
+                return b.ID - a.ID;
+              } else if (sortFilter === 2) {
+                return a.ID - b.ID;
+              }else if (sortFilter === 3) {
+                return a.Account.Price - b.Account.Price;;
+              }else if (sortFilter === 4) {
+                return b.Account.Price - a.Account.Price;;
+              } else {
+                return 0;
+              }
+            })
             .map((item) => (
               <div key={item.ID} className="post">
                 <div className="post-header">

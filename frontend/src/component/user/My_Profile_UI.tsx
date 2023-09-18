@@ -362,7 +362,7 @@ function My_Profile() {
             width="250"
             height="250"
             style={{ borderRadius: "15px" }}
-          />{" "}
+          />
         </div>
         <div className="username-btn">
           <div className="username">

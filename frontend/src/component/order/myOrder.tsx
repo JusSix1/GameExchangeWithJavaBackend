@@ -89,6 +89,16 @@ export default function My_Order_UI() {
         moment(params?.value).format("DD/MM/YYYY hh:mm A"),
     },
     {
+      field: "Is_Receive",
+      headerName: "Is Receive",
+      width: 200,
+      renderCell: (params) => (
+        <span>
+          {params.value && params.row.Is_Slip_Confirm ? "Received" : !params.value && params.row.Is_Slip_Confirm ? "Not Received" : null}
+        </span>
+      ),
+    },
+    {
       field: "Slip",
       headerName: "Slip",
       width: 150,
