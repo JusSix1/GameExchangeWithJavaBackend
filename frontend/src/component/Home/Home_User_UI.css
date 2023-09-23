@@ -5,7 +5,8 @@
     height: 100%;
     display: block;
     resize: none;
-    font-size: 18;
+    font-size: 18px;
+    border-radius: 10px;
 }
 
 /* Search */

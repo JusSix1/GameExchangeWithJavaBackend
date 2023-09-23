@@ -4,29 +4,25 @@ import { PostsInterface } from "../../models/post/IPost";
 import ip_address from "../ip";
 import {
   Alert,
-  Autocomplete,
   Button,
   Dialog,
   DialogActions,
   DialogTitle,
   Snackbar,
-  TextField,
 } from "@mui/material";
 import "./Home_User_UI.css";
 import Moment from "moment";
 import moment from "moment";
-import { GamesInterface } from "../../models/account/IGame";
-import { UsersInterface } from "../../models/user/IUser";
 
 export default function Home_User_UI() {
   const [post, setPost] = React.useState<PostsInterface[]>([]);
-  const [game, setGame] = React.useState<GamesInterface[]>([]);
-  const [listUserName, setListUserName] = React.useState<UsersInterface[]>([]);
-  const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
+  const textareaRefDescription = React.useRef<HTMLTextAreaElement | null>(null);
+  const textareaRefGame = React.useRef<HTMLTextAreaElement | null>(null);
+  const textareaRefUser = React.useRef<HTMLTextAreaElement | null>(null);
 
-  const [search, setSearch] = React.useState("");
-  const [gameFilter, setGameFilter] = React.useState<number>();
-  const [userNameFilter, setUserNameFilter] = React.useState<number>();
+  const [searchDescription, setSearchDescription] = React.useState("");
+  const [searchGame, setSearchGame] = React.useState("");
+  const [searchUser, setSearchUser] = React.useState("");
   const [postID, setPostID] = React.useState<number>();
   const [accountID, setAccountID] = React.useState<number>();
   const [sortFilter, setSortFilter] = React.useState<number>(0);
@@ -51,8 +47,16 @@ export default function Home_User_UI() {
     setErrorMsg("");
   };
 
-  const textAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setSearch(event.target.value);
+  const textAreaChangeDescription = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSearchDescription(event.target.value);
+  };
+
+  const textAreaChangeGame = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSearchGame(event.target.value);
+  };
+
+  const textAreaChangeUser = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSearchUser(event.target.value);
   };
 
   const handleReserveButtonClick = (item: any) => {
@@ -69,10 +73,6 @@ export default function Home_User_UI() {
     setDialogReserveOpen(false);
   };
 
-  const isOptionEqualToValue = (option: { ID: any }, value: { ID: any }) => {
-    return option.ID === value.ID;
-  };
-
   const getPost = async () => {
     const apiUrl = ip_address() + "/posts";
     const requestOptions = {
@@ -87,44 +87,6 @@ export default function Home_User_UI() {
       .then((res) => {
         if (res.data) {
           setPost(res.data);
-        }
-      });
-  };
-
-  const getGame = async () => {
-    const apiUrl = ip_address() + "/games";
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      },
-    };
-
-    await fetch(apiUrl, requestOptions)
-      .then((response) => response.json())
-      .then((res) => {
-        if (res.data) {
-          setGame(res.data);
-        }
-      });
-  };
-
-  const getListUserName = async () => {
-    const apiUrl = ip_address() + "/usernamelist";
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      },
-    };
-
-    await fetch(apiUrl, requestOptions)
-      .then((response) => response.json())
-      .then((res) => {
-        if (res.data) {
-          setListUserName(res.data);
         }
       });
   };
@@ -169,20 +131,28 @@ export default function Home_User_UI() {
       const fetchData = async () => {
         setDialogLoadOpen(true);
         await getPost();
-        await getGame();
-        await getListUserName();
         setDialogLoadOpen(false);
       };
       fetchData();
       setCount(1);
       document.title = "Game Exchange";
     }
-    if (textareaRef && textareaRef.current) {
-      textareaRef.current.style.height = "0px";
-      const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = scrollHeight + "px";
+    if (textareaRefDescription && textareaRefDescription.current) {
+      textareaRefDescription.current.style.height = "0px";
+      const scrollHeightDescription = textareaRefDescription.current.scrollHeight;
+      textareaRefDescription.current.style.height = scrollHeightDescription + "px";
     }
-  }, [count, search]);
+    if (textareaRefGame && textareaRefGame.current) {
+      textareaRefGame.current.style.height = "0px";
+      const scrollHeightGame = textareaRefGame.current.scrollHeight;
+      textareaRefGame.current.style.height = scrollHeightGame + "px";
+    }
+    if (textareaRefUser && textareaRefUser.current) {
+      textareaRefUser.current.style.height = "0px";
+      const scrollHeightUser = textareaRefUser.current.scrollHeight;
+      textareaRefUser.current.style.height = scrollHeightUser + "px";
+    }
+  }, [count, searchDescription, searchGame, searchUser]);
 
   return (
     <>
@@ -214,110 +184,49 @@ export default function Home_User_UI() {
             <div className="search-component">
               <textarea
                 className="textareaDescription"
-                ref={textareaRef}
-                onChange={textAreaChange}
+                ref={textareaRefDescription}
+                onChange={textAreaChangeDescription}
               >
-                {search}
+                {searchDescription}
               </textarea>
             </div>
             <div className="search-component">Game name</div>
             <div className="search-component">
-              <Autocomplete
-                id="game-autocomplete"
-                options={game}
-                size="small"
-                style={{ backgroundColor: "#e4e6eb", borderRadius: "5px" }}
-                value={
-                  gameFilter
-                    ? game.find((option) => option.ID === gameFilter)
-                    : null
-                }
-                onChange={(event: any, value) => {
-                  setGameFilter(value?.ID);
-                }}
-                getOptionLabel={(option: any) => `${option.Name}`}
-                renderInput={(params: any) => {
-                  return (
-                    <TextField
-                      {...params}
-                      variant="outlined"
-                      placeholder="Search game name"
-                    />
-                  );
-                }}
-                renderOption={(props: any, option: any) => {
-                  return (
-                    <li {...props} value={option.ID} key={option.ID}>
-                      {option.Name}
-                    </li>
-                  );
-                }}
-                isOptionEqualToValue={isOptionEqualToValue}
-              />
+              <textarea
+                className="textareaDescription"
+                ref={textareaRefGame}
+                onChange={textAreaChangeGame}
+              >
+                {searchGame}
+              </textarea>
             </div>
             <div className="search-component">User name</div>
             <div className="search-component">
-              <Autocomplete
-                id="username-autocomplete"
-                options={listUserName}
-                size="small"
-                style={{ backgroundColor: "#e4e6eb", borderRadius: "5px" }}
-                value={
-                  userNameFilter
-                    ? listUserName.find(
-                        (option) => option.ID === userNameFilter
-                      )
-                    : null
-                }
-                onChange={(event: any, value) => {
-                  setUserNameFilter(value?.ID);
-                }}
-                getOptionLabel={(option: any) => `${option.Profile_Name}`}
-                renderInput={(params: any) => {
-                  return (
-                    <TextField
-                      {...params}
-                      variant="outlined"
-                      placeholder="Search user name"
-                    />
-                  );
-                }}
-                renderOption={(props: any, option: any) => {
-                  return (
-                    <li {...props} value={option.ID} key={option.ID}>
-                      {option.Profile_Name}
-                    </li>
-                  );
-                }}
-                isOptionEqualToValue={isOptionEqualToValue}
-              />
+            <textarea
+                className="textareaDescription"
+                ref={textareaRefUser}
+                onChange={textAreaChangeUser}
+              >
+                {searchUser}
+              </textarea>
             </div>
             <div className="search-component">Sort by</div>
             <div className="search-component">
               <div className="search-component">
                 <input
                   type="radio"
-                  name="priceFilter"
+                  name="radioFilter"
                   defaultChecked
                   onChange={(event) => setSortFilter(1)}
                 />
-                <label>newest</label>
+                <label>Newest</label>
                 <br />
               </div>
               <div className="search-component">
                 <input
                   type="radio"
-                  name="priceFilter"
+                  name="radioFilter"
                   onChange={(event) => setSortFilter(2)}
-                />
-                <label>oldest</label>
-                <br />
-              </div>
-              <div className="search-component">
-                <input
-                  type="radio"
-                  name="priceFilter"
-                  onChange={(event) => setSortFilter(3)}
                 />
                 <label>Cheapest - most expensive</label>
                 <br />
@@ -325,8 +234,8 @@ export default function Home_User_UI() {
               <div className="search-component">
                 <input
                   type="radio"
-                  name="priceFilter"
-                  onChange={(event) => setSortFilter(4)}
+                  name="radioFilter"
+                  onChange={(event) => setSortFilter(3)}
                 />
                 <label>Most expensive - cheapest</label>
                 <br />
@@ -339,22 +248,16 @@ export default function Home_User_UI() {
           {post
             .filter(
               (item) =>
-                item.Description.toLowerCase().includes(search.toLowerCase()) &&
-                (gameFilter === null ||
-                  gameFilter === undefined ||
-                  item.Account.Game_ID === gameFilter) &&
-                (userNameFilter === null ||
-                  userNameFilter === undefined ||
-                  item.Account.User_ID === userNameFilter)
+                item.Description.toLowerCase().includes(searchDescription.toLowerCase()) &&
+                item.Account.Game.Name.toLowerCase().includes(searchGame.toLowerCase()) &&
+                item.User.Profile_Name.toLowerCase().includes(searchUser.toLowerCase())
             )
             .sort((a, b) => {
               if (sortFilter === 1) {
                 return b.ID - a.ID;
               } else if (sortFilter === 2) {
-                return a.ID - b.ID;
-              }else if (sortFilter === 3) {
                 return a.Account.Price - b.Account.Price;;
-              }else if (sortFilter === 4) {
+              }else if (sortFilter === 3) {
                 return b.Account.Price - a.Account.Price;;
               } else {
                 return 0;

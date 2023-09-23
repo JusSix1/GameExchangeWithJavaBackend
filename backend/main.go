@@ -51,6 +51,7 @@ func main() {
 			protected.POST("/post/:email", post_controller.CreatePost)
 			protected.GET("/posts", post_controller.ListPost)
 			protected.GET("/post/:email/:id", post_controller.GetPost)
+			protected.GET("/individualpost/:account_id", post_controller.GetindividualPost)
 			protected.PATCH("/post", post_controller.UpdatePost)
 
 			protected.POST("/order/:email", order_controller.CreateOrder)

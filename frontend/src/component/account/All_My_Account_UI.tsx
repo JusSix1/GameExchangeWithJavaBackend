@@ -205,7 +205,6 @@ export default function All_My_Account_UI() {
 
   const handleEditButtonClick = (data: any) => {
     setImportAccount(data);
-    console.log(data);
     handleDialogEditClickOpen();
   };
 

@@ -70,11 +70,18 @@ func ListPost(c *gin.Context) {
 	var posts []entity.Post
 	var account []entity.Account
 	var user []entity.User
+	var game []entity.Game
 
 	if err := entity.DB().Preload("Account", func(db *gorm.DB) *gorm.DB {
-		return db.Select("id", "game_id", "user_id", "price").Find(&account)
+		return db.Select("id", "game_id", "user_id", "price").
+			Preload("Game", func(db *gorm.DB) *gorm.DB {
+				return db.Select("id", "name").
+					Find(&game)
+			}).
+			Find(&account)
 	}).Preload("User", func(db *gorm.DB) *gorm.DB {
-		return db.Select("id", "profile_name", "profile_picture", "email").Find(&user)
+		return db.Select("id", "profile_name", "profile_picture", "email").
+			Find(&user)
 	}).Raw("SELECT * FROM posts WHERE is_reserve = 0 ORDER BY created_at DESC").Find(&posts).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -118,6 +125,26 @@ func GetPost(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": post})
+}
+
+// GET /individualpost/:account_id
+func GetindividualPost(c *gin.Context) {
+	var post entity.Post
+	var account entity.Account
+	var user entity.User
+
+	account_id := c.Param("account_id")
+
+	if err := entity.DB().Preload("Account", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "game_id", "user_id", "price").Find(&account)
+	}).Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "profile_name", "profile_picture", "email").Find(&user)
+	}).Raw("SELECT * FROM posts WHERE account_id = ?", account_id).Find(&post).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": post})

@@ -13,7 +13,7 @@
     linear-gradient(90deg, #242526 calc(50% - var(--m)), #000 0 calc(50% + var(--m)), #3a3b3c 0);
   background-size: calc(var(--s) + 2 * var(--m)) calc(var(--s) * 1.732 + 3 * var(--m));
   mix-blend-mode: lighten;
-  min-height: 1000px;
+  min-height: 1500px;
 }
 
 .div-AppBar {

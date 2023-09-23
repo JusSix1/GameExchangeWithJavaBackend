@@ -13,6 +13,7 @@ import My_Basket_UI from "./component/Basket/myBasket";
 import My_Order_UI from "./component/order/myOrder";
 import My_Profile_UI from "./component/user/My_Profile_UI";
 import My_Bought_UI from "./component/bought/Bought_UI";
+import Individual_Post_UI from "./component/IndividualPost/Individual_Post_UI";
 
 export default function App() {
   const [token, setToken] = React.useState<String>("");
@@ -42,23 +43,15 @@ export default function App() {
     return (
       <>
         <Routes>
-          <Route path="/" element={<Home_User_UI />} /> {/** home */}
-          <Route path="/MyProfile" element={<My_Profile_UI />} />{" "}
-          {/** My profile */}
-          <Route
-            path="/Profile/:profile_name"
-            element={<User_Profile_UI />}
-          />{" "}
-          {/** user profile */}
-          <Route path="/AllMyAccount" element={<All_My_Account_UI />} />{" "}
-          {/** All Account */}
-          <Route path="/edit_post/:id" element={<Edit_post_UI />} />{" "}
-          {/** Edit Post */}
-          <Route path="/MyOrder" element={<My_Order_UI />} /> {/* My Order */}
-          <Route path="/MyBasket" element={<My_Basket_UI />} />{" "}
-          {/** My Revenue */}
-          <Route path="/AlreadyBought" element={<My_Bought_UI />} />{" "}
-          {/** My Revenue */}
+          <Route path="/" element={<Home_User_UI />} />
+          <Route path="/MyProfile" element={<My_Profile_UI />} />
+          <Route path="/Profile/:profile_name" element={<User_Profile_UI />} />
+          <Route path="/AllMyAccount" element={<All_My_Account_UI />} />
+          <Route path="/edit_post/:id" element={<Edit_post_UI />} />
+          <Route path="/MyOrder" element={<My_Order_UI />} />
+          <Route path="/MyBasket" element={<My_Basket_UI />} />
+          <Route path="/AlreadyBought" element={<My_Bought_UI />} />
+          <Route path="/Individual_Post/:account_id" element={<Individual_Post_UI />} />
         </Routes>
       </>
     );

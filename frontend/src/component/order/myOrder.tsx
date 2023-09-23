@@ -149,6 +149,21 @@ export default function My_Order_UI() {
         </Button>
       ),
     },
+    {
+      field: "viewpost",
+      headerName: "post",
+      width: 150,
+      renderCell: (params) => (
+        <Button
+          size="small"
+          variant="contained"
+          color="primary"
+          onClick={() => handlePostButtonClick(params.row.Account_ID)}
+        >
+          View
+        </Button>
+      ),
+    },
   ];
 
   const filterColumns = ({
@@ -214,6 +229,10 @@ export default function My_Order_UI() {
   const handleCanelButtonClick = (ID: Number) => {
     setOrderID(ID);
     setDialogCancelOpen(true);
+  };
+
+  const handlePostButtonClick = (ID: Number) => {
+    window.open("/Individual_Post/" + ID)
   };
 
   const handleDialogCancelClickClose = () => {

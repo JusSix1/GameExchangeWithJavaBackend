@@ -93,6 +93,21 @@ export default function My_Bought_UI() {
         </Button>
       ),
     },
+    {
+      field: "viewpost",
+      headerName: "Post",
+      width: 150,
+      renderCell: (params) => (
+        <Button
+          size="small"
+          variant="contained"
+          color="primary"
+          onClick={() => handlePostButtonClick(params.row.Account_ID)}
+        >
+          view
+        </Button>
+      ),
+    },
   ];
 
   const filterColumns = ({
@@ -141,6 +156,10 @@ export default function My_Bought_UI() {
     setDialogReceiveOpen(true);
   };
 
+  const handlePostButtonClick = (ID: Number) => {
+    window.open("/Individual_Post/" + ID)
+  };
+
   const handleDialogReceiveClickClose = () => {
     setDialogReceiveOpen(false);
   };
@@ -160,7 +179,6 @@ export default function My_Bought_UI() {
       .then((res) => {
         if (res.data) {
           setOrder(res.data);
-          console.log(res.data);
         }
       });
   };
