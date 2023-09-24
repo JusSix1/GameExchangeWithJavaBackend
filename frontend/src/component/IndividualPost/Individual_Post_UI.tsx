@@ -7,6 +7,7 @@ import { Alert, Dialog, DialogTitle, Snackbar } from "@mui/material";
 import Moment from "moment";
 import moment from "moment";
 import { useParams } from "react-router-dom";
+import "./Individual_Post_UI.css";
 
 export default function Individual_Post_UI() {
   const { account_id } = useParams();
@@ -81,40 +82,40 @@ export default function Individual_Post_UI() {
         </Alert>
       </Snackbar>
 
-      <div style={{ width: "100%" }}>
-        <div className="post">
-          <div className="post-header">
-            <img
-              src={post?.User.Profile_Picture}
-              alt={`${post?.User.Profile_Name}'s profile`}
-            />
-            <div className="post-author">
-              <a
-                href={`/profile/${post?.User.Profile_Name}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: "#FFF" }}
-              >
-                {post?.User.Profile_Name}
-              </a>
+        <div className="pagecenter">
+          <div className="post">
+            <div className="post-header">
+              <img
+                src={post?.User.Profile_Picture}
+                alt={`${post?.User.Profile_Name}'s profile`}
+              />
+              <div className="post-author">
+                <a
+                  href={`/profile/${post?.User.Profile_Name}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#FFF" }}
+                >
+                  {post?.User.Profile_Name}
+                </a>
+              </div>
+              <div className="post-timestamp">
+                {moment(post?.CreatedAt).format("DD/MM/YYYY hh:mm A")}
+              </div>
             </div>
-            <div className="post-timestamp">
-              {moment(post?.CreatedAt).format("DD/MM/YYYY hh:mm A")}
+            <div className="post-content">{post?.Description}</div>
+            <div className="post-price">
+              <h4 style={{ color: "#FFF" }}>Price {post?.Account.Price} ฿</h4>
             </div>
+            {post?.Advertising_image && (
+              <img
+                src={post?.Advertising_image}
+                alt="Posted content"
+                className="post-image"
+              />
+            )}
           </div>
-          <div className="post-content">{post?.Description}</div>
-          <div className="post-price">
-            <h4 style={{ color: "#FFF" }}>Price {post?.Account.Price} ฿</h4>
-          </div>
-          {post?.Advertising_image && (
-            <img
-              src={post?.Advertising_image}
-              alt="Posted content"
-              className="post-image"
-            />
-          )}
         </div>
-      </div>
 
       <Dialog //Load
         open={dialogLoadOpen}

@@ -98,7 +98,8 @@ type Comment struct {
 	Victim_ID    *uint  `valid:"-"`
 	Victim       User   `gorm:"references:id" valid:"-"`
 	Comment_Text string `valid:"-"`
-	Is_Positive  bool   `valid:"-"`
+	Rating       uint   `valid:"range(1|5)~Invalid rating format"`
+	Review_image string `valid:"image_valid~Please change the image"`
 }
 
 func init() {

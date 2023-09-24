@@ -7,6 +7,7 @@ export interface CommentsInterface {
     Commenter:          UsersInterface,
     Victim_ID:          number,
     Victim:             UsersInterface,
-    Comment_Text:               String,
-    Is_Positive:        boolean,
+    Comment_Text:       String,
+    Rating:             number,
+    Review_image:       string,
 }

@@ -841,8 +841,9 @@ export default function All_My_Account_UI() {
                   {/* Profile Picture */}
                   <h4>Advertising Image</h4>
                   <Grid item xs={12} sx={{ marginX: 2 }}>
-                    <img src={`${imageString}`} width="100%" height="100%" />{" "}
-                    {/** show base64 picture from string variable (that contain base64 picture data) */}
+                    {imageString && (
+                      <img src={`${imageString}`} width="100%" height="100%" />
+                    )}
                   </Grid>
                   <input type="file" onChange={handleImageChange} />
                 </Grid>

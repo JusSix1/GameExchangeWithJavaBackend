@@ -1,3 +1,5 @@
+/* eslint-disable no-template-curly-in-string */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-useless-concat */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -10,16 +12,9 @@ import {
   Container,
   Dialog,
   DialogTitle,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
   Snackbar,
   Typography,
 } from "@mui/material";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import Moment from "moment";
 import "./My_Profile_UI.css";
 
@@ -37,11 +32,11 @@ function User_Profile() {
 
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
   const [showComments, setShowComments] = React.useState(false);
-  const [isPositive, setIsPositive] = React.useState<Boolean>();
-  const [value, setValue] = React.useState("");
   const [commentText, setCommentText] = React.useState<string>();
-  const [countPositive, setCountPositive] = React.useState<number>(0);
-  const [countNegative, setCountNegative] = React.useState<number>(0);
+  const [commentRating, setCommentRating] = React.useState<number>();
+  const [imageString, setImageString] = React.useState<
+    string | ArrayBuffer | null
+  >(null);
 
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -66,14 +61,19 @@ function User_Profile() {
     setErrorMsg("");
   };
 
-  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if ((event.target as HTMLInputElement).value === "1") {
-      setIsPositive(true);
-      setValue((event.target as HTMLInputElement).value);
-    } else if ((event.target as HTMLInputElement).value === "2") {
-      setIsPositive(false);
-      setValue((event.target as HTMLInputElement).value);
-    }
+  const handleImageChange = (event: any) => {
+    const image = event.target.files[0];
+
+    const reader = new FileReader();
+    reader.readAsDataURL(image);
+    reader.onload = () => {
+      const base64Data = reader.result;
+      setImageString(base64Data);
+    };
+  };
+
+  const handleClickRating = (point: number) => {
+    setCommentRating(point);
   };
 
   const getUser = async () => {
@@ -105,31 +105,18 @@ function User_Profile() {
       },
     };
 
-    let countPositiveIn = 0;
-    let countNegativeIn = 0;
-
     await fetch(apiUrl, requestOptions)
       .then((response) => response.json())
       .then(async (res) => {
-        if (res.data) {
-          res.data.forEach((comment: { Is_Positive: any }) => {
-            if (comment.Is_Positive) {
-              countPositiveIn++;
-            } else {
-              countNegativeIn++;
-            }
-          });
-
-          await setCountPositive(countPositiveIn);
-          await setCountNegative(countNegativeIn);
-
-          await setCommentList(res.data);
-        }
+        await setCommentList(res.data);
       });
   };
 
   const CreateComment = async () => {
-    if (isPositive === undefined) {
+    if (
+      commentRating === undefined ||
+      !(commentRating >= 1 && commentRating <= 5)
+    ) {
       setError(true);
       setErrorMsg(" -  Please rate");
     } else {
@@ -138,7 +125,8 @@ function User_Profile() {
       let data = {
         Profile_Name: profile_name,
         Comment_Text: commentText,
-        Is_Positive: isPositive,
+        Review_image: imageString,
+        Rating: commentRating,
       };
 
       const apiUrl = ip_address() + "/comment/" + localStorage.getItem("email"); //ส่งขอการเพิ่ม
@@ -158,8 +146,8 @@ function User_Profile() {
             setSuccess(true);
             getComment();
             setCommentText("");
-            setIsPositive(undefined);
-            setValue("");
+            setCommentRating(0);
+            setImageString(null);
             if (!showComments) {
               setShowComments(!showComments);
             }
@@ -243,43 +231,50 @@ function User_Profile() {
               <div style={{ width: "100%" }}>
                 <Typography sx={{ marginBottom: 1 }}>Add a comment</Typography>
 
-                <FormControl>
-                  <FormLabel id="demo-controlled-radio-buttons-group">
-                    Satisfaction
-                  </FormLabel>
-                  <RadioGroup
-                    row
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="controlled-radio-buttons-group"
-                    onChange={handleRadioChange}
-                    value={value}
-                  >
-                    <FormControlLabel
-                      value="1"
-                      control={
-                        <Radio
-                          sx={{
-                            color: "green",
-                            "&.Mui-checked": { color: "green" },
-                          }}
-                        />
-                      }
-                      label="Positive"
+                <div className="rating">
+                  <div className="star-group">
+                    <input
+                      type="radio"
+                      className="star"
+                      id="one"
+                      name="star_rating"
+                      checked={commentRating === 1}
+                      onClick={() => handleClickRating(1)}
                     />
-                    <FormControlLabel
-                      value="2"
-                      control={
-                        <Radio
-                          sx={{
-                            color: "red",
-                            "&.Mui-checked": { color: "red" },
-                          }}
-                        />
-                      }
-                      label="Negative"
+                    <input
+                      type="radio"
+                      className="star"
+                      id="two"
+                      name="star_rating"
+                      checked={commentRating === 2}
+                      onClick={() => handleClickRating(2)}
                     />
-                  </RadioGroup>
-                </FormControl>
+                    <input
+                      type="radio"
+                      className="star"
+                      id="three"
+                      name="star_rating"
+                      checked={commentRating === 3}
+                      onClick={() => handleClickRating(3)}
+                    />
+                    <input
+                      type="radio"
+                      className="star"
+                      id="four"
+                      name="star_rating"
+                      checked={commentRating === 4}
+                      onClick={() => handleClickRating(4)}
+                    />
+                    <input
+                      type="radio"
+                      className="star"
+                      id="five"
+                      name="star_rating"
+                      checked={commentRating === 5}
+                      onClick={() => handleClickRating(5)}
+                    />
+                  </div>
+                </div>
 
                 <div>
                   <textarea
@@ -299,6 +294,17 @@ function User_Profile() {
                   ></textarea>
                 </div>
 
+                <div style={{ marginTop: "1rem" }}>
+                  {imageString && (
+                    <img
+                      src={`${imageString}`}
+                      alt="Posted content"
+                      className="comment-image"
+                    />
+                  )}
+                  <input type="file" onChange={handleImageChange} />
+                </div>
+
                 <div
                   style={{
                     display: "flex",
@@ -312,43 +318,6 @@ function User_Profile() {
                   >
                     {showComments ? "Hide comment" : "Show comment"}
                   </Button>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    Positive: {countPositive}
-                    <ThumbUpAltIcon style={{ color: "green" }} />
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    {countPositive >= countNegative ? (
-                      <div style={{ color: "green" }}>
-                        Most of the comments were positive.
-                      </div>
-                    ) : (
-                      <div style={{ color: "red" }}>
-                        Most of the comments were negative.
-                      </div>
-                    )}
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    Negative: {countNegative}
-                    <ThumbDownAltIcon style={{ color: "red" }} />
-                  </div>
                   <Button
                     variant="contained"
                     sx={{ backgroundColor: "#00ADB5" }}
@@ -394,11 +363,6 @@ function User_Profile() {
                               style={{ color: "black" }}
                             >
                               {item.Commenter.Profile_Name + " "}
-                              {item.Is_Positive ? (
-                                <ThumbUpAltIcon style={{ color: "green" }} />
-                              ) : (
-                                <ThumbDownAltIcon style={{ color: "red" }} />
-                              )}
                             </a>
                           </Typography>
                           <p className="small">
@@ -406,7 +370,56 @@ function User_Profile() {
                               "DD/MM/YYYY hh:mm A"
                             )}
                           </p>
+                          <div className="rating">
+                            <div className="star-group">
+                              <input
+                                type="radio"
+                                className="star"
+                                id="one"
+                                name={`star_rate_${item.ID}`}
+                                checked={item.Rating === 1}
+                              />
+                              <input
+                                type="radio"
+                                className="star"
+                                id="two"
+                                name={`star_rate_${item.ID}`}
+                                checked={item.Rating === 2}
+                              />
+                              <input
+                                type="radio"
+                                className="star"
+                                id="three"
+                                name={`star_rate_${item.ID}`}
+                                checked={item.Rating === 3}
+                              />
+                              <input
+                                type="radio"
+                                className="star"
+                                id="four"
+                                name={`star_rate_${item.ID}`}
+                                checked={item.Rating === 4}
+                              />
+                              <input
+                                type="radio"
+                                className="star"
+                                id="five"
+                                name={`star_rate_${item.ID}`}
+                                checked={item.Rating === 5}
+                              />
+                            </div>
+                          </div>
+
                           <p>{item.Comment_Text}</p>
+                          <div>
+                            {item.Review_image && (
+                              <img
+                                src={item.Review_image}
+                                alt="Review content"
+                                className="comment-image"
+                              />
+                            )}
+                          </div>
                         </div>
                       </CardContent>
                     </Card>

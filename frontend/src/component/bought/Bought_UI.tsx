@@ -108,6 +108,21 @@ export default function My_Bought_UI() {
         </Button>
       ),
     },
+    {
+      field: "review",
+      headerName: "Review",
+      width: 150,
+      renderCell: (params) => (
+        <Button
+          size="small"
+          variant="contained"
+          color="primary"
+          onClick={() => handleReviewButtonClick(params.row.Account.User_ID)}
+        >
+          Review
+        </Button>
+      ),
+    },
   ];
 
   const filterColumns = ({
@@ -158,6 +173,26 @@ export default function My_Bought_UI() {
 
   const handlePostButtonClick = (ID: Number) => {
     window.open("/Individual_Post/" + ID)
+  };
+
+  const handleReviewButtonClick = async (User_ID: Number) => {
+    const apiUrl = ip_address() + "/usersprofilename/" + User_ID;
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.data) {
+          window.open("/profile/" + res.data.Profile_Name)
+        }
+      });
+    // window.open("/profile/" + User_ID)
   };
 
   const handleDialogReceiveClickClose = () => {

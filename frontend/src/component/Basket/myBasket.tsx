@@ -15,8 +15,8 @@ import moment from "moment";
 import { OrdersInterface } from "../../models/order/IOrder";
 import ip_address from "../ip";
 import { PostsInterface } from "../../models/post/IPost";
-import "./myBasket.css"
-import "../Home/Home_User_UI.css"
+import "./myBasket.css";
+import "../Home/Home_User_UI.css";
 
 export default function My_Basket_UI() {
   const [reserve, setReserve] = React.useState<OrdersInterface[]>([]);
@@ -118,7 +118,6 @@ export default function My_Basket_UI() {
         ID: reserveForUploadSlip.ID,
         Slip: reserveForUploadSlip.Slip,
       };
-      console.log(data);
       const apiUrl = ip_address() + "/orderslip"; //ส่งขอการแก้ไข
       const requestOptions = {
         method: "PATCH",
@@ -225,7 +224,7 @@ export default function My_Basket_UI() {
             }}
             sx={{ margin: 1 }}
           >
-            <Grid key={item.ID} width={"60%"}>
+            <Grid key={item.ID} width={"80%"}>
               <div className="post">
                 <div className="post-header">
                   <img
@@ -247,8 +246,12 @@ export default function My_Basket_UI() {
                 </div>
                 <div className="post-content">{item.Description}</div>
                 <div className="post-price">
-                  <h4 style={{ color: "#FFF" }}>Price {item.Account.Price} ฿</h4>
-                  <h4 style={{ color: "#FFF" }}>Bank account number: {item.User.Bank_Account}</h4>
+                  <h4 style={{ color: "#FFF" }}>
+                    Price {item.Account.Price} ฿
+                  </h4>
+                  <h4 style={{ color: "#FFF" }}>
+                    Bank account number: {item.User.Bank_Account}
+                  </h4>
                 </div>
                 {item.Advertising_image && (
                   <img
@@ -289,11 +292,13 @@ export default function My_Basket_UI() {
         <Grid margin={1} item xs={12}>
           <h4>Slip</h4>
           <Grid>
-            <img
-              src={`${reserveForUploadSlip?.Slip}`}
-              width="480"
-              height="640"
-            />
+            {reserveForUploadSlip.Slip && (
+              <img
+                src={`${reserveForUploadSlip?.Slip}`}
+                width="480"
+                height="640"
+              />
+            )}
           </Grid>
           <input type="file" onChange={handleImageChange} />
         </Grid>
@@ -323,10 +328,20 @@ export default function My_Basket_UI() {
       >
         <DialogTitle id="alert-dialog-title">{"Delete Account"}</DialogTitle>
         <DialogActions>
-          <Button size="small" onClick={handleDialogDeleteClickClose} color="inherit">
+          <Button
+            size="small"
+            onClick={handleDialogDeleteClickClose}
+            color="inherit"
+          >
             Cancel
           </Button>
-          <Button size="small" onClick={DeleteOrder} sx={{ color: "#ff753e"}} color="error" autoFocus>
+          <Button
+            size="small"
+            onClick={DeleteOrder}
+            sx={{ color: "#ff753e" }}
+            color="error"
+            autoFocus
+          >
             Delete
           </Button>
         </DialogActions>

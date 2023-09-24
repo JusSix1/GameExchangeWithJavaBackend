@@ -125,6 +125,19 @@ func GetUserProfilePicture(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
+// GET /usersprofilename/:id
+func GetUserProfileName(c *gin.Context) {
+	var user entity.User
+	id := c.Param("id")
+
+	if err := entity.DB().Raw("SELECT profile_name FROM users WHERE id = ?", id).Find(&user).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": user})
+}
+
 // PATCH /users
 func UpdateUser(c *gin.Context) {
 	var user entity.User

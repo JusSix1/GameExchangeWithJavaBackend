@@ -15,7 +15,8 @@ func CreateComment(c *gin.Context) {
 	type CommentCreate struct {
 		Profile_Name string
 		Comment_Text string
-		Is_Positive  bool
+		Rating       uint
+		Review_image string
 	}
 
 	var comment CommentCreate
@@ -57,7 +58,8 @@ func CreateComment(c *gin.Context) {
 		Commenter_ID: &commenter.ID,
 		Victim_ID:    &victim.ID,
 		Comment_Text: comment.Comment_Text,
-		Is_Positive:  comment.Is_Positive,
+		Rating:       comment.Rating,
+		Review_image: comment.Review_image,
 	}
 
 	if _, err := govalidator.ValidateStruct(newComment); err != nil {

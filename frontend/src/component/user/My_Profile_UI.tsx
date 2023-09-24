@@ -499,11 +499,6 @@ function My_Profile() {
                           style={{ color: "black" }}
                         >
                           {item.Commenter.Profile_Name + " "}
-                          {item.Is_Positive ? (
-                            <ThumbUpAltIcon style={{ color: "green" }} />
-                          ) : (
-                            <ThumbDownAltIcon style={{ color: "red" }} />
-                          )}
                         </a>
                       </Typography>
                       <p className="small">

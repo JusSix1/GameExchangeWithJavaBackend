@@ -161,6 +161,7 @@ func GetBought(c *gin.Context) {
 	var userCheckID entity.User
 	var order []entity.Order
 	var accountOrder []entity.Account
+	// var user []entity.User
 
 	email := c.Param("email")
 
@@ -170,7 +171,7 @@ func GetBought(c *gin.Context) {
 	}
 
 	if err := entity.DB().Preload("Account", func(db *gorm.DB) *gorm.DB {
-		return db.Preload("Game").Select("id", "game_id", "game_account", "game_password", "email", "email_password").Find(&accountOrder)
+		return db.Preload("Game").Select("id", "game_id", "game_account", "game_password", "email", "email_password", "user_id").Find(&accountOrder)
 	}).Raw("SELECT * FROM orders WHERE user_id = ? and is_slip_confirm = true ORDER BY id DESC", userCheckID.ID).Find(&order).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
