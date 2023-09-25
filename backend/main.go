@@ -27,53 +27,64 @@ func main() {
 	r.POST("/users", user_controller.CreateUser)
 	r.GET("/genders", user_controller.ListGenders)
 
+	// login Admin Route
+	r.POST("/login/admin", login_controller.LoginAdmin)
+
 	routerUser := r.Group("/")
 	{
-		protected := routerUser.Use(middlewares.AuthorizesUser())
+		protectedUser := routerUser.Use(middlewares.AuthorizesUser())
 		{
-			protected.GET("/myinfo/:email", user_controller.GetMyInfo)
-			protected.GET("/user/:profilename", user_controller.GetUser)
-			protected.GET("/usersprofilepicture/:email", user_controller.GetUserProfilePicture)
-			protected.GET("/usernamelist", user_controller.GetUserNameList)
-			protected.GET("/usersprofilename/:id", user_controller.GetUserProfileName)
-			protected.PATCH("/users", user_controller.UpdateUser)
-			protected.PATCH("/usersPassword", user_controller.UpdateUserPassword)
-			protected.DELETE("/users/:email", user_controller.DeleteUser)
+			protectedUser.GET("/myinfo/:email", user_controller.GetMyInfo)
+			protectedUser.GET("/user/:profilename", user_controller.GetUser)
+			protectedUser.GET("/usersprofilepicture/:email", user_controller.GetUserProfilePicture)
+			protectedUser.GET("/usernamelist", user_controller.GetUserNameList)
+			protectedUser.GET("/usersprofilename/:id", user_controller.GetUserProfileName)
+			protectedUser.PATCH("/users", user_controller.UpdateUser)
+			protectedUser.PATCH("/usersPassword", user_controller.UpdateUserPassword)
+			protectedUser.DELETE("/users/:email", user_controller.DeleteUser)
 
-			protected.POST("/account/:email", account_controller.CreateAccount)
-			protected.GET("/all-account/:email", account_controller.GetAllAccount)
-			protected.PATCH("/account", account_controller.UpdateAccount)
-			protected.DELETE("/account", account_controller.DeleteAccount)
+			protectedUser.POST("/account/:email", account_controller.CreateAccount)
+			protectedUser.GET("/all-account/:email", account_controller.GetAllAccount)
+			protectedUser.PATCH("/account", account_controller.UpdateAccount)
+			protectedUser.DELETE("/account", account_controller.DeleteAccount)
 
-			protected.POST("/game", game_controller.CreateGame)
-			protected.GET("/games", game_controller.ListGame)
-			protected.GET("/newgame", game_controller.NewGame)
+			protectedUser.POST("/game", game_controller.CreateGame)
+			protectedUser.GET("/games", game_controller.ListGame)
+			protectedUser.GET("/newgame", game_controller.NewGame)
 
-			protected.POST("/post/:email", post_controller.CreatePost)
-			protected.GET("/posts", post_controller.ListPost)
-			protected.GET("/post/:email/:id", post_controller.GetPost)
-			protected.GET("/individualpost/:account_id", post_controller.GetindividualPost)
-			protected.PATCH("/post", post_controller.UpdatePost)
+			protectedUser.POST("/post/:email", post_controller.CreatePost)
+			protectedUser.GET("/posts", post_controller.ListPost)
+			protectedUser.GET("/post/:email/:id", post_controller.GetPost)
+			protectedUser.GET("/individualpost/:account_id", post_controller.GetindividualPost)
+			protectedUser.PATCH("/post", post_controller.UpdatePost)
 
-			protected.POST("/order/:email", order_controller.CreateOrder)
-			protected.GET("/myorder/:email", order_controller.GetOrder)
-			protected.GET("/myreserve/:email", order_controller.GetReserve)
-			protected.GET("/mybought/:email", order_controller.GetBought)
-			protected.PATCH("/orderslip", order_controller.UpdateOrderSlip)
-			protected.PATCH("/orderslipconfirm", order_controller.UpdateOrderSlipConfirm)
-			protected.PATCH("/orderreive", order_controller.UpdateOrderReceive)
-			protected.DELETE("/order", order_controller.DeleteOrder)
-			protected.DELETE("/cancelorder", order_controller.CancelOrder)
+			protectedUser.POST("/order/:email", order_controller.CreateOrder)
+			protectedUser.GET("/myorder/:email", order_controller.GetOrder)
+			protectedUser.GET("/myreserve/:email", order_controller.GetReserve)
+			protectedUser.GET("/mybought/:email", order_controller.GetBought)
+			protectedUser.PATCH("/orderslip", order_controller.UpdateOrderSlip)
+			protectedUser.PATCH("/orderslipconfirm", order_controller.UpdateOrderSlipConfirm)
+			protectedUser.PATCH("/orderreive", order_controller.UpdateOrderReceive)
+			protectedUser.DELETE("/order", order_controller.DeleteOrder)
+			protectedUser.DELETE("/cancelorder", order_controller.CancelOrder)
 
-			protected.POST("/revenue/:email", revenue_controller.CreateRevenue)
-			protected.GET("/revenue/:email", revenue_controller.GetRevenue)
-			protected.PATCH("/revenue", revenue_controller.UpdateRevenue)
+			protectedUser.POST("/revenue/:email", revenue_controller.CreateRevenue)
+			protectedUser.GET("/revenue/:email", revenue_controller.GetRevenue)
+			protectedUser.PATCH("/revenue", revenue_controller.UpdateRevenue)
 
-			protected.POST("/comment/:email", comment_controller.CreateComment)
-			protected.GET("/comment/:profile_name", comment_controller.GetComment)
-			protected.GET("/mycomment/:email", comment_controller.GetMyComment)
+			protectedUser.POST("/comment/:email", comment_controller.CreateComment)
+			protectedUser.GET("/comment/:profile_name", comment_controller.GetComment)
+			protectedUser.GET("/mycomment/:email", comment_controller.GetMyComment)
 		}
 	}
+
+	// routerAdmin := r.Group("/")
+	// {
+	// 	protectedAdmin := routerAdmin.Use(middlewares.AuthorizesAdmin())
+	// 	{
+
+	// 	}
+	// }
 
 	// Run the server
 	r.Run()

@@ -102,6 +102,13 @@ type Comment struct {
 	Review_image string `valid:"image_valid~Please change the image"`
 }
 
+type Admin struct {
+	gorm.Model
+	Account_Name string `gorm:"uniqueIndex" valid:"required~Name is blank"`
+	Password     string `valid:"minstringlength(8)~Password must be longer than 8 characters,required~Password is blank"`
+	Admin_Name   string `valid:"required~Name is blank"`
+}
+
 func init() {
 	govalidator.CustomTypeTagMap.Set("DelayNow10Min", func(i interface{}, context interface{}) bool {
 		t := i.(time.Time)
