@@ -32,6 +32,7 @@ import { AccountsInterface } from "../../models/account/IAccount";
 import { GamesInterface } from "../../models/account/IGame";
 import { PostsInterface } from "../../models/post/IPost";
 import "./All_My_Account.css";
+import { ReqSellersInterface } from "../../models/reqseller/IReqSeller";
 
 const styles: { [name: string]: React.CSSProperties } = {
   container: {
@@ -54,6 +55,7 @@ const styles: { [name: string]: React.CSSProperties } = {
 export default function All_My_Account_UI() {
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
   const [account, setAccount] = React.useState<AccountsInterface[]>([]);
+  const [is_Seller, setIsSeller] = React.useState<ReqSellersInterface>();
   const [importAccount, setImportAccount] = React.useState<
     Partial<AccountsInterface>
   >({});
@@ -303,6 +305,25 @@ export default function All_My_Account_UI() {
       });
   };
 
+  const isSeller = async () => {
+    const apiUrl = ip_address() + "/isseller/" + localStorage.getItem("email");
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then(async (res) => {
+        if (res.data) {
+          setIsSeller(res.data);
+        }
+      });
+  };
+
   const CreateGame = async () => {
     setDialogLoadOpen(true);
 
@@ -511,6 +532,7 @@ export default function All_My_Account_UI() {
         setDialogLoadOpen(true);
         await getAccount();
         await getGame();
+        await isSeller();
         setDialogLoadOpen(false);
       };
       fetchData();
@@ -523,415 +545,431 @@ export default function All_My_Account_UI() {
     }
   }, [count, description]);
 
-  return (
-    <>
-      <Grid>
-        <Snackbar //ป้ายบันทึกสำเร็จ
-          open={success}
-          autoHideDuration={6000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        >
-          <Alert onClose={handleClose} severity="success">
-            Succes
-          </Alert>
-        </Snackbar>
+  if (is_Seller?.Is_Confirm) {
+    return (
+      <>
+        <Grid>
+          <Snackbar //ป้ายบันทึกสำเร็จ
+            open={success}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          >
+            <Alert onClose={handleClose} severity="success">
+              Succes
+            </Alert>
+          </Snackbar>
 
-        <Snackbar //ป้ายบันทึกไม่สำเร็จ
-          open={error}
-          autoHideDuration={6000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        >
-          <Alert onClose={handleClose} severity="error">
-            Error {errorMsg}
-          </Alert>
-        </Snackbar>
+          <Snackbar //ป้ายบันทึกไม่สำเร็จ
+            open={error}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          >
+            <Alert onClose={handleClose} severity="error">
+              Error {errorMsg}
+            </Alert>
+          </Snackbar>
 
-        <Grid //ตารางแสดงผล
-          container
-          sx={{ padding: 2 }}
-        >
-          <div style={{ height: "80vh", width: "100%" }}>
-            <DataGrid
-              style={{ background: "#3a3b3c", color: "white" }}
-              rows={account}
-              getRowId={(row) => row.ID}
-              slots={{ toolbar: CustomToolbar }}
-              columns={columns}
-              slotProps={{
-                filterPanel: {
-                  filterFormProps: {
-                    filterColumns,
+          <Grid //ตารางแสดงผล
+            container
+            sx={{ padding: 2 }}
+          >
+            <div style={{ height: "80vh", width: "100%" }}>
+              <DataGrid
+                style={{ background: "#3a3b3c", color: "white" }}
+                rows={account}
+                getRowId={(row) => row.ID}
+                slots={{ toolbar: CustomToolbar }}
+                columns={columns}
+                slotProps={{
+                  filterPanel: {
+                    filterFormProps: {
+                      filterColumns,
+                    },
+                    getColumnForNewFilter,
                   },
-                  getColumnForNewFilter,
-                },
-              }}
-              checkboxSelection
-              onRowSelectionModelChange={(newRowSelectionModel) => {
-                setRowSelectionModel(newRowSelectionModel);
-              }}
-              rowSelectionModel={rowSelectionModel}
-              disableRowSelectionOnClick
-            />
-          </div>
-        </Grid>
-
-        <Grid //ปุ่ม Import, Delete
-          container
-          sx={{ padding: 2 }}
-        >
-          <Grid sx={{ padding: 2 }}>
-            <button
-              className="button-slip"
-              onClick={() => handleDialogCreateClickOpen()}
-            >
-              Add Account
-            </button>
+                }}
+                checkboxSelection
+                onRowSelectionModelChange={(newRowSelectionModel) => {
+                  setRowSelectionModel(newRowSelectionModel);
+                }}
+                rowSelectionModel={rowSelectionModel}
+                disableRowSelectionOnClick
+              />
+            </div>
           </Grid>
-          <Grid sx={{ padding: 2 }}>
-            <button
-              className="button-cancel"
-              onClick={() => handleDialogDeleteClickOpen()}
-            >
-              Delete Account
-            </button>
+
+          <Grid //ปุ่ม Import, Delete
+            container
+            sx={{ padding: 2 }}
+          >
+            <Grid sx={{ padding: 2 }}>
+              <button
+                className="button-slip"
+                onClick={() => handleDialogCreateClickOpen()}
+              >
+                Add Account
+              </button>
+            </Grid>
+            <Grid sx={{ padding: 2 }}>
+              <button
+                className="button-cancel"
+                onClick={() => handleDialogDeleteClickOpen()}
+              >
+                Delete Account
+              </button>
+            </Grid>
           </Grid>
-        </Grid>
 
-        <Dialog //Account
-          open={dialogCreateOpen}
-          onClose={handleDialogCreateClickClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Add an Account"}</DialogTitle>
+          <Dialog //Account
+            open={dialogCreateOpen}
+            onClose={handleDialogCreateClickClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Add an Account"}
+            </DialogTitle>
 
-          <DialogContent>
-            <Box>
-              <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
-                <Grid container>
+            <DialogContent>
+              <Box>
+                <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
                   <Grid container>
-                    <Grid>Game</Grid>
                     <Grid container>
-                      <Grid margin={1} item xs={5}>
-                        <Autocomplete
-                          id="game-autocomplete"
-                          options={[{ ID: -1, Name: "Other..." }, ...game]}
-                          fullWidth
-                          size="small"
-                          value={
-                            importAccount.Game_ID
-                              ? game.find(
-                                  (option) =>
-                                    option.ID === importAccount.Game_ID
-                                )
-                              : null
-                          }
-                          onChange={(event: any, value) => {
-                            if (value && value.ID === -1) {
-                              handleDialogAddGameClickOpen();
-                            } else {
+                      <Grid>Game</Grid>
+                      <Grid container>
+                        <Grid margin={1} item xs={5}>
+                          <Autocomplete
+                            id="game-autocomplete"
+                            options={[{ ID: -1, Name: "Other..." }, ...game]}
+                            fullWidth
+                            size="small"
+                            value={
+                              importAccount.Game_ID
+                                ? game.find(
+                                    (option) =>
+                                      option.ID === importAccount.Game_ID
+                                  )
+                                : null
+                            }
+                            onChange={(event: any, value) => {
+                              if (value && value.ID === -1) {
+                                handleDialogAddGameClickOpen();
+                              } else {
+                                setImportAccount({
+                                  ...importAccount,
+                                  Game_ID: value?.ID,
+                                });
+                                setNewGame("");
+                              }
+                            }}
+                            getOptionLabel={(option: any) => `${option.Name}`}
+                            renderInput={(params: any) => {
+                              return (
+                                <TextField
+                                  {...params}
+                                  variant="outlined"
+                                  placeholder="Search..."
+                                />
+                              );
+                            }}
+                            renderOption={(props: any, option: any) => {
+                              return (
+                                <li
+                                  {...props}
+                                  value={option.ID}
+                                  key={option.ID}
+                                >
+                                  {option.Name}
+                                </li>
+                              );
+                            }}
+                            isOptionEqualToValue={isOptionEqualToValue}
+                          />
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+                      <Grid>Game account</Grid>
+                      <Grid container>
+                        <Grid margin={1} item xs={5}>
+                          <TextField
+                            fullWidth
+                            id="game_account"
+                            label="Account"
+                            type="string"
+                            variant="outlined"
+                            value={importAccount.Game_Account}
+                            onChange={(event) =>
                               setImportAccount({
                                 ...importAccount,
-                                Game_ID: value?.ID,
-                              });
-                              setNewGame("");
+                                Game_Account: event.target.value,
+                              })
                             }
-                          }}
-                          getOptionLabel={(option: any) => `${option.Name}`}
-                          renderInput={(params: any) => {
-                            return (
-                              <TextField
-                                {...params}
-                                variant="outlined"
-                                placeholder="Search..."
-                              />
-                            );
-                          }}
-                          renderOption={(props: any, option: any) => {
-                            return (
-                              <li {...props} value={option.ID} key={option.ID}>
-                                {option.Name}
-                              </li>
-                            );
-                          }}
-                          isOptionEqualToValue={isOptionEqualToValue}
+                          />
+                        </Grid>
+                        <Grid margin={1} item xs={5}>
+                          <TextField
+                            fullWidth
+                            id="game_password"
+                            label="Password"
+                            type="string"
+                            variant="outlined"
+                            value={importAccount.Game_Password}
+                            onChange={(event) =>
+                              setImportAccount({
+                                ...importAccount,
+                                Game_Password: event.target.value,
+                              })
+                            }
+                          />
+                        </Grid>
+                      </Grid>
+                    </Paper>
+                    <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+                      <Grid>Email account</Grid>
+                      <Grid container>
+                        <Grid margin={1} item xs={5}>
+                          <TextField
+                            fullWidth
+                            id="email"
+                            label="Email"
+                            type="string"
+                            variant="outlined"
+                            value={importAccount.Email}
+                            onChange={(event) =>
+                              setImportAccount({
+                                ...importAccount,
+                                Email: event.target.value,
+                              })
+                            }
+                          />
+                        </Grid>
+                        <Grid margin={1} item xs={5}>
+                          <TextField
+                            fullWidth
+                            id="email_password"
+                            label="Password"
+                            type="string"
+                            variant="outlined"
+                            value={importAccount.Email_Password}
+                            onChange={(event) =>
+                              setImportAccount({
+                                ...importAccount,
+                                Email_Password: event.target.value,
+                              })
+                            }
+                          />
+                        </Grid>
+                      </Grid>
+                    </Paper>
+                    <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+                      <Grid item xs={12}>
+                        Price
+                      </Grid>
+                      <Grid margin={1} item>
+                        <TextField
+                          fullWidth
+                          id="Price"
+                          label="Price"
+                          type="number"
+                          variant="outlined"
+                          value={importAccount.Price}
+                          onChange={(event) =>
+                            setImportAccount({
+                              ...importAccount,
+                              Price: Number(event.target.value),
+                            })
+                          }
                         />
                       </Grid>
-                    </Grid>
+                    </Paper>
                   </Grid>
-                  <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
-                    <Grid>Game account</Grid>
-                    <Grid container>
-                      <Grid margin={1} item xs={5}>
-                        <TextField
-                          fullWidth
-                          id="game_account"
-                          label="Account"
-                          type="string"
-                          variant="outlined"
-                          value={importAccount.Game_Account}
-                          onChange={(event) =>
-                            setImportAccount({
-                              ...importAccount,
-                              Game_Account: event.target.value,
-                            })
-                          }
-                        />
-                      </Grid>
-                      <Grid margin={1} item xs={5}>
-                        <TextField
-                          fullWidth
-                          id="game_password"
-                          label="Password"
-                          type="string"
-                          variant="outlined"
-                          value={importAccount.Game_Password}
-                          onChange={(event) =>
-                            setImportAccount({
-                              ...importAccount,
-                              Game_Password: event.target.value,
-                            })
-                          }
-                        />
-                      </Grid>
-                    </Grid>
-                  </Paper>
-                  <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
-                    <Grid>Email account</Grid>
-                    <Grid container>
-                      <Grid margin={1} item xs={5}>
-                        <TextField
-                          fullWidth
-                          id="email"
-                          label="Email"
-                          type="string"
-                          variant="outlined"
-                          value={importAccount.Email}
-                          onChange={(event) =>
-                            setImportAccount({
-                              ...importAccount,
-                              Email: event.target.value,
-                            })
-                          }
-                        />
-                      </Grid>
-                      <Grid margin={1} item xs={5}>
-                        <TextField
-                          fullWidth
-                          id="email_password"
-                          label="Password"
-                          type="string"
-                          variant="outlined"
-                          value={importAccount.Email_Password}
-                          onChange={(event) =>
-                            setImportAccount({
-                              ...importAccount,
-                              Email_Password: event.target.value,
-                            })
-                          }
-                        />
-                      </Grid>
-                    </Grid>
-                  </Paper>
-                  <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+                </Paper>
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                size="small"
+                onClick={handleDialogCreateClickClose}
+                color="inherit"
+              >
+                Cancel
+              </Button>
+              <Button
+                size="small"
+                onClick={
+                  buttonDialogAccount === "Import" ? CreateAccount : EditAccount
+                }
+                sx={{ color: "#00ADB5" }}
+                autoFocus
+              >
+                {buttonDialogAccount}
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog //Delete
+            open={dialogDeleteOpen}
+            onClose={handleDialogDeleteClickClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            fullWidth={true}
+            maxWidth="sm"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Delete Account"}
+            </DialogTitle>
+            <DialogActions>
+              <Button size="small" onClick={handleDialogDeleteClickClose}>
+                Cancel
+              </Button>
+              <Button
+                size="small"
+                onClick={DeleteAccount}
+                sx={{ color: "#ff753e" }}
+                color="error"
+                autoFocus
+              >
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog //post
+            open={dialogPostOpen}
+            onClose={handleDialogPostClickClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            fullWidth={true}
+            maxWidth="xl"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Post information"}
+            </DialogTitle>
+
+            <DialogContent>
+              <Box>
+                <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+                  <Grid container>
                     <Grid item xs={12}>
-                      Price
+                      <h4>Description</h4>
                     </Grid>
-                    <Grid margin={1} item>
-                      <TextField
-                        fullWidth
-                        id="Price"
-                        label="Price"
-                        type="number"
-                        variant="outlined"
-                        value={importAccount.Price}
-                        onChange={(event) =>
-                          setImportAccount({
-                            ...importAccount,
-                            Price: Number(event.target.value),
-                          })
-                        }
-                      />
+                    <Grid item xs={12} sx={{ marginX: 2 }}>
+                      <textarea
+                        ref={textareaRef}
+                        style={styles.textareaDefaultStyle}
+                        onChange={textAreaChange}
+                      >
+                        {description}
+                      </textarea>
                     </Grid>
-                  </Paper>
-                </Grid>
-              </Paper>
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              size="small"
-              onClick={handleDialogCreateClickClose}
-              color="inherit"
-            >
-              Cancel
-            </Button>
-            <Button
-              size="small"
-              onClick={
-                buttonDialogAccount === "Import" ? CreateAccount : EditAccount
-              }
-              sx={{ color: "#00ADB5" }}
-              autoFocus
-            >
-              {buttonDialogAccount}
-            </Button>
-          </DialogActions>
-        </Dialog>
+                  </Grid>
 
-        <Dialog //Delete
-          open={dialogDeleteOpen}
-          onClose={handleDialogDeleteClickClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          fullWidth={true}
-          maxWidth="sm"
-        >
-          <DialogTitle id="alert-dialog-title">{"Delete Account"}</DialogTitle>
-          <DialogActions>
-            <Button size="small" onClick={handleDialogDeleteClickClose}>
-              Cancel
-            </Button>
-            <Button
-              size="small"
-              onClick={DeleteAccount}
-              sx={{ color: "#ff753e" }}
-              color="error"
-              autoFocus
-            >
-              Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        <Dialog //post
-          open={dialogPostOpen}
-          onClose={handleDialogPostClickClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          fullWidth={true}
-          maxWidth="xl"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {"Post information"}
-          </DialogTitle>
-
-          <DialogContent>
-            <Box>
-              <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
-                <Grid container>
                   <Grid item xs={12}>
-                    <h4>Description</h4>
+                    {" "}
+                    {/* Profile Picture */}
+                    <h4>Advertising Image</h4>
+                    <Grid item xs={12} sx={{ marginX: 2 }}>
+                      {imageString && (
+                        <img
+                          src={`${imageString}`}
+                          width="100%"
+                          height="100%"
+                        />
+                      )}
+                    </Grid>
+                    <input type="file" onChange={handleImageChange} />
                   </Grid>
-                  <Grid item xs={12} sx={{ marginX: 2 }}>
-                    <textarea
-                      ref={textareaRef}
-                      style={styles.textareaDefaultStyle}
-                      onChange={textAreaChange}
-                    >
-                      {description}
-                    </textarea>
+                </Paper>
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                size="small"
+                onClick={handleDialogPostClickClose}
+                color="error"
+              >
+                Cancel
+              </Button>
+              <Button size="small" onClick={CreatePost} color="info" autoFocus>
+                Post
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog //Add game
+            open={dialogAddGameOpen}
+            onClose={handleDialogAddGameClickClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            fullWidth={true}
+          >
+            <DialogTitle id="alert-dialog-title">{"Add Game"}</DialogTitle>
+
+            <DialogContent>
+              <Box>
+                <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+                  <Grid container>
+                    <TextField
+                      fullWidth
+                      id="new_game"
+                      label="New game"
+                      type="string"
+                      variant="outlined"
+                      size="small"
+                      value={newGame}
+                      onChange={(event) => setNewGame(event.target.value)}
+                    />
                   </Grid>
-                </Grid>
+                </Paper>
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                size="small"
+                onClick={handleDialogAddGameClickClose}
+                color="error"
+              >
+                Cancel
+              </Button>
+              <Button size="small" onClick={CreateGame} color="info" autoFocus>
+                Add
+              </Button>
+            </DialogActions>
+          </Dialog>
 
-                <Grid item xs={12}>
-                  {" "}
-                  {/* Profile Picture */}
-                  <h4>Advertising Image</h4>
-                  <Grid item xs={12} sx={{ marginX: 2 }}>
-                    {imageString && (
-                      <img src={`${imageString}`} width="100%" height="100%" />
-                    )}
-                  </Grid>
-                  <input type="file" onChange={handleImageChange} />
-                </Grid>
-              </Paper>
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              size="small"
-              onClick={handleDialogPostClickClose}
-              color="error"
-            >
-              Cancel
-            </Button>
-            <Button size="small" onClick={CreatePost} color="info" autoFocus>
-              Post
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        <Dialog //Add game
-          open={dialogAddGameOpen}
-          onClose={handleDialogAddGameClickClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          fullWidth={true}
-        >
-          <DialogTitle id="alert-dialog-title">{"Add Game"}</DialogTitle>
-
-          <DialogContent>
-            <Box>
-              <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
-                <Grid container>
-                  <TextField
-                    fullWidth
-                    id="new_game"
-                    label="New game"
-                    type="string"
-                    variant="outlined"
-                    size="small"
-                    value={newGame}
-                    onChange={(event) => setNewGame(event.target.value)}
-                  />
-                </Grid>
-              </Paper>
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              size="small"
-              onClick={handleDialogAddGameClickClose}
-              color="error"
-            >
-              Cancel
-            </Button>
-            <Button size="small" onClick={CreateGame} color="info" autoFocus>
-              Add
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        <Dialog //Load
-          open={dialogLoadOpen}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <div className="custom-loader" />
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <div>Loading...</div>
-            </div>
-          </DialogTitle>
-        </Dialog>
-      </Grid>
-    </>
-  );
+          <Dialog //Load
+            open={dialogLoadOpen}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div className="custom-loader" />
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div>Loading...</div>
+              </div>
+            </DialogTitle>
+          </Dialog>
+        </Grid>
+      </>
+    );
+  } else {
+    return null
+  }
 }

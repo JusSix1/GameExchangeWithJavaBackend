@@ -14,6 +14,7 @@ func CreateAccount(c *gin.Context) {
 	var account entity.Account
 	var accountLastID entity.Account
 	var game entity.Game
+	var reqseller entity.ReqSeller
 
 	email := c.Param("email")
 
@@ -29,6 +30,11 @@ func CreateAccount(c *gin.Context) {
 
 	if tx := entity.DB().Where("id = ?", account.Game_ID).First(&game); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Game not found"})
+		return
+	}
+
+	if tx := entity.DB().Where("id = ? AND is_confirm = true", user.ID).First(&reqseller); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "You are not seller"})
 		return
 	}
 

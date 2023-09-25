@@ -7,6 +7,7 @@ import (
 	login_controller "github.com/JusSix1/GameExchange/controller/login"
 	order_controller "github.com/JusSix1/GameExchange/controller/order"
 	post_controller "github.com/JusSix1/GameExchange/controller/post"
+	reqseller_controller "github.com/JusSix1/GameExchange/controller/reqseller"
 	revenue_controller "github.com/JusSix1/GameExchange/controller/revenue"
 	user_controller "github.com/JusSix1/GameExchange/controller/user"
 	"github.com/JusSix1/GameExchange/entity"
@@ -75,6 +76,8 @@ func main() {
 			protectedUser.POST("/comment/:email", comment_controller.CreateComment)
 			protectedUser.GET("/comment/:profile_name", comment_controller.GetComment)
 			protectedUser.GET("/mycomment/:email", comment_controller.GetMyComment)
+
+			protectedUser.GET("/isseller/:email", reqseller_controller.GetIsSeller)
 		}
 	}
 

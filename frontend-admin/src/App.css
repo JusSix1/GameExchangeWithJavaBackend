@@ -1,38 +1,27 @@
-.App {
-  text-align: center;
+.background-all {
+  --s: 67px; /* shape size */
+  --m: 4px; /* line thickness */
+
+  --v1: #242526 119.5deg, #0000 120.5deg;
+  --v2: #000 119.5deg, #0000 120.5deg;
+  background: conic-gradient(at var(--m) calc(var(--s) * 0.5777), transparent 270deg, #000 0deg),
+    conic-gradient(at calc(100% - var(--m)) calc(var(--s) * 0.5777), #000 90deg, transparent 0deg),
+    conic-gradient(from -60deg at 50% calc(var(--s) * 0.8662), var(--v1)),
+    conic-gradient(from -60deg at 50% calc(var(--s) * 0.8662 + 2 * var(--m)), var(--v2)),
+    conic-gradient(from 120deg at 50% calc(var(--s) * 1.4435 + 3 * var(--m)), var(--v1)),
+    conic-gradient(from 120deg at 50% calc(var(--s) * 1.4435 + var(--m)), var(--v2)),
+    linear-gradient(90deg, #242526 calc(50% - var(--m)), #000 0 calc(50% + var(--m)), #3a3b3c 0);
+  background-size: calc(var(--s) + 2 * var(--m)) calc(var(--s) * 1.732 + 3 * var(--m));
+  mix-blend-mode: lighten;
+  min-height: 1100px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.end {
+  min-height: 50px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.div-AppBar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }

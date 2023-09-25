@@ -18,6 +18,27 @@ import Individual_Post_UI from "./component/IndividualPost/Individual_Post_UI";
 export default function App() {
   const [token, setToken] = React.useState<String>("");
 
+  function routeList() {
+    return (
+      <>
+        <Routes>
+          <Route path="/" element={<Home_User_UI />} />
+          <Route path="/MyProfile" element={<My_Profile_UI />} />
+          <Route path="/Profile/:profile_name" element={<User_Profile_UI />} />
+          <Route path="/AllMyAccount" element={<All_My_Account_UI />} />
+          <Route path="/edit_post/:id" element={<Edit_post_UI />} />
+          <Route path="/MyOrder" element={<My_Order_UI />} />
+          <Route path="/MyBasket" element={<My_Basket_UI />} />
+          <Route path="/AlreadyBought" element={<My_Bought_UI />} />
+          <Route
+            path="/Individual_Post/:account_id"
+            element={<Individual_Post_UI />}
+          />
+        </Routes>
+      </>
+    );
+  }
+
   React.useEffect(() => {
     document.title = "Game Exchange";
     const token = localStorage.getItem("token");
@@ -38,25 +59,7 @@ export default function App() {
         </div>
       </Router>
     );
+  } else {
+    return <SignIn_User />;
   }
-
-  function routeList() {
-    return (
-      <>
-        <Routes>
-          <Route path="/" element={<Home_User_UI />} />
-          <Route path="/MyProfile" element={<My_Profile_UI />} />
-          <Route path="/Profile/:profile_name" element={<User_Profile_UI />} />
-          <Route path="/AllMyAccount" element={<All_My_Account_UI />} />
-          <Route path="/edit_post/:id" element={<Edit_post_UI />} />
-          <Route path="/MyOrder" element={<My_Order_UI />} />
-          <Route path="/MyBasket" element={<My_Basket_UI />} />
-          <Route path="/AlreadyBought" element={<My_Bought_UI />} />
-          <Route path="/Individual_Post/:account_id" element={<Individual_Post_UI />} />
-        </Routes>
-      </>
-    );
-  }
-
-  return <SignIn_User />;
 }
