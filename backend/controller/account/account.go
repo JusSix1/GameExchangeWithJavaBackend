@@ -33,7 +33,7 @@ func CreateAccount(c *gin.Context) {
 		return
 	}
 
-	if tx := entity.DB().Where("id = ? AND is_confirm = true", user.ID).First(&reqseller); tx.RowsAffected == 0 {
+	if tx := entity.DB().Where("user_id = ? AND is_confirm = true", user.ID).First(&reqseller); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "You are not seller"})
 		return
 	}

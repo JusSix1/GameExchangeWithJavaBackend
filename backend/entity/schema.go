@@ -117,8 +117,8 @@ type ReqSeller struct {
 	User                User   `gorm:"references:id" valid:"-"`
 	Admin_ID            *uint  `valid:"-"`
 	Admin               Admin  `gorm:"references:id" valid:"-"`
-	Personal_Card_Front string `valid:"image_valid~Please change the image"`
-	Personal_Card_Back  string `valid:"image_valid~Please change the image"`
+	Personal_Card_Front string `valid:"required~Front image is blank, image_valid~Please change the image"`
+	Personal_Card_Back  string `valid:"required~Back image is blank,image_valid~Please change the image"`
 	Is_Confirm          bool   `valid:"-"`
 }
 

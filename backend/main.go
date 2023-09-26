@@ -77,7 +77,9 @@ func main() {
 			protectedUser.GET("/comment/:profile_name", comment_controller.GetComment)
 			protectedUser.GET("/mycomment/:email", comment_controller.GetMyComment)
 
+			protectedUser.POST("/reqseller/:email", reqseller_controller.CreateReqSeller)
 			protectedUser.GET("/isseller/:email", reqseller_controller.GetIsSeller)
+			protectedUser.GET("/isreqseller/:email", reqseller_controller.GetIsReqSeller)
 		}
 	}
 
