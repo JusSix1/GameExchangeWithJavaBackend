@@ -102,6 +102,9 @@ export default function Req_Seller_UI() {
       .then((response) => response.json())
       .then(async (res) => {
         if (res.data) {
+          await isReqSeller();
+          document.body.scrollTop = 0;
+          document.documentElement.scrollTop = 0;
           setSuccess(true);
         } else {
           setError(true);

@@ -83,13 +83,15 @@ func main() {
 		}
 	}
 
-	// routerAdmin := r.Group("/")
-	// {
-	// 	protectedAdmin := routerAdmin.Use(middlewares.AuthorizesAdmin())
-	// 	{
-
-	// 	}
-	// }
+	routerAdmin := r.Group("/")
+	{
+		protectedAdmin := routerAdmin.Use(middlewares.AuthorizesAdmin())
+		{
+			protectedAdmin.GET("/reqseller", reqseller_controller.ListReqSeller)
+			protectedAdmin.PATCH("/givepermission/:account_name", reqseller_controller.UpdateAccount)
+			protectedAdmin.DELETE("/rejectrequest", reqseller_controller.RejectRequest)
+		}
+	}
 
 	// Run the server
 	r.Run()

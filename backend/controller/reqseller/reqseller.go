@@ -54,6 +54,18 @@ func CreateReqSeller(c *gin.Context) {
 
 }
 
+// GET /reqseller
+func ListReqSeller(c *gin.Context) {
+	var reqseller []entity.ReqSeller
+
+	if err := entity.DB().Preload("User").Preload("Admin").Raw("SELECT * FROM req_sellers ORDER BY id DESC").Find(&reqseller).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": reqseller})
+}
+
 // GET /isseller/:email
 func GetIsSeller(c *gin.Context) {
 	var userCheckID entity.User
@@ -93,4 +105,53 @@ func GetIsReqSeller(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{})
 
+}
+
+// PATCH /givepermission/:account_name
+func UpdateAccount(c *gin.Context) {
+	var reqSeller entity.ReqSeller
+	var admin entity.Admin
+
+	account_name := c.Param("account_name")
+
+	if err := c.ShouldBindJSON(&reqSeller); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if tx := entity.DB().Where("account_name = ?", account_name).First(&admin); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Admin not found"})
+		return
+	}
+
+	// update user fields that are allowed to be updated
+	updateReqSeller := entity.ReqSeller{
+		Admin_ID:   &admin.ID,
+		Is_Confirm: true,
+	}
+
+	if err := entity.DB().Where("id = ?", reqSeller.ID).Updates(&updateReqSeller).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": reqSeller})
+}
+
+// DELETE /rejectrequest
+func RejectRequest(c *gin.Context) {
+
+	var reqSeller entity.ReqSeller
+
+	if err := c.ShouldBindJSON(&reqSeller); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if tx := entity.DB().Exec("DELETE FROM req_sellers WHERE id = ?", reqSeller.ID); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ReqSeller not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": reqSeller})
 }

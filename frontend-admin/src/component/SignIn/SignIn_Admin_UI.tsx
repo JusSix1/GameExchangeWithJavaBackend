@@ -42,7 +42,7 @@ export default function SignIn_Admin() {
       .then((res) => {
         if (res.data) {
           localStorage.setItem("token", res.data.token);
-          localStorage.setItem("account_name", res.data.email);
+          localStorage.setItem("account_name", res.data.account_name);
           return res.data;
         } else {
           return false;

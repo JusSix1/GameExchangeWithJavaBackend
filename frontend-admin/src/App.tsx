@@ -4,6 +4,7 @@ import './App.css';
 import SignIn_Admin from './component/SignIn/SignIn_Admin_UI';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AdminFullAppBar from './component/FullAppBar/AdminFullAppBar';
+import List_ReqSeller_UI from './component/ReqSeller/ReqSeller_UI';
 
 export default function App() {
   const [token, setToken] = React.useState<String>("");
@@ -12,7 +13,7 @@ export default function App() {
     return (
       <>
         <Routes>
-          {/* <Route path="/" element={<Home_Admin_UI />} /> */}
+          <Route path="/" element={<List_ReqSeller_UI />} />
         </Routes>
       </>
     );
