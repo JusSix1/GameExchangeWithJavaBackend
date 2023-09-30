@@ -6,6 +6,7 @@ import (
 	"github.com/JusSix1/GameExchange/entity"
 	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // POST /reqseller/:email
@@ -57,8 +58,14 @@ func CreateReqSeller(c *gin.Context) {
 // GET /reqseller
 func ListReqSeller(c *gin.Context) {
 	var reqseller []entity.ReqSeller
+	var admin []entity.Admin
+	var user []entity.User
 
-	if err := entity.DB().Preload("User").Preload("Admin").Raw("SELECT * FROM req_sellers ORDER BY id DESC").Find(&reqseller).Error; err != nil {
+	if err := entity.DB().Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "Profile_Name").Find(&user)
+	}).Preload("Admin", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "admin_name").Find(&admin)
+	}).Raw("SELECT * FROM req_sellers ORDER BY id DESC").Find(&reqseller).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

@@ -210,6 +210,13 @@ func SetupDatabase() {
 	}
 	db.Model(&Admin{}).Create(&Admin1)
 
+	Admin2 := Admin{
+		Account_Name: "Jane",
+		Password:     "$2a$12$I0y6Rso/myQzK0EXsS0dv.a908//LMR7faAJgUJ.7LY2GrzoEsvWa",
+		Admin_Name:   "Jane ny",
+	}
+	db.Model(&Admin{}).Create(&Admin2)
+
 	ReqSeller1 := ReqSeller{
 		User_ID:             &User1.ID,
 		Admin_ID:            &Admin1.ID,

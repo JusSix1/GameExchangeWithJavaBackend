@@ -40,7 +40,6 @@ export default function App() {
   }
 
   React.useEffect(() => {
-    document.title = "Game Exchange";
     const token = localStorage.getItem("token");
     if (token) {
       setToken(token);

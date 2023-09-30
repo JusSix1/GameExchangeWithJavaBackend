@@ -135,7 +135,6 @@ export default function Home_User_UI() {
       };
       fetchData();
       setCount(1);
-      document.title = "Game Exchange";
     }
     if (textareaRefDescription && textareaRefDescription.current) {
       textareaRefDescription.current.style.height = "0px";

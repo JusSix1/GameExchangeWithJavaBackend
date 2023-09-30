@@ -56,7 +56,7 @@ export default function List_ReqSeller_UI() {
   }
 
   const columns: GridColDef[] = [
-    { field: "ID", headerName: "Request ID", width: 70 },
+    { field: "ID", headerName: "Request ID", width: 100 },
     {
       field: "CreatedAt",
       headerName: "Create at",
@@ -68,7 +68,16 @@ export default function List_ReqSeller_UI() {
       field: "User",
       headerName: "User",
       width: 200,
-      renderCell: (params) => params.row.User.Profile_Name,
+      renderCell: (params) => (
+        <a
+          href={`/UserProfile/${String(params?.row.User.Profile_Name)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: 'white' }}
+        >
+          {String(params.row.User.Profile_Name)}
+        </a>
+      ),
     },
     {
       field: "Front card",
@@ -220,7 +229,7 @@ export default function List_ReqSeller_UI() {
   };
 
   const getReqSeller = async () => {
-    const apiUrl = ip_address() + "/reqseller"; // email คือ email ที่ผ่านเข้ามาทาง parameter
+    const apiUrl = ip_address() + "/reqseller";
     const requestOptions = {
       method: "GET",
       headers: {
@@ -234,7 +243,6 @@ export default function List_ReqSeller_UI() {
       .then((res) => {
         if (res.data) {
           setReqSeller(res.data);
-          console.log(res.data);
         }
       });
   };

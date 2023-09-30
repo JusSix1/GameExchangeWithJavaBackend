@@ -11,8 +11,9 @@ import "./AdminFullAppBar.css"
 // User Icon
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import HomeIcon from '@mui/icons-material/Home';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 import { Link as RouterLink } from "react-router-dom";
 import { Avatar } from '@mui/material';
@@ -28,8 +29,13 @@ function UserFullAppBar() {
       <List sx={{ width: "100%" }}>
 
         <ListItem button component={RouterLink} to="/">
-          <HomeIcon />
-          <ListItemText primary="Home" sx={{ paddingLeft: 1 }} />
+          <PersonAddIcon />
+          <ListItemText primary="Request Seller" sx={{ paddingLeft: 1 }} />
+        </ListItem>
+
+        <ListItem button component={RouterLink} to="/ManageAdmin">
+          <AdminPanelSettingsIcon />
+          <ListItemText primary="Manage Admin" sx={{ paddingLeft: 1 }} />
         </ListItem>
 
       </List>

@@ -2,6 +2,7 @@ package main
 
 import (
 	account_controller "github.com/JusSix1/GameExchange/controller/account"
+	admin_controller "github.com/JusSix1/GameExchange/controller/admin"
 	comment_controller "github.com/JusSix1/GameExchange/controller/comment"
 	game_controller "github.com/JusSix1/GameExchange/controller/game"
 	login_controller "github.com/JusSix1/GameExchange/controller/login"
@@ -87,9 +88,17 @@ func main() {
 	{
 		protectedAdmin := routerAdmin.Use(middlewares.AuthorizesAdmin())
 		{
+			protectedAdmin.POST("/createadmin", admin_controller.CreateAdmin)
+			protectedAdmin.GET("/listadmin", admin_controller.GetListAdmin)
+			protectedAdmin.DELETE("/admin/:account_name", admin_controller.DeleteAdmin)
+
+			protectedAdmin.GET("/userforadmin/:profilename", user_controller.GetUser)
+
 			protectedAdmin.GET("/reqseller", reqseller_controller.ListReqSeller)
 			protectedAdmin.PATCH("/givepermission/:account_name", reqseller_controller.UpdateAccount)
 			protectedAdmin.DELETE("/rejectrequest", reqseller_controller.RejectRequest)
+
+			protectedAdmin.GET("/commentforadmin/:profile_name", comment_controller.GetComment)
 		}
 	}
 

@@ -31,9 +31,6 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	println(user.PersonalID)
-	println(user.Address)
-
 	// create new object for create new record
 	newUser := entity.User{
 		Email:           user.Email,
@@ -328,7 +325,7 @@ func DeleteUser(c *gin.Context) {
 	// ตรวจสอบรหัสผ่าน
 	err := bcrypt.CompareHashAndPassword([]byte(Password.Password), []byte(passwordUser.Password))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Old password is incorrect"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Password is incorrect"})
 		return
 	}
 

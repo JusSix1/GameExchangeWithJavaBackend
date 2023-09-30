@@ -30,7 +30,7 @@ button{
     transform: translate(6px, 6px);
 }
 
-.AddAccBtn::after, .btn-1::before {
+.AddAccBtn::after, .AddAccBtn::before {
     content: "";
     position: absolute;
     opacity: 0.3;

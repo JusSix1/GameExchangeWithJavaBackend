@@ -217,7 +217,6 @@ function SignIn_User() {
       await getGender();
     };
     fetchData();
-    document.title = "Sign In Game ExChange";
   }, []);
 
   return (

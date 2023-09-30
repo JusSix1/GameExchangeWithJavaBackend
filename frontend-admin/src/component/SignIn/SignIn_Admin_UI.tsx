@@ -5,7 +5,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import Typography from "@mui/material/Typography";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
@@ -23,7 +23,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 export default function SignIn_Admin() {
-  document.title = "Sign In Admin ExChange";
   // Sign in
   const [signin, setSignin] = useState<Partial<SigninAdminInterface>>({});
   const [success, setSuccess] = useState(false);
@@ -84,7 +83,7 @@ export default function SignIn_Admin() {
   };
 
   React.useEffect(() => {
-    document.title = "Sign In Admin ExChange";
+
   }, []);
 
   return (
@@ -109,7 +108,7 @@ export default function SignIn_Admin() {
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert onClose={handleClose} severity="error">
-          Email or Password invalid
+          Account or Password invalid
         </Alert>
       </Snackbar>
 
@@ -127,7 +126,7 @@ export default function SignIn_Admin() {
               }}
             >
               <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-                <LockOutlinedIcon />
+                <AdminPanelSettingsIcon />
               </Avatar>
               <Typography component="h1" variant="h5">
                 Sign in
