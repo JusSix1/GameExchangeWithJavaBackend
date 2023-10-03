@@ -35,6 +35,7 @@ export default function Manage_Admin_UI() {
   const [newAdmin, setNewAdmin] = React.useState<Partial<AdminsInterface>>({});
   const [password, setPassword] = React.useState<string>();
   const [confirmPassword, setConfirmPassword] = React.useState<string>();
+  const [oldPassword, setOldPassword] = React.useState<string>();
 
   const [adminID, setAdminID] = React.useState<Number>();
 
@@ -43,6 +44,7 @@ export default function Manage_Admin_UI() {
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
   const [dialogLoadOpen, setDialogLoadOpen] = React.useState(false);
   const [dialogAddAdminOpen, setDialogAddAdminOpen] = React.useState(false);
+  const [dialogChangePasswordOpen, setDialogChangePasswordOpen] = React.useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = React.useState(false);
 
   Moment.locale("th");
@@ -62,6 +64,15 @@ export default function Manage_Admin_UI() {
         <GridToolbarColumnsButton sx={{ color: "#00ADB5" }} />
         <GridToolbarFilterButton sx={{ color: "#00ADB5" }} />
         <GridToolbarDensitySelector sx={{ color: "#00ADB5" }} />
+        <Button
+          size="small"
+          variant="contained"
+          color="primary"
+          style={{ color: "#fff", background: "#ff753e" }}
+          onClick={() => handleChangePasswordButtonClick()}
+        >
+          Change Password
+        </Button>
       </GridToolbarContainer>
     );
   }
@@ -155,21 +166,26 @@ export default function Manage_Admin_UI() {
     setDialogDeleteOpen(true);
   };
 
-  //   const handleCloseCardDialog = () => {
-  //     setDialogCardOpen(false);
-  //   };
+  const handleChangePasswordButtonClick = () => {
+    setDialogChangePasswordOpen(true);
+  };
 
   const handleDialogAddAdminClickClose = () => {
     setDialogAddAdminOpen(false);
+    setPassword(undefined);
+    setConfirmPassword(undefined);
   };
 
   const handleDialogDeleteClickClose = () => {
     setDialogDeleteOpen(false);
   };
 
-  //   const handleDialogRejectClickClose = () => {
-  //     setDialogRejectOpen(false);
-  //   };
+  const handleDialogChangePasswordClickClose = () => {
+    setDialogChangePasswordOpen(false);
+    setPassword(undefined);
+    setConfirmPassword(undefined);
+    setOldPassword(undefined);
+  };
 
   const getListAdmin = async () => {
     const apiUrl = ip_address() + "/listadmin";
@@ -266,6 +282,47 @@ export default function Manage_Admin_UI() {
     setDialogLoadOpen(false);
   };
 
+  const ChangePasswordAdmin = async () => {
+    setDialogLoadOpen(true);
+
+    if (password === confirmPassword) {
+      let data = {
+        Account_Name: localStorage.getItem("account_name"),
+        OldPassword: oldPassword,
+        NewPassword: password,
+      };
+      const apiUrl = ip_address() + "/adminPassword"; //ส่งขอการแก้ไข
+      const requestOptions = {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      };
+
+      fetch(apiUrl, requestOptions)
+        .then((response) => response.json())
+        .then(async (res) => {
+          if (res.data) {
+            setSuccess(true);
+            setPassword(undefined);
+            setConfirmPassword(undefined);
+            setOldPassword(undefined);
+            handleDialogChangePasswordClickClose();
+          } else {
+            setError(true);
+            setErrorMsg(" - " + res.error);
+          }
+        });
+    } else {
+      setError(true);
+      setErrorMsg("รหัสผ่านไม่ตรงกัน");
+    }
+    setDialogLoadOpen(false);
+  };
+
+
   React.useEffect(() => {
     const fetchData = async () => {
       setDialogLoadOpen(true);
@@ -303,7 +360,7 @@ export default function Manage_Admin_UI() {
         container
         sx={{ padding: 2 }}
       >
-        <div style={{ height: "80vh", width: "100%" }}>
+        <div style={{ height: "90vh", width: "100%" }}>
           <DataGrid
             style={{ background: "#3a3b3c", color: "white" }}
             rows={admin}
@@ -453,6 +510,76 @@ export default function Manage_Admin_UI() {
           </Button>
           <Button color="error" onClick={DeleteAdmin} autoFocus>
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog //ChangePassword
+        open={dialogChangePasswordOpen}
+        onClose={handleDialogChangePasswordClickClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Change Password"}</DialogTitle>
+
+        <DialogContent>
+          <Box>
+            <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+              <Grid container>
+                <Grid container>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="old_password"
+                      label="Old Password"
+                      variant="outlined"
+                      type="password"
+                      onChange={(event) => setOldPassword(event.target.value)}
+                    />
+                  </Grid>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="new_password"
+                      label="New Password"
+                      variant="outlined"
+                      type="password"
+                      onChange={(event) => setPassword(event.target.value)}
+                    />
+                  </Grid>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="confirnm_password"
+                      label="Confirm New Password"
+                      variant="outlined"
+                      type="password"
+                      onChange={(event) =>
+                        setConfirmPassword(event.target.value)
+                      }
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            size="small"
+            color="inherit"
+            onClick={handleDialogChangePasswordClickClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            size="small"
+            onClick={ChangePasswordAdmin}
+            color="error"
+            sx={{ color: "#ff753e" }}
+            autoFocus
+          >
+            Change Password
           </Button>
         </DialogActions>
       </Dialog>

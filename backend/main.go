@@ -77,6 +77,8 @@ func main() {
 			protectedUser.POST("/comment/:email", comment_controller.CreateComment)
 			protectedUser.GET("/comment/:profile_name", comment_controller.GetComment)
 			protectedUser.GET("/mycomment/:email", comment_controller.GetMyComment)
+			protectedUser.GET("/mycommentedid/:email/:profile_name", comment_controller.GetMyCommentedID)
+			protectedUser.DELETE("/deletecomment", comment_controller.DeleteComment)
 
 			protectedUser.POST("/reqseller/:email", reqseller_controller.CreateReqSeller)
 			protectedUser.GET("/isseller/:email", reqseller_controller.GetIsSeller)
@@ -90,6 +92,7 @@ func main() {
 		{
 			protectedAdmin.POST("/createadmin", admin_controller.CreateAdmin)
 			protectedAdmin.GET("/listadmin", admin_controller.GetListAdmin)
+			protectedAdmin.PATCH("/adminPassword", admin_controller.UpdateAdminPassword)
 			protectedAdmin.DELETE("/admin/:account_name", admin_controller.DeleteAdmin)
 
 			protectedAdmin.GET("/userforadmin/:profilename", user_controller.GetUser)

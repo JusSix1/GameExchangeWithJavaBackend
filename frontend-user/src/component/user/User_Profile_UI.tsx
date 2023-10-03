@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-redundant-roles */
 /* eslint-disable no-template-curly-in-string */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-useless-concat */
@@ -11,6 +12,7 @@ import {
   CardContent,
   Container,
   Dialog,
+  DialogActions,
   DialogTitle,
   Snackbar,
   Typography,
@@ -29,6 +31,9 @@ function User_Profile() {
   const { profile_name } = useParams(); // ดึง parameter จาก url-parameter
   const [user, setUser] = React.useState<Partial<UsersInterface>>({});
   const [commentList, setCommentList] = React.useState<CommentsInterface[]>([]);
+  const [avgRating, setAvgRating] = React.useState<number>();
+  const [commentedID, setCommentedID] = React.useState<CommentsInterface[]>([]);
+  const [commentID, setCommentID] = React.useState<number>();
 
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
   const [showComments, setShowComments] = React.useState(false);
@@ -42,6 +47,7 @@ function User_Profile() {
   const [error, setError] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
   const [dialogLoadOpen, setDialogLoadOpen] = React.useState(false);
+  const [dialogDeleteOpen, setDialogDeleteOpen] = React.useState(false);
 
   Moment.locale("th");
 
@@ -76,6 +82,16 @@ function User_Profile() {
     setCommentRating(point);
   };
 
+  const handleClickDelete = (id: number) => {
+    setDialogDeleteOpen(true);
+    setCommentID(id);
+  };
+
+  const handleDialogDeleteClickClose = () => {
+    setDialogDeleteOpen(false);
+    setCommentID(undefined);
+  };
+
   const getUser = async () => {
     const apiUrl = ip_address() + "/user/" + profile_name;
     const requestOptions = {
@@ -108,7 +124,43 @@ function User_Profile() {
     await fetch(apiUrl, requestOptions)
       .then((response) => response.json())
       .then(async (res) => {
+        // Assuming res.data is an array of comment objects
+        const commentList = res.data;
+
+        // Calculate the average rating
+        const totalRating = commentList.reduce(
+          (accumulator: any, comment: { Rating: any }) =>
+            accumulator + comment.Rating,
+          0
+        );
+        const averageRating =
+          commentList.length > 0 ? totalRating / commentList.length : 0;
+
+        setAvgRating(Math.round(averageRating));
+
         await setCommentList(res.data);
+      });
+  };
+
+  const getMyCommentedID = async () => {
+    const apiUrl =
+      ip_address() +
+      "/mycommentedid/" +
+      localStorage.getItem("email") +
+      "/" +
+      profile_name;
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then(async (res) => {
+        await setCommentedID(res.data);
       });
   };
 
@@ -145,6 +197,7 @@ function User_Profile() {
           if (res.data) {
             setSuccess(true);
             getComment();
+            getMyCommentedID();
             setCommentText("");
             setCommentRating(0);
             setImageString(null);
@@ -160,6 +213,40 @@ function User_Profile() {
     }
   };
 
+  const DeleteComment = async () => {
+    setDialogLoadOpen(true);
+
+    let data = {
+      ID: commentID,
+    };
+
+    const apiUrl = ip_address() + "/deletecomment";
+    const requestOptions = {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then(async (res) => {
+        if (res.data) {
+          setSuccess(true);
+          getComment();
+          getMyCommentedID();
+          handleDialogDeleteClickClose();
+        } else {
+          setError(true);
+          setErrorMsg(" - " + res.error);
+        }
+      });
+
+    setDialogLoadOpen(false);
+  };
+
   const [count, setCount] = React.useState<number>(0);
 
   React.useEffect(() => {
@@ -168,6 +255,7 @@ function User_Profile() {
         setDialogLoadOpen(true);
         await getUser();
         await getComment();
+        await getMyCommentedID();
         setDialogLoadOpen(false);
       };
       fetchData();
@@ -288,6 +376,7 @@ function User_Profile() {
                       resize: "none",
                       backgroundColor: "#F",
                       fontSize: 16,
+                      borderRadius: "5px",
                     }}
                     onChange={textAreaChange}
                     value={commentText}
@@ -318,6 +407,46 @@ function User_Profile() {
                   >
                     {showComments ? "Hide comment" : "Show comment"}
                   </Button>
+                  <div className="rating">
+                    <div className="star-group">
+                      <p style={{ fontSize: "12px" }}>Average rating: </p>
+                      <input
+                        type="radio"
+                        className="star"
+                        id="one"
+                        name="avg_rating"
+                        checked={avgRating === 1}
+                      />
+                      <input
+                        type="radio"
+                        className="star"
+                        id="two"
+                        name="avg_rating"
+                        checked={avgRating === 2}
+                      />
+                      <input
+                        type="radio"
+                        className="star"
+                        id="three"
+                        name="avg_rating"
+                        checked={avgRating === 3}
+                      />
+                      <input
+                        type="radio"
+                        className="star"
+                        id="four"
+                        name="avg_rating"
+                        checked={avgRating === 4}
+                      />
+                      <input
+                        type="radio"
+                        className="star"
+                        id="five"
+                        name="avg_rating"
+                        checked={avgRating === 5}
+                      />
+                    </div>
+                  </div>
                   <Button
                     variant="contained"
                     sx={{ backgroundColor: "#00ADB5" }}
@@ -420,6 +549,19 @@ function User_Profile() {
                               />
                             )}
                           </div>
+                          <div className="delete-container">
+                            {commentedID.some(
+                              (commentedItem) => commentedItem.ID === item.ID
+                            ) && (
+                              <Button
+                                variant="contained"
+                                color="error"
+                                onClick={() => handleClickDelete(item.ID)}
+                              >
+                                Delete
+                              </Button>
+                            )}
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -429,6 +571,31 @@ function User_Profile() {
             ))}
         </div>
       </div>
+
+      <Dialog //Delete
+        open={dialogDeleteOpen}
+        onClose={handleDialogDeleteClickClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth={true}
+        maxWidth="sm"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete Account"}</DialogTitle>
+        <DialogActions>
+          <Button size="small" onClick={handleDialogDeleteClickClose}>
+            Cancel
+          </Button>
+          <Button
+            size="small"
+            onClick={DeleteComment}
+            sx={{ color: "#ff753e" }}
+            color="error"
+            autoFocus
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog //Load
         open={dialogLoadOpen}

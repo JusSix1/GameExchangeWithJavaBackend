@@ -120,3 +120,49 @@ func GetMyComment(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": comment})
 }
+
+// GET /mycommentedid/:email/:profile_name
+func GetMyCommentedID(c *gin.Context) {
+	var victim entity.User
+	var commenter entity.User
+	var comment []entity.Comment
+
+	email := c.Param("email")
+
+	profile_name := c.Param("profile_name")
+
+	if tx := entity.DB().Where("email = ?", email).First(&commenter); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+
+	if tx := entity.DB().Where("profile_name = ?", profile_name).First(&victim); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+
+	if err := entity.DB().Raw("SELECT ID FROM comments WHERE commenter_ID = ? AND victim_ID = ? ORDER BY id DESC", commenter.ID, victim.ID).Find(&comment).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": comment})
+}
+
+// DELETE /deletecomment
+func DeleteComment(c *gin.Context) {
+
+	var comment entity.Comment
+
+	if err := c.ShouldBindJSON(&comment); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if tx := entity.DB().Exec("DELETE FROM comments WHERE id = ?", comment.ID); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Comment not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": comment})
+}

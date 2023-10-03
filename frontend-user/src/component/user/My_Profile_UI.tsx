@@ -19,8 +19,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import { Box, Grid, Paper } from "@mui/material";
 import Moment from "moment";
 import Menu from "@mui/material/Menu";
@@ -62,8 +60,7 @@ function My_Profile() {
   const [confirm_password, setConfirm_password] = React.useState<string | null>(
     null
   );
-  const [countPositive, setCountPositive] = React.useState<number>(0);
-  const [countNegative, setCountNegative] = React.useState<number>(0);
+  const [avgRating, setAvgRating] = React.useState<number>();
 
   const openOption = Boolean(anchorEl);
   const [success, setSuccess] = React.useState(false);
@@ -184,23 +181,23 @@ function My_Profile() {
       },
     };
 
-    let countPositiveIn = 0;
-    let countNegativeIn = 0;
-
     await fetch(apiUrl, requestOptions)
       .then((response) => response.json())
       .then(async (res) => {
         if (res.data) {
-          res.data.forEach((comment: { Is_Positive: any }) => {
-            if (comment.Is_Positive) {
-              countPositiveIn++;
-            } else {
-              countNegativeIn++;
-            }
-          });
+          // Assuming res.data is an array of comment objects
+          const commentList = res.data;
 
-          await setCountPositive(countPositiveIn);
-          await setCountNegative(countNegativeIn);
+          // Calculate the average rating
+          const totalRating = commentList.reduce(
+            (accumulator: any, comment: { Rating: any }) =>
+              accumulator + comment.Rating,
+            0
+          );
+          const averageRating =
+            commentList.length > 0 ? totalRating / commentList.length : 0;
+
+          setAvgRating(Math.round(averageRating));
 
           await setCommentList(res.data);
         }
@@ -425,42 +422,45 @@ function My_Profile() {
         <Card style={{ background: "#c1c1c1" }}>
           <CardContent>
             <div className="comment-header">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                Positive: {countPositive}
-                <ThumbUpAltIcon style={{ color: "green" }} />
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {countPositive >= countNegative ? (
-                  <div style={{ color: "green" }}>
-                    Most of the comments were positive.
-                  </div>
-                ) : (
-                  <div style={{ color: "red" }}>
-                    Most of the comments were negative.
-                  </div>
-                )}
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                Negative: {countNegative}
-                <ThumbDownAltIcon style={{ color: "red" }} />
+              <div className="rating">
+                <div className="star-group">
+                  <p style={{ fontSize: "12px" }}>Average rating: </p>
+                  <input
+                    type="radio"
+                    className="star"
+                    id="one"
+                    name="avg_rating"
+                    checked={avgRating === 1}
+                  />
+                  <input
+                    type="radio"
+                    className="star"
+                    id="two"
+                    name="avg_rating"
+                    checked={avgRating === 2}
+                  />
+                  <input
+                    type="radio"
+                    className="star"
+                    id="three"
+                    name="avg_rating"
+                    checked={avgRating === 3}
+                  />
+                  <input
+                    type="radio"
+                    className="star"
+                    id="four"
+                    name="avg_rating"
+                    checked={avgRating === 4}
+                  />
+                  <input
+                    type="radio"
+                    className="star"
+                    id="five"
+                    name="avg_rating"
+                    checked={avgRating === 5}
+                  />
+                </div>
               </div>
             </div>
           </CardContent>
@@ -471,46 +471,97 @@ function My_Profile() {
       <div className="comment-list">
         {commentList.map((item) => (
           <section>
-            <Container style={{ maxWidth: "100%" }}>
-              <div className="comment-body">
-                <img
+          <Container style={{ maxWidth: "100%" }}>
+            <div className="comment-body">
+              <img
+                style={{
+                  borderRadius: "50%",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                  marginRight: "0.75rem",
+                }}
+                src={item.Commenter.Profile_Picture}
+                alt={`${item.Commenter.Profile_Name}'s profile`}
+                width="65"
+                height="65"
+              />
+              <Card style={{ width: "100%", background: "#c1c1c1" }}>
+                <CardContent
                   style={{
-                    borderRadius: "50%",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                    marginRight: "0.75rem",
+                    padding: "1rem",
                   }}
-                  src={item.Commenter.Profile_Picture}
-                  alt={`${item.Commenter.Profile_Name}'s profile`}
-                  width="65"
-                  height="65"
-                />
-                <Card style={{ width: "100%", background: "#c1c1c1" }}>
-                  <CardContent
-                    style={{
-                      padding: "1rem",
-                    }}
-                  >
-                    <div>
-                      <Typography>
-                        <a
-                          href={`/profile/${item.Commenter.Profile_Name}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: "black" }}
-                        >
-                          {item.Commenter.Profile_Name + " "}
-                        </a>
-                      </Typography>
-                      <p className="small">
-                        {moment(item.CreatedAt).format("DD/MM/YYYY hh:mm A")}
-                      </p>
-                      <p>{item.Comment_Text}</p>
+                >
+                  <div>
+                    <Typography>
+                      <a
+                        href={`/profile/${item.Commenter.Profile_Name}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "black" }}
+                      >
+                        {item.Commenter.Profile_Name + " "}
+                      </a>
+                    </Typography>
+                    <p className="small">
+                      {moment(item.CreatedAt).format(
+                        "DD/MM/YYYY hh:mm A"
+                      )}
+                    </p>
+                    <div className="rating">
+                      <div className="star-group">
+                        <input
+                          type="radio"
+                          className="star"
+                          id="one"
+                          name={`star_rate_${item.ID}`}
+                          checked={item.Rating === 1}
+                        />
+                        <input
+                          type="radio"
+                          className="star"
+                          id="two"
+                          name={`star_rate_${item.ID}`}
+                          checked={item.Rating === 2}
+                        />
+                        <input
+                          type="radio"
+                          className="star"
+                          id="three"
+                          name={`star_rate_${item.ID}`}
+                          checked={item.Rating === 3}
+                        />
+                        <input
+                          type="radio"
+                          className="star"
+                          id="four"
+                          name={`star_rate_${item.ID}`}
+                          checked={item.Rating === 4}
+                        />
+                        <input
+                          type="radio"
+                          className="star"
+                          id="five"
+                          name={`star_rate_${item.ID}`}
+                          checked={item.Rating === 5}
+                        />
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </Container>
-          </section>
+
+                    <p>{item.Comment_Text}</p>
+                    <div>
+                      {item.Review_image && (
+                        <img
+                          src={item.Review_image}
+                          alt="Review content"
+                          className="comment-image"
+                        />
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </Container>
+        </section>
         ))}
       </div>
 

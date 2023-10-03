@@ -67,6 +67,66 @@ func GetListAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": admin})
 }
 
+// PATCH /adminPassword
+func UpdateAdminPassword(c *gin.Context) {
+
+	type PasswordAdmin struct {
+		Account_Name string `valid:"-"`
+		OldPassword  string `valid:"minstringlength(8)~Password must be longer than 8 characters,required~Password is blank"`
+		NewPassword  string `valid:"minstringlength(8)~Password must be longer than 8 characters,required~Password is blank"`
+	}
+
+	var passwordAdmin PasswordAdmin
+	var oldPassword entity.Admin
+
+	if err := c.ShouldBindJSON(&passwordAdmin); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if tx := entity.DB().Where("account_name = ?", passwordAdmin.Account_Name).Last(&oldPassword); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Admin not found"})
+		return
+	}
+
+	// validate PasswordUser
+	if _, err := govalidator.ValidateStruct(passwordAdmin); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// ตรวจสอบรหัสผ่าน
+	err := bcrypt.CompareHashAndPassword([]byte(oldPassword.Password), []byte(passwordAdmin.OldPassword))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Old password is incorrect"})
+		return
+	}
+
+	updatePasswordAdmin := entity.Admin{
+		Password: passwordAdmin.NewPassword,
+	}
+
+	if !(passwordAdmin.NewPassword[0:7] == "$2a$12$") { // เช็คว่ารหัสที่ผ่านเข้ามามีการ encrypt แล้วหรือยัง หากมีการ encrypt แล้วจะไม่ทำการ encrypt ซ้ำ
+		hashPassword, err := bcrypt.GenerateFromPassword([]byte(updatePasswordAdmin.Password), 12)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "error hashing password"})
+			return
+		}
+		print("HASH!!!!")
+		updatePasswordAdmin.Password = string(hashPassword)
+	} else {
+		print("NOT HASH!!!")
+	}
+
+	if err := entity.DB().Where("account_name = ?", passwordAdmin.Account_Name).Updates(&updatePasswordAdmin).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": passwordAdmin})
+
+}
+
 // DELETE /admin/:account_name
 func DeleteAdmin(c *gin.Context) {
 	account_name := c.Param("account_name")
