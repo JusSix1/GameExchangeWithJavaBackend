@@ -49,8 +49,8 @@ type Account struct {
 	ID_Account     uint    `valid:"-"`
 	User_ID        *uint   `valid:"-"`
 	User           User    `gorm:"references:id" valid:"-"`
-	Game_Account   string  `valid:"-"`
-	Game_Password  string  `valid:"-"`
+	Game_Account   string  `valid:"required~Game account is blank"`
+	Game_Password  string  `valid:"required~Game password is blank"`
 	Email          string  `valid:"-"`
 	Email_Password string  `valid:"-"`
 	Price          uint    `valid:"required~Price is blank"`
@@ -120,6 +120,8 @@ type ReqSeller struct {
 	Personal_Card_Front string `valid:"required~Front image is blank, image_valid~Please change the image"`
 	Personal_Card_Back  string `valid:"required~Back image is blank,image_valid~Please change the image"`
 	Is_Confirm          bool   `valid:"-"`
+	Note                string `valid:"required~Note is blank"`
+	Is_Reject           bool   `valid:"-"`
 }
 
 func init() {

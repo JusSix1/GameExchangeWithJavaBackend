@@ -81,8 +81,11 @@ func main() {
 			protectedUser.DELETE("/deletecomment", comment_controller.DeleteComment)
 
 			protectedUser.POST("/reqseller/:email", reqseller_controller.CreateReqSeller)
+			protectedUser.GET("/reqdata/:email", reqseller_controller.GetrReqData)
 			protectedUser.GET("/isseller/:email", reqseller_controller.GetIsSeller)
 			protectedUser.GET("/isreqseller/:email", reqseller_controller.GetIsReqSeller)
+			protectedUser.GET("/isrejectreqseller/:email", reqseller_controller.GetIsRejectReqSeller)
+			protectedUser.PATCH("/rerequest/:email", reqseller_controller.UpdateReReqUser)
 		}
 	}
 
@@ -98,8 +101,8 @@ func main() {
 			protectedAdmin.GET("/userforadmin/:profilename", user_controller.GetUser)
 
 			protectedAdmin.GET("/reqseller", reqseller_controller.ListReqSeller)
-			protectedAdmin.PATCH("/givepermission/:account_name", reqseller_controller.UpdateAccount)
-			protectedAdmin.DELETE("/rejectrequest", reqseller_controller.RejectRequest)
+			protectedAdmin.PATCH("/accesspermission/:account_name", reqseller_controller.UpdateAccessUser)
+			protectedAdmin.PATCH("/rejectreq/:account_name", reqseller_controller.UpdateRejectUser)
 
 			protectedAdmin.GET("/commentforadmin/:profile_name", comment_controller.GetComment)
 		}

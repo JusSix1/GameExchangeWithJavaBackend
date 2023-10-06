@@ -1,0 +1,13 @@
+.req-row {
+    background-color: #48abe0;
+    color: #fff;
+}
+
+.reject-row {
+    background-color: blueviolet;
+    color: #fff;
+}
+
+.note-content {
+    white-space: pre-line;
+}

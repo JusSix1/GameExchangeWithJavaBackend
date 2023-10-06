@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-restricted-globals */
 /* eslint-disable jsx-a11y/alt-text */
 import { Snackbar, Alert, Dialog, DialogTitle } from "@mui/material";
 import * as React from "react";
@@ -9,8 +11,13 @@ export default function Req_Seller_UI() {
   const [reqSeller, setReqSeller] = React.useState<
     Partial<ReqSellersInterface>
   >({});
+  const [reqSellerData, setReqSellerData] =
+    React.useState<ReqSellersInterface>();
 
   const [isUserReqSeller, setIsUserReqSeller] = React.useState(false);
+  const [isUserRejectReqSeller, setIsUserRejectReqSeller] =
+    React.useState(false);
+  const [isReSendAgain, setIsReSendAgain] = React.useState(false);
 
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -58,7 +65,34 @@ export default function Req_Seller_UI() {
     };
   };
 
-  const isReqSeller = async () => {
+  function handleButtonClickHome() {
+    window.location.href = "/";
+  }
+
+  function handleButtonClickSendAgain() {
+    setIsReSendAgain(true)
+  }
+
+  const GetMyReqData = async () => {
+    const apiUrl = ip_address() + "/reqdata/" + localStorage.getItem("email");
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then(async (res) => {
+        if (res.data) {
+          setReqSellerData(res.data);
+        }
+      });
+  };
+
+  const GetIsReqSeller = async () => {
     const apiUrl =
       ip_address() + "/isreqseller/" + localStorage.getItem("email");
     const requestOptions = {
@@ -76,6 +110,29 @@ export default function Req_Seller_UI() {
           setIsUserReqSeller(true);
         } else {
           setIsUserReqSeller(false);
+        }
+      });
+  };
+
+  const GetIsRejectReqSeller = async () => {
+    const apiUrl =
+      ip_address() + "/isrejectreqseller/" + localStorage.getItem("email");
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then(async (res) => {
+        if (res.data) {
+          setIsUserRejectReqSeller(true);
+          GetMyReqData();
+        } else {
+          setIsUserRejectReqSeller(false);
         }
       });
   };
@@ -102,9 +159,49 @@ export default function Req_Seller_UI() {
       .then((response) => response.json())
       .then(async (res) => {
         if (res.data) {
-          await isReqSeller();
+          await GetIsReqSeller();
+          await GetIsRejectReqSeller();
           document.body.scrollTop = 0;
           document.documentElement.scrollTop = 0;
+          setReqSeller({});
+          setSuccess(true);
+        } else {
+          setError(true);
+          setErrorMsg(" - " + res.error);
+        }
+      });
+
+    setDialogLoadOpen(false);
+  };
+
+  const ReReqSeller = async () => {
+    setDialogLoadOpen(true);
+
+    let data = {
+      ID: reqSellerData?.ID,
+      Personal_Card_Front: reqSeller.Personal_Card_Front,
+      Personal_Card_Back: reqSeller.Personal_Card_Back,
+    };
+
+    const apiUrl = ip_address() + "/rerequest/" + localStorage.getItem("email"); //ส่งขอการเพิ่ม
+    const requestOptions = {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then(async (res) => {
+        if (res.data) {
+          await GetIsReqSeller();
+          await GetIsRejectReqSeller();
+          document.body.scrollTop = 0;
+          document.documentElement.scrollTop = 0;
+          setReqSeller({});
           setSuccess(true);
         } else {
           setError(true);
@@ -118,13 +215,14 @@ export default function Req_Seller_UI() {
   React.useEffect(() => {
     const fetchData = async () => {
       setDialogLoadOpen(true);
-      await isReqSeller();
+      await GetIsReqSeller();
+      await GetIsRejectReqSeller();
       setDialogLoadOpen(false);
     };
     fetchData();
   }, []);
 
-  if (!isUserReqSeller) {
+  if (!isUserReqSeller && !isUserRejectReqSeller) {
     return (
       <>
         <Snackbar //ป้ายบันทึกสำเร็จ
@@ -226,7 +324,7 @@ export default function Req_Seller_UI() {
         </Dialog>
       </>
     );
-  } else {
+  } else if (isUserReqSeller && !isUserRejectReqSeller) {
     return (
       <>
         <div className="div-main">
@@ -242,7 +340,11 @@ export default function Req_Seller_UI() {
               <br />
               <br />
               <div>
-                <div className="custom-loader" />
+                <div className="div-btn">
+                  <button className="btn-send" onClick={handleButtonClickHome}>
+                    Back to Home
+                  </button>
+                </div>
               </div>
               <br />
               <br />
@@ -280,5 +382,100 @@ export default function Req_Seller_UI() {
         </Dialog>
       </>
     );
+  } else if (isUserRejectReqSeller) {
+    return (
+      <>
+        <div className="div-main">
+          <div>
+            <div className="div-header">
+              <h2>Your request was rejected.</h2>
+            </div>
+
+            <div className="div-description">
+              <h4>Note:</h4>
+              {reqSellerData?.Note}
+              <br />
+              <br />
+            </div>
+
+            {isReSendAgain && (
+              <>
+                <div className="div-upload">
+                  <div>Front:</div>
+                  {reqSeller.Personal_Card_Front && (
+                    <img
+                      src={`${reqSeller?.Personal_Card_Front}`}
+                      width="80%"
+                      height="100%"
+                    />
+                  )}
+                  <input type="file" onChange={handleImageChangeFront} />
+                </div>
+                <div className="div-upload">
+                  <div>
+                    <br />
+                    Back:
+                  </div>
+                  {reqSeller.Personal_Card_Back && (
+                    <img
+                      src={`${reqSeller?.Personal_Card_Back}`}
+                      width="80%"
+                      height="100%"
+                    />
+                  )}
+                  <input type="file" onChange={handleImageChangeBack} />
+                </div>
+              </>
+            )}
+          </div>
+
+          {isReSendAgain && (
+            <div className="div-btn">
+              <button className="btn-send" onClick={ReReqSeller}>
+                Send
+              </button>
+            </div>
+          )}
+
+          {!isReSendAgain && (
+            <div className="div-btn">
+              <button className="btn-send" onClick={handleButtonClickSendAgain}>
+                Send again
+              </button>
+            </div>
+          )}
+        </div>
+
+        <Dialog //Load
+          open={dialogLoadOpen}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div className="custom-loader" />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div>Loading...</div>
+            </div>
+          </DialogTitle>
+        </Dialog>
+      </>
+    );
+  } else {
+    window.location.href = "/";
+    return null;
   }
 }

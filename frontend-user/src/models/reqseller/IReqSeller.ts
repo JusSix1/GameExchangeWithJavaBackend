@@ -9,4 +9,6 @@ export interface ReqSellersInterface {
   Personal_Card_Front: string;
   Personal_Card_Back: string;
   Is_Confirm: boolean;
+  Note: string;
+  Is_Reject: boolean;
 }

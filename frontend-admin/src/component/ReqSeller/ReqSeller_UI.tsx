@@ -2,12 +2,14 @@
 import * as React from "react";
 import {
   Alert,
+  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Grid,
+  Paper,
   Snackbar,
 } from "@mui/material";
 
@@ -25,6 +27,7 @@ import {
 import { ReqSellersInterface } from "../../model/reqseller/IReqSeller";
 import moment from "moment";
 import Moment from "moment";
+import "./ReqSeller_UI.css";
 
 export default function List_ReqSeller_UI() {
   const [reqSeller, setReqSeller] = React.useState<ReqSellersInterface[]>([]);
@@ -35,6 +38,8 @@ export default function List_ReqSeller_UI() {
   >(null);
   const [headDialog, setHeadDialog] = React.useState<string>();
 
+  const [note, setNote] = React.useState<string>();
+
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
@@ -42,6 +47,9 @@ export default function List_ReqSeller_UI() {
   const [dialogCardOpen, setDialogCardOpen] = React.useState(false);
   const [dialogGiveOpen, setDialogGiveOpen] = React.useState(false);
   const [dialogRejectOpen, setDialogRejectOpen] = React.useState(false);
+  const [dialogNoteOpen, setDialogNoteOpen] = React.useState(false);
+
+  const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
   Moment.locale("th");
 
@@ -73,7 +81,7 @@ export default function List_ReqSeller_UI() {
           href={`/UserProfile/${String(params?.row.User.Profile_Name)}`}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ color: 'white' }}
+          style={{ color: "white" }}
         >
           {String(params.row.User.Profile_Name)}
         </a>
@@ -113,24 +121,40 @@ export default function List_ReqSeller_UI() {
     },
     {
       field: "Admin",
-      headerName: "Grantor",
+      headerName: "Moder",
       width: 200,
       renderCell: (params) => params.row.Admin.Admin_Name,
     },
     {
-      field: "Give Permission",
-      headerName: "Give Permission",
+      field: "Status",
+      headerName: "Status",
+      width: 200,
+      renderCell: (params) => (
+        <>
+          {params.row.Is_Confirm ? (
+            <p>Access</p>
+          ) : params.row.Is_Reject ? (
+            <p>Reject</p>
+          ) : !params.row.Is_Reject && !params.row.Is_Reject ? (
+            <p>New Request</p>
+          ) : null}
+        </>
+      ),
+    },
+    {
+      field: "Permission",
+      headerName: "Permission",
       width: 150,
       renderCell: (params) => (
         <Button
-          disabled={params.row.Is_Confirm}
+          disabled={params.row.Is_Confirm || params.row.Is_Reject}
           size="small"
           variant="contained"
           color="primary"
           style={{ color: "#000" }}
           onClick={() => handleGiveButtonClick(params.row.ID)}
         >
-          Give
+          Access
         </Button>
       ),
     },
@@ -140,7 +164,7 @@ export default function List_ReqSeller_UI() {
       width: 150,
       renderCell: (params) => (
         <Button
-          disabled={params.row.Is_Confirm}
+          disabled={params.row.Is_Reject}
           size="small"
           variant="contained"
           color="error"
@@ -150,6 +174,11 @@ export default function List_ReqSeller_UI() {
           Reject
         </Button>
       ),
+    },
+    {
+      field: "Note",
+      headerName: "Note",
+      width: 200,
     },
   ];
 
@@ -228,6 +257,15 @@ export default function List_ReqSeller_UI() {
     setDialogRejectOpen(false);
   };
 
+  const handleDialogNoteClickClose = () => {
+    setNote(undefined);
+    setDialogNoteOpen(false);
+  };
+
+  const textAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNote(event.target.value);
+  };
+
   const getReqSeller = async () => {
     const apiUrl = ip_address() + "/reqseller";
     const requestOptions = {
@@ -243,16 +281,17 @@ export default function List_ReqSeller_UI() {
       .then((res) => {
         if (res.data) {
           setReqSeller(res.data);
+          console.log(res.data);
         }
       });
   };
 
-  const GivePermission = () => {
+  const AccessPermission = () => {
     let data = {
       ID: reqSellerID,
     };
     const apiUrl =
-      ip_address() + "/givepermission/" + localStorage.getItem("account_name"); //ส่งขอการแก้ไข
+      ip_address() + "/accesspermission/" + localStorage.getItem("account_name"); //ส่งขอการแก้ไข
     const requestOptions = {
       method: "PATCH",
       headers: {
@@ -281,11 +320,13 @@ export default function List_ReqSeller_UI() {
 
     let data = {
       ID: reqSellerID,
+      Note: note,
     };
 
-    const apiUrl = ip_address() + "/rejectrequest"; //ส่งขอการแก้ไข
+    const apiUrl =
+      ip_address() + "/rejectreq/" + localStorage.getItem("account_name"); //ส่งขอการแก้ไข
     const requestOptions = {
-      method: "DELETE",
+      method: "PATCH",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
         "Content-Type": "application/json",
@@ -308,14 +349,23 @@ export default function List_ReqSeller_UI() {
     setDialogLoadOpen(false);
   };
 
+  const [count, setCount] = React.useState<number>(0);
   React.useEffect(() => {
-    const fetchData = async () => {
-      setDialogLoadOpen(true);
-      await getReqSeller();
-      setDialogLoadOpen(false);
-    };
-    fetchData();
-  }, []);
+    if (count === 0) {
+      const fetchData = async () => {
+        setDialogLoadOpen(true);
+        await getReqSeller();
+        setDialogLoadOpen(false);
+      };
+      fetchData();
+      setCount(1);
+    }
+    if (textareaRef && textareaRef.current) {
+      textareaRef.current.style.height = "0px";
+      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = scrollHeight + "px";
+    }
+  }, [count, note]);
 
   return (
     <>
@@ -352,6 +402,7 @@ export default function List_ReqSeller_UI() {
             getRowId={(row) => row.ID}
             slots={{ toolbar: CustomToolbar }}
             columns={columns}
+            disableRowSelectionOnClick
             slotProps={{
               filterPanel: {
                 filterFormProps: {
@@ -359,6 +410,21 @@ export default function List_ReqSeller_UI() {
                 },
                 getColumnForNewFilter,
               },
+            }}
+            onCellClick={(params) => {
+              if (params.field === "Note") {
+                const preNote = params?.value;
+                setNote(String(preNote));
+                setDialogNoteOpen(true);
+              }
+            }}
+            getRowClassName={(params) => {
+              if (!params.row.Is_Confirm && params.row.Is_Reject) {
+                return "reject-row";
+              } else if (!params.row.Is_Confirm && !params.row.Is_Reject) {
+                return "req-row";
+              }
+              return "";
             }}
           />
         </div>
@@ -398,12 +464,12 @@ export default function List_ReqSeller_UI() {
           </Button>
           <Button
             size="small"
-            onClick={GivePermission}
+            onClick={AccessPermission}
             sx={{ color: "#00ADB5" }}
             color="primary"
             autoFocus
           >
-            Give
+            Access
           </Button>
         </DialogActions>
       </Dialog>
@@ -417,6 +483,31 @@ export default function List_ReqSeller_UI() {
         maxWidth="sm"
       >
         <DialogTitle id="alert-dialog-title">{"Reject request"}</DialogTitle>
+        <DialogContent>
+          <Box>
+            <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+              <Grid container>
+                <p>Note</p>
+                <textarea
+                  ref={textareaRef}
+                  style={{
+                    padding: 5,
+                    marginTop: 10,
+                    width: "98%",
+                    height: "100%",
+                    display: "block",
+                    resize: "none",
+                    backgroundColor: "#F",
+                    fontSize: 16,
+                    borderRadius: "5px",
+                  }}
+                  onChange={textAreaChange}
+                  value={note}
+                ></textarea>
+              </Grid>
+            </Paper>
+          </Box>
+        </DialogContent>
         <DialogActions>
           <Button
             size="small"
@@ -433,6 +524,35 @@ export default function List_ReqSeller_UI() {
             autoFocus
           >
             Reject
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog //Note
+        open={dialogNoteOpen}
+        onClose={handleDialogNoteClickClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth={true}
+        maxWidth="sm"
+      >
+        <DialogTitle id="alert-dialog-title">{"Note"}</DialogTitle>
+        <DialogContent>
+          <Box>
+            <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+              <Grid container>
+                <div className="note-content">{note}</div>
+              </Grid>
+            </Paper>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            size="small"
+            onClick={handleDialogNoteClickClose}
+            color="inherit"
+          >
+            close
           </Button>
         </DialogActions>
       </Dialog>
