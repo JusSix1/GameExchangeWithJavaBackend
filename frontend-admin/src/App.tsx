@@ -5,8 +5,9 @@ import SignIn_Admin from './component/SignIn/SignIn_Admin_UI';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AdminFullAppBar from './component/FullAppBar/AdminFullAppBar';
 import List_ReqSeller_UI from './component/ReqSeller/ReqSeller_UI';
-import User_Profile_For_Admin from './component/user/User_Profile_UI';
+import User_Profile_For_Admin from './component/User/User_Profile_UI';
 import Manage_Admin_UI from './component/ManageAdmin/ManageAdmin_UI';
+import Game_UI from './component/Game/Game_UI';
 
 export default function App() {
   const [token, setToken] = React.useState<String>("");
@@ -17,6 +18,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<List_ReqSeller_UI />} />
           <Route path="/UserProfile/:profile_name" element={<User_Profile_For_Admin />}/>
+          <Route path='/Game' element={<Game_UI />} />
           <Route path='/ManageAdmin' element={<Manage_Admin_UI />} />
         </Routes>
       </>

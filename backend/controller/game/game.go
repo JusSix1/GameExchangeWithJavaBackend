@@ -41,7 +41,7 @@ func CreateGame(c *gin.Context) {
 func ListGame(c *gin.Context) {
 	var games []entity.Game
 
-	if err := entity.DB().Raw("SELECT * FROM games ORDER BY name").Scan(&games).Error; err != nil {
+	if err := entity.DB().Raw("SELECT * FROM games").Scan(&games).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -49,14 +49,46 @@ func ListGame(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": games})
 }
 
-// GET /newgame
-func NewGame(c *gin.Context) {
-	var games []entity.Game
+// PATCH /game
+func UpdateGame(c *gin.Context) {
+	var game entity.Game
 
-	if err := entity.DB().Raw("SELECT * FROM games ORDER BY id DESC LIMIT 1").Scan(&games).Error; err != nil {
+	if err := c.ShouldBindJSON(&game); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": games})
+	updateGame := entity.Game{
+		Name: game.Name,
+	}
+
+	if _, err := govalidator.ValidateStruct(updateGame); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := entity.DB().Where("id = ?", game.ID).Updates(&updateGame).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": game})
+}
+
+// DELETE /game
+func DeleteGame(c *gin.Context) {
+
+	var game entity.Game
+
+	if err := c.ShouldBindJSON(&game); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if tx := entity.DB().Exec("DELETE FROM games WHERE id = ?", game.ID); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Game not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": game})
 }

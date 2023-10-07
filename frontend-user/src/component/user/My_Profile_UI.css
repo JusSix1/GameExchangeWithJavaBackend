@@ -259,7 +259,6 @@
 
 /* delete btn */
 .delete-container {
-	display: flex;
 	justify-content: end;
 	align-items: end;
 	margin-top: 1rem;

@@ -67,7 +67,6 @@ export default function All_My_Account_UI() {
   const [imageString, setImageString] = React.useState<
     string | ArrayBuffer | null
   >(null);
-  const [newGame, setNewGame] = React.useState<string>("");
   const [description, setDescription] = React.useState<String>("");
   const [buttonDialogAccount, setButtonDialogAccount] =
     React.useState<String>("");
@@ -79,7 +78,6 @@ export default function All_My_Account_UI() {
   const [dialogCreateOpen, setDialogCreateOpen] = React.useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = React.useState(false);
   const [dialogPostOpen, setDialogPostOpen] = React.useState(false);
-  const [dialogAddGameOpen, setDialogAddGameOpen] = React.useState(false);
 
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>([]);
@@ -219,7 +217,6 @@ export default function All_My_Account_UI() {
 
   const handleDialogCreateClickClose = () => {
     setDialogCreateOpen(false);
-    setNewGame("");
     setImportAccount({});
   };
 
@@ -243,14 +240,6 @@ export default function All_My_Account_UI() {
   const handleDialogEditClickOpen = () => {
     setDialogCreateOpen(true);
     setButtonDialogAccount("Summit");
-  };
-
-  const handleDialogAddGameClickOpen = () => {
-    setDialogAddGameOpen(true);
-  };
-
-  const handleDialogAddGameClickClose = () => {
-    setDialogAddGameOpen(false);
   };
 
   const handleImageChange = (event: any) => {
@@ -324,46 +313,6 @@ export default function All_My_Account_UI() {
           setIsSeller(res.data);
         }
       });
-  };
-
-  const CreateGame = async () => {
-    setDialogLoadOpen(true);
-
-    if (newGame !== "") {
-      let data = {
-        //ประกาศก้อนข้อมูล
-        Name: newGame,
-      };
-
-      const apiUrl = ip_address() + "/game"; //ส่งขอการเพิ่ม
-      const requestOptions = {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      };
-
-      await fetch(apiUrl, requestOptions)
-        .then((response) => response.json())
-        .then(async (res) => {
-          if (res.data) {
-            setSuccess(true);
-            getGame();
-            handleDialogAddGameClickClose();
-            setNewGame("");
-          } else {
-            setError(true);
-            setErrorMsg(" - " + res.error);
-          }
-        });
-    } else {
-      setError(true);
-      setErrorMsg(" - Enter name");
-    }
-
-    setDialogLoadOpen(false);
   };
 
   const CreateAccount = async () => {
@@ -644,7 +593,7 @@ export default function All_My_Account_UI() {
                         <Grid margin={1} item xs={5}>
                           <Autocomplete
                             id="game-autocomplete"
-                            options={[{ ID: -1, Name: "Other..." }, ...game]}
+                            options={game}
                             fullWidth
                             size="small"
                             value={
@@ -656,15 +605,10 @@ export default function All_My_Account_UI() {
                                 : null
                             }
                             onChange={(event: any, value) => {
-                              if (value && value.ID === -1) {
-                                handleDialogAddGameClickOpen();
-                              } else {
-                                setImportAccount({
-                                  ...importAccount,
-                                  Game_ID: value?.ID,
-                                });
-                                setNewGame("");
-                              }
+                              setImportAccount({
+                                ...importAccount,
+                                Game_ID: value?.ID,
+                              });
                             }}
                             getOptionLabel={(option: any) => `${option.Name}`}
                             renderInput={(params: any) => {
@@ -901,47 +845,6 @@ export default function All_My_Account_UI() {
             </DialogActions>
           </Dialog>
 
-          <Dialog //Add game
-            open={dialogAddGameOpen}
-            onClose={handleDialogAddGameClickClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-            fullWidth={true}
-          >
-            <DialogTitle id="alert-dialog-title">{"Add Game"}</DialogTitle>
-
-            <DialogContent>
-              <Box>
-                <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
-                  <Grid container>
-                    <TextField
-                      fullWidth
-                      id="new_game"
-                      label="New game"
-                      type="string"
-                      variant="outlined"
-                      size="small"
-                      value={newGame}
-                      onChange={(event) => setNewGame(event.target.value)}
-                    />
-                  </Grid>
-                </Paper>
-              </Box>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                size="small"
-                onClick={handleDialogAddGameClickClose}
-                color="error"
-              >
-                Cancel
-              </Button>
-              <Button size="small" onClick={CreateGame} color="info" autoFocus>
-                Add
-              </Button>
-            </DialogActions>
-          </Dialog>
-
           <Dialog //Load
             open={dialogLoadOpen}
             aria-labelledby="alert-dialog-title"
@@ -972,6 +875,6 @@ export default function All_My_Account_UI() {
       </>
     );
   } else {
-    return (<Req_Seller_UI/>)
+    return <Req_Seller_UI />;
   }
 }

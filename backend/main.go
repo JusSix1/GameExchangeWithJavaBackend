@@ -50,9 +50,7 @@ func main() {
 			protectedUser.PATCH("/account", account_controller.UpdateAccount)
 			protectedUser.DELETE("/account", account_controller.DeleteAccount)
 
-			protectedUser.POST("/game", game_controller.CreateGame)
 			protectedUser.GET("/games", game_controller.ListGame)
-			protectedUser.GET("/newgame", game_controller.NewGame)
 
 			protectedUser.POST("/post/:email", post_controller.CreatePost)
 			protectedUser.GET("/posts", post_controller.ListPost)
@@ -105,6 +103,11 @@ func main() {
 			protectedAdmin.PATCH("/rejectreq/:account_name", reqseller_controller.UpdateRejectUser)
 
 			protectedAdmin.GET("/commentforadmin/:profile_name", comment_controller.GetComment)
+
+			protectedAdmin.POST("/game", game_controller.CreateGame)
+			protectedAdmin.GET("/listgame", game_controller.ListGame)
+			protectedAdmin.PATCH("/game", game_controller.UpdateGame)
+			protectedAdmin.DELETE("/game", game_controller.DeleteGame)
 		}
 	}
 

@@ -8,12 +8,12 @@ import ListItemText from '@mui/material/ListItemText';
 import Drawer from '@mui/material/Drawer';
 import "./AdminFullAppBar.css"
 
-// User Icon
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import GamepadIcon from '@mui/icons-material/Gamepad';
 
 import { Link as RouterLink } from "react-router-dom";
 import { Avatar } from '@mui/material';
@@ -31,6 +31,11 @@ function UserFullAppBar() {
         <ListItem button component={RouterLink} to="/">
           <PersonAddIcon />
           <ListItemText primary="Request Seller" sx={{ paddingLeft: 1 }} />
+        </ListItem>
+
+        <ListItem button component={RouterLink} to="/Game">
+          <GamepadIcon />
+          <ListItemText primary="Manage Game" sx={{ paddingLeft: 1 }} />
         </ListItem>
 
         <ListItem button component={RouterLink} to="/ManageAdmin">

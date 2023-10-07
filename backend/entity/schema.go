@@ -40,7 +40,7 @@ type User struct {
 
 type Game struct {
 	gorm.Model
-	Name    string
+	Name    string    `gorm:"uniqueIndex" valid:"required~game name is blank"`
 	Account []Account `gorm:"foreignKey:Game_ID"`
 }
 
