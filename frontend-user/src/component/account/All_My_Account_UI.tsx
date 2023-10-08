@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react/jsx-pascal-case */
 /* eslint-disable jsx-a11y/alt-text */
 import * as React from "react";
@@ -63,6 +64,7 @@ export default function All_My_Account_UI() {
   >({});
   const [post, setPost] = React.useState<Partial<PostsInterface>>({});
   const [game, setGame] = React.useState<GamesInterface[]>([]);
+  const [newName, setNewName] = React.useState<string>();
 
   const [imageString, setImageString] = React.useState<
     string | ArrayBuffer | null
@@ -78,6 +80,7 @@ export default function All_My_Account_UI() {
   const [dialogCreateOpen, setDialogCreateOpen] = React.useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = React.useState(false);
   const [dialogPostOpen, setDialogPostOpen] = React.useState(false);
+  const [dialogNewGameOpen, setDialogNewGameOpen] = React.useState(false);
 
   const [rowSelectionModel, setRowSelectionModel] =
     React.useState<GridRowSelectionModel>([]);
@@ -235,6 +238,15 @@ export default function All_My_Account_UI() {
   const handleDialogPostClickClose = () => {
     setDialogPostOpen(false);
     setImageString(null);
+  };
+
+  const handleDialogNewGameClickOpen = () => {
+    setDialogNewGameOpen(true);
+  };
+
+  const handleDialogNewGameClickClose = () => {
+    setDialogNewGameOpen(false);
+    setNewName(undefined);
   };
 
   const handleDialogEditClickOpen = () => {
@@ -475,6 +487,38 @@ export default function All_My_Account_UI() {
     setDialogLoadOpen(false);
   };
 
+  const CreateReqNewGame = async () => {
+    setDialogLoadOpen(true);
+
+    let data = {
+      Name: newName,
+    };
+
+    const apiUrl = ip_address() + "/reqgame/" + localStorage.getItem("email"); //ส่งขอการเพิ่ม
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then(async (res) => {
+        if (res.data) {
+          setSuccess(true);
+          getGame();
+          handleDialogNewGameClickClose();
+        } else {
+          setError(true);
+          setErrorMsg(" - " + res.error);
+        }
+      });
+    setDialogLoadOpen(false);
+  };
+
   const [count, setCount] = React.useState<number>(0);
 
   React.useEffect(() => {
@@ -633,6 +677,9 @@ export default function All_My_Account_UI() {
                             }}
                             isOptionEqualToValue={isOptionEqualToValue}
                           />
+                          <a onClick={handleDialogNewGameClickOpen}>
+                            Don't have a game name?
+                          </a>
                         </Grid>
                       </Grid>
                     </Grid>
@@ -841,6 +888,53 @@ export default function All_My_Account_UI() {
               </Button>
               <Button size="small" onClick={CreatePost} color="info" autoFocus>
                 Post
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog //new game
+            open={dialogNewGameOpen}
+            onClose={handleDialogNewGameClickClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            maxWidth="xl"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Request new game"}
+            </DialogTitle>
+
+            <DialogContent>
+              <Box>
+                <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+                  <Grid container>
+                    <Grid item xs={12}>
+                      <p>Admin will check before adding this list.</p>
+                    </Grid>
+                    <Grid item xs={12} sx={{ marginX: 2 }}>
+                      <TextField
+                        fullWidth
+                        id="new-game-name"
+                        label="Name"
+                        type="string"
+                        variant="outlined"
+                        value={newName}
+                        onChange={(event) => setNewName(event.target.value)}
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                size="small"
+                onClick={handleDialogNewGameClickClose}
+                color="error"
+              >
+                Cancel
+              </Button>
+              <Button size="small" onClick={CreateReqNewGame} color="info" autoFocus>
+                Send
               </Button>
             </DialogActions>
           </Dialog>

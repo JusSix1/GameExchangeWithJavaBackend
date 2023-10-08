@@ -36,12 +36,20 @@ type User struct {
 	Commenter       []Comment   `gorm:"foreignKey:Commenter_ID"`
 	Victim          []Comment   `gorm:"foreignKey:Victim_ID"`
 	ReqSeller       []ReqSeller `gorm:"foreignKey:User_ID"`
+	ReqGame         []ReqGame   `gorm:"foreignKey:User_ID"`
 }
 
 type Game struct {
 	gorm.Model
 	Name    string    `gorm:"uniqueIndex" valid:"required~game name is blank"`
 	Account []Account `gorm:"foreignKey:Game_ID"`
+}
+
+type ReqGame struct {
+	gorm.Model
+	User_ID *uint  `valid:"-"`
+	User    User   `gorm:"references:id" valid:"-"`
+	Name    string `valid:"required~game name is blank"`
 }
 
 type Account struct {

@@ -27,6 +27,7 @@ import ip_address from "../ip";
 import "./Game_UI.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { ReqGamesInterface } from "../../model/reqgame/reqgame";
 
 const darkTheme = createTheme({
   palette: {
@@ -36,6 +37,7 @@ const darkTheme = createTheme({
 
 export default function Game_UI() {
   const [game, setGame] = React.useState<GamesInterface[]>([]);
+  const [reqGame, setReqGame] = React.useState<ReqGamesInterface[]>([]);
   const [newGame, setNewGame] = React.useState<Partial<GamesInterface>>({});
   const [gameID, setGameID] = React.useState<Number>();
   const [name, setName] = React.useState<string>();
@@ -47,7 +49,7 @@ export default function Game_UI() {
   const [dialogEditOpen, setDialogEditOpen] = React.useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = React.useState(false);
 
-  function CustomToolbar() {
+  function CustomToolbarListGame() {
     return (
       <GridToolbarContainer>
         <GridToolbarColumnsButton sx={{ color: "#00ADB5" }} />
@@ -57,7 +59,7 @@ export default function Game_UI() {
     );
   }
 
-  const columns: GridColDef[] = [
+  const columnsListGame: GridColDef[] = [
     { field: "ID", headerName: "ID", flex: 1 },
     {
       field: "Name",
@@ -128,6 +130,31 @@ export default function Game_UI() {
     return columnForNewFilter?.field ?? null;
   };
 
+  const columnsListReqGame: GridColDef[] = [
+    { field: "ID", headerName: "ID", flex: 1 },
+    {
+      field: "Name",
+      headerName: "Game name",
+      flex: 2,
+      renderCell: (params) => params.row.Admin_Name,
+    },
+    {
+      field: "User",
+      headerName: "Requester",
+      flex: 2,
+      renderCell: (params) => (
+        <a
+          href={`/UserProfile/${String(params?.row.User.Profile_Name)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "white" }}
+        >
+          {String(params.row.User.Profile_Name)}
+        </a>
+      ),
+    },
+  ];
+
   const handleClose = (
     event?: React.SyntheticEvent | Event,
     reason?: string
@@ -177,6 +204,26 @@ export default function Game_UI() {
       .then((res) => {
         if (res.data) {
           setGame(res.data);
+        }
+      });
+  };
+
+  const getListReqGame = async () => {
+    const apiUrl = ip_address() + "/listreqgames";
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.data) {
+          setReqGame(res.data);
+          console.log(res.data);
         }
       });
   };
@@ -290,6 +337,7 @@ export default function Game_UI() {
     const fetchData = async () => {
       setDialogLoadOpen(true);
       await getListGame();
+      await getListReqGame();
       setDialogLoadOpen(false);
     };
     fetchData();
@@ -321,12 +369,16 @@ export default function Game_UI() {
 
       <div className="div-main">
         <div className="div-game-datagrid">
+          <div className="div-title-datagrid">
+            <h2>List Game</h2>
+          </div>
           <DataGrid
             style={{ background: "#3a3b3c", color: "white" }}
             rows={game}
             getRowId={(row) => row.ID}
-            slots={{ toolbar: CustomToolbar }}
-            columns={columns}
+            slots={{ toolbar: CustomToolbarListGame }}
+            columns={columnsListGame}
+            disableRowSelectionOnClick
             slotProps={{
               filterPanel: {
                 filterFormProps: {
@@ -338,37 +390,49 @@ export default function Game_UI() {
           />
         </div>
 
-        <div className="div-newgame">
-          <div className="div-newgame-contant">
-            <h3>Add new game</h3>
-            <ThemeProvider theme={darkTheme}>
-              <CssBaseline />
-              <TextField
-                fullWidth
-                id="new_game_name"
-                label="Game Name"
-                type="string"
-                variant="outlined"
-                value={newGame.Name}
-                onChange={(event) =>
-                  setNewGame({
-                    ...newGame,
-                    Name: event.target.value,
-                  })
-                }
-              />
-            </ThemeProvider>
-            <div className="div-newgame-contant-btn">
-              <Button
-                size="small"
-                variant="contained"
-                color="primary"
-                onClick={CreateGame}
-              >
-                Add
-              </Button>
+        <div className="div-newgame-detagrid">
+          <div className="div-title-datagrid">
+            <h2>Request New Game</h2>
+          </div>
+          <div className="div-addnewgame">
+            <div className="div-newgame-contant">
+              <h3>Add new game</h3>
+              <ThemeProvider theme={darkTheme}>
+                <CssBaseline />
+                <TextField
+                  fullWidth
+                  id="new_game_name"
+                  label="Game Name"
+                  type="string"
+                  variant="outlined"
+                  value={newGame.Name}
+                  onChange={(event) =>
+                    setNewGame({
+                      ...newGame,
+                      Name: event.target.value,
+                    })
+                  }
+                />
+              </ThemeProvider>
+              <div className="div-newgame-contant-btn">
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  onClick={CreateGame}
+                >
+                  Add
+                </Button>
+              </div>
             </div>
           </div>
+          <DataGrid
+            style={{ background: "#3a3b3c", color: "white" }}
+            rows={reqGame}
+            getRowId={(row) => row.ID}
+            columns={columnsListReqGame}
+            disableRowSelectionOnClick
+          />
         </div>
       </div>
 

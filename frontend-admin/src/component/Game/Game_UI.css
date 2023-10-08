@@ -1,52 +1,40 @@
-@media (min-width: 900px) {
+@media (min-width: 1050px) {
     .div-main {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
         align-items: start;
-        width: 100%;
         margin-top: 1rem;
     }
 
     .div-game-datagrid {
-        height: 90vh;
-        padding-top: 1rem;
-        min-width: 70%;
+        height: 80vh;
+        margin: 0 1rem 1rem 1rem;
+        min-width: 60%;
     }
 
-    .div-newgame {
-        border: 1px solid #727272;
-        border-radius: 10px;
-        margin: 1rem;
-        background-color: #3a3b3c;
-        box-shadow: 0px 0px 20px 10px #48abe0;
-        animation: shadows-post 10s infinite;
-        width: 100%;
-        /* min-width: 50%; */
+    .div-newgame-detagrid {
+        height: 58.3vh;
+        min-width: 37%;
     }
 }
 
-@media (max-width: 899px) {
+@media (max-width: 1049px) {
     .div-main {
         display: flex;
         flex-direction: column;
-        width: 100%;
         margin-top: 1rem;
     }
 
     .div-game-datagrid {
         height: 90vh;
-        width: 100%;
-        padding-top: 1rem;
+        margin: 1rem;
     }
 
-    .div-newgame {
-        border: 1px solid #727272;
-        border-radius: 10px;
-        margin: 1rem;
-        background-color: #3a3b3c;
-        box-shadow: 0px 0px 20px 10px #48abe0;
-        animation: shadows-post 10s infinite;
+    .div-newgame-detagrid {
+        height: 80vh;
+        min-width: 100%;
+        margin: 5rem 1rem 0 1rem;
     }
 }
 
@@ -65,6 +53,13 @@
     }
 }
 
+.div-title-datagrid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+
 .div-newgame-contant {
     display: flex;
     flex-direction: column;
@@ -72,8 +67,21 @@
     color: #fff;
 }
 
+.div-addnewgame {
+    border: 1px solid #727272;
+    border-radius: 10px;
+    background-color: #3a3b3c;
+    box-shadow: 0px 0px 20px 10px #48abe0;
+    animation: shadows-post 10s infinite;
+    margin-bottom: 1rem;
+}
+
 .div-newgame-contant-btn {
     display: flex;
     justify-content: end;
+    margin-top: 1rem;
+}
+
+.div-reqgame-datagrid {
     margin-top: 1rem;
 }

@@ -8,6 +8,7 @@ import (
 	login_controller "github.com/JusSix1/GameExchange/controller/login"
 	order_controller "github.com/JusSix1/GameExchange/controller/order"
 	post_controller "github.com/JusSix1/GameExchange/controller/post"
+	reqgame_controller "github.com/JusSix1/GameExchange/controller/reqgame"
 	reqseller_controller "github.com/JusSix1/GameExchange/controller/reqseller"
 	revenue_controller "github.com/JusSix1/GameExchange/controller/revenue"
 	user_controller "github.com/JusSix1/GameExchange/controller/user"
@@ -51,6 +52,8 @@ func main() {
 			protectedUser.DELETE("/account", account_controller.DeleteAccount)
 
 			protectedUser.GET("/games", game_controller.ListGame)
+
+			protectedUser.POST("/reqgame/:email", reqgame_controller.CreateReqGame)
 
 			protectedUser.POST("/post/:email", post_controller.CreatePost)
 			protectedUser.GET("/posts", post_controller.ListPost)
@@ -108,6 +111,8 @@ func main() {
 			protectedAdmin.GET("/listgame", game_controller.ListGame)
 			protectedAdmin.PATCH("/game", game_controller.UpdateGame)
 			protectedAdmin.DELETE("/game", game_controller.DeleteGame)
+
+			protectedAdmin.GET("/listreqgames", reqgame_controller.ListReqGame)
 		}
 	}
 

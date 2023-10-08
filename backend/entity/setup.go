@@ -38,6 +38,7 @@ func SetupDatabase() {
 		&Comment{},
 		&Admin{},
 		&ReqSeller{},
+		&ReqGame{},
 	)
 
 	db = database
