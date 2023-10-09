@@ -113,6 +113,7 @@ func main() {
 			protectedAdmin.DELETE("/game", game_controller.DeleteGame)
 
 			protectedAdmin.GET("/listreqgames", reqgame_controller.ListReqGame)
+			protectedAdmin.PATCH("/reqgame", reqgame_controller.UpdateReqGame)
 		}
 	}
 

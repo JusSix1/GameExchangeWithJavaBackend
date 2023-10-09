@@ -41,6 +41,7 @@ export default function Game_UI() {
   const [newGame, setNewGame] = React.useState<Partial<GamesInterface>>({});
   const [gameID, setGameID] = React.useState<Number>();
   const [name, setName] = React.useState<string>();
+  const [reqGameID, setReqGameID] = React.useState<Number>();
 
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -48,6 +49,7 @@ export default function Game_UI() {
   const [dialogLoadOpen, setDialogLoadOpen] = React.useState(false);
   const [dialogEditOpen, setDialogEditOpen] = React.useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = React.useState(false);
+  const [dialogCheckOpen, setDialogCheckOpen] = React.useState(false);
 
   function CustomToolbarListGame() {
     return (
@@ -153,6 +155,22 @@ export default function Game_UI() {
         </a>
       ),
     },
+    {
+      field: "Check",
+      headerName: "Check",
+      flex: 1,
+      renderCell: (params) => (
+        <Button
+          size="small"
+          variant="contained"
+          color="primary"
+          style={{ color: "#fff" }}
+          onClick={() => handleCheckButtonClick(params.row.ID)}
+        >
+          Check
+        </Button>
+      ),
+    },
   ];
 
   const handleClose = (
@@ -178,6 +196,11 @@ export default function Game_UI() {
     setDialogDeleteOpen(true);
   };
 
+  const handleCheckButtonClick = (id: number) => {
+    setReqGameID(id);
+    setDialogCheckOpen(true);
+  };
+
   const handleDialogEditClickClose = () => {
     setGameID(undefined);
     setName("");
@@ -187,6 +210,11 @@ export default function Game_UI() {
   const handleDialogDeleteClickClose = () => {
     setGameID(undefined);
     setDialogDeleteOpen(false);
+  };
+
+  const handleDialogCheckClickClose = () => {
+    setReqGameID(undefined);
+    setDialogCheckOpen(false);
   };
 
   const getListGame = async () => {
@@ -324,6 +352,39 @@ export default function Game_UI() {
           setSuccess(true);
           getListGame();
           handleDialogEditClickClose();
+        } else {
+          setError(true);
+          setErrorMsg(" - " + res.error);
+        }
+      });
+
+    setDialogLoadOpen(false);
+  };
+
+  const UpdateReqGame = async () => {
+    setDialogLoadOpen(true);
+
+    let data = {
+      ID: reqGameID,
+    };
+
+    const apiUrl = ip_address() + "/reqgame";
+    const requestOptions = {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then(async (res) => {
+        if (res.data) {
+          setSuccess(true);
+          getListReqGame();
+          handleDialogCheckClickClose();
         } else {
           setError(true);
           setErrorMsg(" - " + res.error);
@@ -506,6 +567,30 @@ export default function Game_UI() {
             autoFocus
           >
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog //Check
+        open={dialogCheckOpen}
+        onClose={handleDialogCheckClickClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth={true}
+        maxWidth="sm"
+      >
+        <DialogTitle id="alert-dialog-title">{"Have you finished checking?"}</DialogTitle>
+        <DialogActions>
+          <Button size="small" color="inherit" onClick={handleDialogCheckClickClose}>
+            Cancel
+          </Button>
+          <Button
+            size="small"
+            onClick={UpdateReqGame}
+            color="primary"
+            autoFocus
+          >
+            Check
           </Button>
         </DialogActions>
       </Dialog>

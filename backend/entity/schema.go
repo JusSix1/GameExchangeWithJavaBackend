@@ -47,9 +47,10 @@ type Game struct {
 
 type ReqGame struct {
 	gorm.Model
-	User_ID *uint  `valid:"-"`
-	User    User   `gorm:"references:id" valid:"-"`
-	Name    string `valid:"required~game name is blank"`
+	User_ID  *uint  `valid:"-"`
+	User     User   `gorm:"references:id" valid:"-"`
+	Name     string `valid:"required~game name is blank"`
+	Is_Check bool   `valid:"-"`
 }
 
 type Account struct {

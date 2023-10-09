@@ -54,7 +54,28 @@ func ListReqGame(c *gin.Context) {
 
 	if err := entity.DB().Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Select("id", "Profile_Name").Find(&user)
-	}).Raw("SELECT * FROM req_games ORDER BY id DESC").Find(&reqgame).Error; err != nil {
+	}).Raw("SELECT * FROM req_games WHERE is_check = false ORDER BY id DESC").Find(&reqgame).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": reqgame})
+}
+
+// PATCH /reqgames
+func UpdateReqGame(c *gin.Context) {
+	var reqgame entity.ReqGame
+
+	if err := c.ShouldBindJSON(&reqgame); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updateReqGame := entity.ReqGame{
+		Is_Check: true,
+	}
+
+	if err := entity.DB().Where("id = ?", reqgame.ID).Updates(&updateReqGame).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
