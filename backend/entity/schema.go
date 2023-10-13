@@ -34,7 +34,6 @@ type User struct {
 	Gender          Gender      `gorm:"references:id" valid:"-"`
 	Account         []Account   `gorm:"foreignKey:User_ID"`
 	Order           []Order     `gorm:"foreignKey:User_ID"`
-	Revenue         []Revenue   `gorm:"foreignKey:User_ID"`
 	Post            []Post      `gorm:"foreignKey:User_ID"`
 	Commenter       []Comment   `gorm:"foreignKey:Commenter_ID"`
 	Victim          []Comment   `gorm:"foreignKey:Victim_ID"`
@@ -44,7 +43,7 @@ type User struct {
 
 type Game struct {
 	gorm.Model
-	Name    string    `gorm:"uniqueIndex" valid:"required~game name is blank"`
+	Name    string    `gorm:"uniqueIndex" valid:"required~Game name is blank"`
 	Account []Account `gorm:"foreignKey:Game_ID"`
 }
 
@@ -52,7 +51,7 @@ type ReqGame struct {
 	gorm.Model
 	User_ID  *uint  `valid:"-"`
 	User     User   `gorm:"references:id" valid:"-"`
-	Name     string `valid:"required~game name is blank"`
+	Name     string `valid:"required~Game name is blank"`
 	Is_Check bool   `valid:"-"`
 }
 
@@ -80,17 +79,10 @@ type Order struct {
 	User            User      `gorm:"references:id" valid:"-"`
 	Account_ID      *uint     `valid:"-"`
 	Account         Account   `gorm:"references:id" valid:"-"`
-	Slip            string    `valid:"image_valid~Please change the picture"`
+	Slip            string    `valid:"image_valid~Please change the image"`
 	Slip_Create_At  time.Time `valid:"-"`
 	Is_Slip_Confirm bool      `valid:"-"`
 	Is_Receive      bool      `valid:"-"`
-}
-
-type Revenue struct {
-	gorm.Model
-	User_ID *uint   `valid:"-"`
-	User    User    `gorm:"references:id" valid:"-"`
-	Income  float64 `valid:"required~Income is blank"`
 }
 
 type Post struct {
@@ -117,9 +109,9 @@ type Comment struct {
 
 type Admin struct {
 	gorm.Model
-	Account_Name string      `gorm:"uniqueIndex" valid:"required~Name is blank"`
+	Account_Name string      `gorm:"uniqueIndex" valid:"required~Account name is blank"`
 	Password     string      `valid:"minstringlength(8)~Password must be longer than 8 characters,required~Password is blank"`
-	Admin_Name   string      `valid:"required~Name is blank"`
+	Admin_Name   string      `valid:"required~Admin name is blank"`
 	ReqSeller    []ReqSeller `gorm:"foreignKey:Admin_ID"`
 }
 
@@ -129,8 +121,8 @@ type ReqSeller struct {
 	User                User   `gorm:"references:id" valid:"-"`
 	Admin_ID            *uint  `valid:"-"`
 	Admin               Admin  `gorm:"references:id" valid:"-"`
-	Personal_Card_Front string `valid:"required~Front image is blank, image_valid~Please change the image"`
-	Personal_Card_Back  string `valid:"required~Back image is blank,image_valid~Please change the image"`
+	Personal_Card_Front string `valid:"required~Front image is blank, image_valid~Please change front image"`
+	Personal_Card_Back  string `valid:"required~Back image is blank,image_valid~Please change back image"`
 	Is_Confirm          bool   `valid:"-"`
 	Note                string `valid:"-"`
 	Is_Reject           bool   `valid:"-"`

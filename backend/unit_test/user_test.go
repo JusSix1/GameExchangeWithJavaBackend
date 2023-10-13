@@ -34,8 +34,6 @@ func TestUserValidate(t *testing.T) {
 
 		g.Expect(err).To(gomega.BeNil()) // ข้อมูลถูก error จะเป็น nil
 
-		println(err)
-
 		//g.Expect(err.Error()).To(gomega.Equal("")) // comment ทิ้งเนื่องจากไม่มี error ก็ย่อมไม่มี error message
 	})
 

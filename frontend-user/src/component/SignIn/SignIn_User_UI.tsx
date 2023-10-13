@@ -49,7 +49,7 @@ function SignIn_User() {
   const [registerError, setRegisterError] = useState(false);
   const [errorMsg, setErrorMsg] = useState<String | null>(null);
 
-  const [email, setEmail] = React.useState<string | null>(null);
+  const [email, setEmail] = React.useState<string>("");
   const [firstName, setFirstName] = React.useState<string | null>(null);
   const [lastName, setLastName] = React.useState<string | null>(null);
   const [personalID, setPersonalID] = React.useState<string | null>(null);
@@ -121,7 +121,7 @@ function SignIn_User() {
   ) => {
     const id = event.target.id as keyof typeof signin;
     const { value } = event.target;
-    setSignin({ ...signin, [id]: value });
+    setSignin({ ...signin, [id]: value.toLowerCase() });
   };
 
   const handleClose = (
@@ -176,7 +176,7 @@ function SignIn_User() {
     if (new_password === confirm_password) {
       // password ตรงกันก็จะ มีการ submit
       let data = {
-        Email: email,
+        Email: email.toLowerCase(),
         FirstName: firstName,
         LastName: lastName,
         Password: new_password,

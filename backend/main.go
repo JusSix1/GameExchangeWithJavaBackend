@@ -10,7 +10,6 @@ import (
 	post_controller "github.com/JusSix1/GameExchange/controller/post"
 	reqgame_controller "github.com/JusSix1/GameExchange/controller/reqgame"
 	reqseller_controller "github.com/JusSix1/GameExchange/controller/reqseller"
-	revenue_controller "github.com/JusSix1/GameExchange/controller/revenue"
 	user_controller "github.com/JusSix1/GameExchange/controller/user"
 	"github.com/JusSix1/GameExchange/entity"
 	"github.com/JusSix1/GameExchange/middlewares"
@@ -70,10 +69,6 @@ func main() {
 			protectedUser.PATCH("/orderreive", order_controller.UpdateOrderReceive)
 			protectedUser.DELETE("/order", order_controller.DeleteOrder)
 			protectedUser.DELETE("/cancelorder", order_controller.CancelOrder)
-
-			protectedUser.POST("/revenue/:email", revenue_controller.CreateRevenue)
-			protectedUser.GET("/revenue/:email", revenue_controller.GetRevenue)
-			protectedUser.PATCH("/revenue", revenue_controller.UpdateRevenue)
 
 			protectedUser.POST("/comment/:email", comment_controller.CreateComment)
 			protectedUser.GET("/comment/:profile_name", comment_controller.GetComment)
