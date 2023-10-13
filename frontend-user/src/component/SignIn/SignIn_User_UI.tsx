@@ -33,7 +33,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { SigninUserInterface } from "../../models/ISignIn_User";
 import { GendersInterface } from "../../models/user/IGender";
 import ip_address from "../ip";
-import "./SignIn_User.css"
+import "./SignIn_User.css";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -61,6 +61,9 @@ function SignIn_User() {
   const [confirm_password, setConfirm_password] = React.useState<string | null>(
     null
   );
+  const [facebook, setFacebook] = React.useState<string | null>(null);
+  const [ig, setIG] = React.useState<string | null>(null);
+  const [line, setLine] = React.useState<string | null>(null);
   const [imageString, setImageString] = React.useState<
     string | ArrayBuffer | null
   >(
@@ -185,6 +188,9 @@ function SignIn_User() {
         Phone_number: phoneNumber,
         Bank_Account: bankAccount,
         Gender_ID: gender_id,
+        Facebook: facebook,
+        Instagram: ig,
+        Line: line,
       };
 
       const apiUrl = ip_address() + "/users"; // create user
@@ -273,67 +279,67 @@ function SignIn_User() {
       {/** Sign In */}
       <div className="SignInContainer">
         <div className="Login-Box">
-            <Box
-              sx={{
-                my: 8,
-                mx: 4,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                alignSelf: "center",
-              }}
-            >
-              <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-                <LockOutlinedIcon />
-              </Avatar>
-              <Typography component="h1" variant="h5">
-                Sign in
-              </Typography>
-              <Box sx={{ mt: 1 }}>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="Email"
-                  label="Email"
-                  name="Email"
-                  autoComplete="Email"
-                  autoFocus
-                  value={signin.Email || ""}
-                  onChange={handleInputChange}
-                />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="Password"
-                  autoComplete="current-password"
-                  value={signin.Password || ""}
-                  onChange={handleInputChange}
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
-                  onClick={submitUser}
+          <Box
+            sx={{
+              my: 8,
+              mx: 4,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              alignSelf: "center",
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <Box sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="Email"
+                label="Email"
+                name="Email"
+                autoComplete="Email"
+                autoFocus
+                value={signin.Email || ""}
+                onChange={handleInputChange}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="Password"
+                autoComplete="current-password"
+                value={signin.Password || ""}
+                onChange={handleInputChange}
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                onClick={submitUser}
+              >
+                Sign In
+              </Button>
+              <Grid container item direction={"row-reverse"}>
+                <Typography
+                  variant="button"
+                  onClick={handleDialogRegisterClickOpen}
+                  sx={{ cursor: "pointer" }}
                 >
-                  Sign In
-                </Button>
-                <Grid container item direction={"row-reverse"}>
-                  <Typography
-                    variant="button"
-                    onClick={handleDialogRegisterClickOpen}
-                    sx={{ cursor: "pointer" }}
-                  >
-                    Register
-                  </Typography>
-                </Grid>
-              </Box>
+                  Register
+                </Typography>
+              </Grid>
             </Box>
+          </Box>
         </div>
       </div>
 
@@ -350,6 +356,7 @@ function SignIn_User() {
           <Box>
             <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
               <Grid container>
+                <p className="TextHead">Required information*</p>
                 <Grid container>
                   {" "}
                   {/** email & password */}
@@ -357,7 +364,7 @@ function SignIn_User() {
                     <TextField
                       fullWidth
                       id="email"
-                      label="Email"
+                      label="Email*"
                       variant="outlined"
                       onChange={(event) => setEmail(String(event.target.value))}
                     />
@@ -366,7 +373,7 @@ function SignIn_User() {
                     <TextField
                       fullWidth
                       id="firstname"
-                      label="First name"
+                      label="First name*"
                       variant="outlined"
                       onChange={(event) =>
                         setFirstName(String(event.target.value))
@@ -377,7 +384,7 @@ function SignIn_User() {
                     <TextField
                       fullWidth
                       id="lastname"
-                      label="Last name"
+                      label="Last name*"
                       variant="outlined"
                       onChange={(event) =>
                         setLastName(String(event.target.value))
@@ -388,7 +395,7 @@ function SignIn_User() {
                     <TextField
                       fullWidth
                       id="personalID"
-                      label="Personal ID"
+                      label="Personal ID*"
                       variant="outlined"
                       onChange={(event) =>
                         setPersonalID(String(event.target.value))
@@ -399,7 +406,7 @@ function SignIn_User() {
                     <TextField
                       fullWidth
                       id="address"
-                      label="Address"
+                      label="Address*"
                       variant="outlined"
                       onChange={(event) =>
                         setAddress(String(event.target.value))
@@ -410,7 +417,7 @@ function SignIn_User() {
                     <TextField
                       fullWidth
                       id="bank_account"
-                      label="Bank account number"
+                      label="Bank account number*"
                       variant="outlined"
                       onChange={(event) =>
                         setBankAccount(String(event.target.value))
@@ -422,7 +429,7 @@ function SignIn_User() {
                       fullWidth
                       type="password"
                       id="password"
-                      label="Password"
+                      label="Password*"
                       variant="outlined"
                       onChange={(event) =>
                         setNew_password(String(event.target.value))
@@ -434,7 +441,7 @@ function SignIn_User() {
                       fullWidth
                       type="password"
                       id="confirm-password"
-                      label="Confirm Password"
+                      label="Confirm Password*"
                       variant="outlined"
                       onChange={(event) =>
                         setConfirm_password(String(event.target.value))
@@ -450,7 +457,7 @@ function SignIn_User() {
                     <TextField
                       fullWidth
                       id="profile-name"
-                      label="Profile Name"
+                      label="Profile Name*"
                       variant="outlined"
                       onChange={(event) =>
                         setProfile_name(String(event.target.value))
@@ -462,7 +469,7 @@ function SignIn_User() {
                     <Grid>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
-                          label="Birthday"
+                          label="Birthday*"
                           value={birthday}
                           onChange={(newValue) => {
                             setBirthday(newValue);
@@ -479,7 +486,7 @@ function SignIn_User() {
                       <TextField
                         fullWidth
                         id="phonr-number"
-                        label="Phone number"
+                        label="Phone number*"
                         variant="outlined"
                         onChange={(event) =>
                           setPhoneNumber(String(event.target.value))
@@ -491,7 +498,7 @@ function SignIn_User() {
                       {/* gender radio button */}
                       <FormControl>
                         <FormLabel id="radio-buttons-group-gender">
-                          Gender
+                          Gender*
                         </FormLabel>
                         <RadioGroup
                           aria-labelledby="radio-buttons-group-gender"
@@ -509,6 +516,41 @@ function SignIn_User() {
                           ))}
                         </RadioGroup>
                       </FormControl>
+                    </Grid>
+                  </Grid>
+
+                  <p className="TextHead">Unnecessary information</p>
+                  <Grid container>
+                    <Grid margin={1} item xs={12}>
+                      <TextField
+                        fullWidth
+                        id="Facebook-name"
+                        label="Facebook"
+                        variant="outlined"
+                        onChange={(event) =>
+                          setFacebook(String(event.target.value))
+                        }
+                      />
+                    </Grid>
+                    <Grid margin={1} item xs={12}>
+                      <TextField
+                        fullWidth
+                        id="ig-name"
+                        label="Instagram"
+                        variant="outlined"
+                        onChange={(event) => setIG(String(event.target.value))}
+                      />
+                    </Grid>
+                    <Grid margin={1} item xs={12}>
+                      <TextField
+                        fullWidth
+                        id="Line-name"
+                        label="Line"
+                        variant="outlined"
+                        onChange={(event) =>
+                          setLine(String(event.target.value))
+                        }
+                      />
                     </Grid>
                   </Grid>
 
@@ -531,8 +573,10 @@ function SignIn_User() {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogRegisterClose} color="inherit">Cancel</Button>
-          <Button onClick={createAccount}  autoFocus>
+          <Button onClick={handleDialogRegisterClose} color="inherit">
+            Cancel
+          </Button>
+          <Button onClick={createAccount} autoFocus>
             Submit
           </Button>
         </DialogActions>

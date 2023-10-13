@@ -219,6 +219,9 @@ function My_Profile() {
       Bank_Account: userEdit.Bank_Account,
       Phone_number: userEdit.Phone_Number,
       Gender_ID: userEdit.Gender_ID,
+      Facebook: userEdit.Facebook,
+      Instagram: userEdit.Instagram,
+      Line: userEdit.Line,
     };
     const apiUrl = ip_address() + "/users"; //ส่งขอการแก้ไข
     const requestOptions = {
@@ -415,6 +418,9 @@ function My_Profile() {
           {"Gender: " + user.Gender?.Gender + "\n\n"}
           {"Address: " + user.Address + "\n\n"}
           {"Bank account number: " + user.Bank_Account + "\n\n"}
+          {user.Facebook && "Facebook: " + user.Facebook + "\n\n"}
+          {user.Instagram && "Instagram: " + user.Instagram + "\n\n"}
+          {user.Line && "Line: " + user.Line + "\n\n"}
         </div>
       </div>
 
@@ -471,97 +477,95 @@ function My_Profile() {
       <div className="comment-list">
         {commentList.map((item) => (
           <section>
-          <Container style={{ maxWidth: "100%" }}>
-            <div className="comment-body">
-              <img
-                style={{
-                  borderRadius: "50%",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                  marginRight: "0.75rem",
-                }}
-                src={item.Commenter.Profile_Picture}
-                alt={`${item.Commenter.Profile_Name}'s profile`}
-                width="65"
-                height="65"
-              />
-              <Card style={{ width: "100%", background: "#c1c1c1" }}>
-                <CardContent
+            <Container style={{ maxWidth: "100%" }}>
+              <div className="comment-body">
+                <img
                   style={{
-                    padding: "1rem",
+                    borderRadius: "50%",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                    marginRight: "0.75rem",
                   }}
-                >
-                  <div>
-                    <Typography>
-                      <a
-                        href={`/profile/${item.Commenter.Profile_Name}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: "black" }}
-                      >
-                        {item.Commenter.Profile_Name + " "}
-                      </a>
-                    </Typography>
-                    <p className="small">
-                      {moment(item.CreatedAt).format(
-                        "DD/MM/YYYY hh:mm A"
-                      )}
-                    </p>
-                    <div className="rating">
-                      <div className="star-group">
-                        <input
-                          type="radio"
-                          className="star"
-                          id="one"
-                          name={`star_rate_${item.ID}`}
-                          checked={item.Rating === 1}
-                        />
-                        <input
-                          type="radio"
-                          className="star"
-                          id="two"
-                          name={`star_rate_${item.ID}`}
-                          checked={item.Rating === 2}
-                        />
-                        <input
-                          type="radio"
-                          className="star"
-                          id="three"
-                          name={`star_rate_${item.ID}`}
-                          checked={item.Rating === 3}
-                        />
-                        <input
-                          type="radio"
-                          className="star"
-                          id="four"
-                          name={`star_rate_${item.ID}`}
-                          checked={item.Rating === 4}
-                        />
-                        <input
-                          type="radio"
-                          className="star"
-                          id="five"
-                          name={`star_rate_${item.ID}`}
-                          checked={item.Rating === 5}
-                        />
+                  src={item.Commenter.Profile_Picture}
+                  alt={`${item.Commenter.Profile_Name}'s profile`}
+                  width="65"
+                  height="65"
+                />
+                <Card style={{ width: "100%", background: "#c1c1c1" }}>
+                  <CardContent
+                    style={{
+                      padding: "1rem",
+                    }}
+                  >
+                    <div>
+                      <Typography>
+                        <a
+                          href={`/profile/${item.Commenter.Profile_Name}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: "black" }}
+                        >
+                          {item.Commenter.Profile_Name + " "}
+                        </a>
+                      </Typography>
+                      <p className="small">
+                        {moment(item.CreatedAt).format("DD/MM/YYYY hh:mm A")}
+                      </p>
+                      <div className="rating">
+                        <div className="star-group">
+                          <input
+                            type="radio"
+                            className="star"
+                            id="one"
+                            name={`star_rate_${item.ID}`}
+                            checked={item.Rating === 1}
+                          />
+                          <input
+                            type="radio"
+                            className="star"
+                            id="two"
+                            name={`star_rate_${item.ID}`}
+                            checked={item.Rating === 2}
+                          />
+                          <input
+                            type="radio"
+                            className="star"
+                            id="three"
+                            name={`star_rate_${item.ID}`}
+                            checked={item.Rating === 3}
+                          />
+                          <input
+                            type="radio"
+                            className="star"
+                            id="four"
+                            name={`star_rate_${item.ID}`}
+                            checked={item.Rating === 4}
+                          />
+                          <input
+                            type="radio"
+                            className="star"
+                            id="five"
+                            name={`star_rate_${item.ID}`}
+                            checked={item.Rating === 5}
+                          />
+                        </div>
+                      </div>
+
+                      <p>{item.Comment_Text}</p>
+                      <div>
+                        {item.Review_image && (
+                          <img
+                            src={item.Review_image}
+                            alt="Review content"
+                            className="comment-image"
+                          />
+                        )}
                       </div>
                     </div>
-
-                    <p>{item.Comment_Text}</p>
-                    <div>
-                      {item.Review_image && (
-                        <img
-                          src={item.Review_image}
-                          alt="Review content"
-                          className="comment-image"
-                        />
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </Container>
-        </section>
+                  </CardContent>
+                </Card>
+              </div>
+            </Container>
+          </section>
         ))}
       </div>
 
@@ -690,7 +694,7 @@ function My_Profile() {
                     <Grid margin={1} item xs={5}>
                       <TextField
                         fullWidth
-                        id="phonr-number"
+                        id="phone-number"
                         label="Phone number"
                         variant="outlined"
                         defaultValue={user.Phone_Number}
@@ -727,6 +731,53 @@ function My_Profile() {
                           ))}
                         </RadioGroup>
                       </FormControl>
+                    </Grid>
+                    <Grid container>
+                      <Grid margin={1} item xs={12}>
+                        <TextField
+                          fullWidth
+                          id="facebook"
+                          label="Facebook"
+                          variant="outlined"
+                          defaultValue={user.Facebook}
+                          onChange={(event) =>
+                            setUserEdit({
+                              ...userEdit,
+                              Facebook: event.target.value,
+                            })
+                          }
+                        />
+                      </Grid>
+                      <Grid margin={1} item xs={12}>
+                        <TextField
+                          fullWidth
+                          id="instagram"
+                          label="Instagram"
+                          variant="outlined"
+                          defaultValue={user.Instagram}
+                          onChange={(event) =>
+                            setUserEdit({
+                              ...userEdit,
+                              Instagram: event.target.value,
+                            })
+                          }
+                        />
+                      </Grid>
+                      <Grid margin={1} item xs={12}>
+                        <TextField
+                          fullWidth
+                          id="line"
+                          label="Line"
+                          variant="outlined"
+                          defaultValue={user.Line}
+                          onChange={(event) =>
+                            setUserEdit({
+                              ...userEdit,
+                              Line: event.target.value,
+                            })
+                          }
+                        />
+                      </Grid>
                     </Grid>
                   </Grid>
 

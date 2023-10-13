@@ -17,3 +17,8 @@
   border-radius: 25px;
   box-shadow: -5px -5px 10px rgba(255,94,247, 0.5),5px 5px 5px rgba(2,245,255, 0.5);
 }
+
+.TextHead {
+  font-size: 18px;
+  font-weight: bold;
+}

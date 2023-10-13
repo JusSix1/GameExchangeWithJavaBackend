@@ -47,15 +47,21 @@ export default function Home_User_UI() {
     setErrorMsg("");
   };
 
-  const textAreaChangeDescription = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const textAreaChangeDescription = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setSearchDescription(event.target.value);
   };
 
-  const textAreaChangeGame = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const textAreaChangeGame = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setSearchGame(event.target.value);
   };
 
-  const textAreaChangeUser = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const textAreaChangeUser = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setSearchUser(event.target.value);
   };
 
@@ -138,8 +144,10 @@ export default function Home_User_UI() {
     }
     if (textareaRefDescription && textareaRefDescription.current) {
       textareaRefDescription.current.style.height = "0px";
-      const scrollHeightDescription = textareaRefDescription.current.scrollHeight;
-      textareaRefDescription.current.style.height = scrollHeightDescription + "px";
+      const scrollHeightDescription =
+        textareaRefDescription.current.scrollHeight;
+      textareaRefDescription.current.style.height =
+        scrollHeightDescription + "px";
     }
     if (textareaRefGame && textareaRefGame.current) {
       textareaRefGame.current.style.height = "0px";
@@ -201,7 +209,7 @@ export default function Home_User_UI() {
             </div>
             <div className="search-component">User name</div>
             <div className="search-component">
-            <textarea
+              <textarea
                 className="textareaDescription"
                 ref={textareaRefUser}
                 onChange={textAreaChangeUser}
@@ -211,33 +219,17 @@ export default function Home_User_UI() {
             </div>
             <div className="search-component">Sort by</div>
             <div className="search-component">
-              <div className="search-component">
-                <input
-                  type="radio"
-                  name="radioFilter"
-                  defaultChecked
-                  onChange={(event) => setSortFilter(1)}
-                />
-                <label>Newest</label>
-                <br />
+              <div className="radio-item">
+                <input name="radio" id="radio1" type="radio" defaultChecked onChange={(event) => setSortFilter(1)} />
+                <label htmlFor="radio1">Newest</label>
               </div>
-              <div className="search-component">
-                <input
-                  type="radio"
-                  name="radioFilter"
-                  onChange={(event) => setSortFilter(2)}
-                />
-                <label>Cheapest - most expensive</label>
-                <br />
+              <div className="radio-item">
+                <input name="radio" id="radio2" type="radio" onChange={(event) => setSortFilter(2)} />
+                <label htmlFor="radio2">Cheapest - most expensive</label>
               </div>
-              <div className="search-component">
-                <input
-                  type="radio"
-                  name="radioFilter"
-                  onChange={(event) => setSortFilter(3)}
-                />
-                <label>Most expensive - cheapest</label>
-                <br />
+              <div className="radio-item">
+                <input name="radio" id="radio3" type="radio" onChange={(event) => setSortFilter(3)} />
+                <label htmlFor="radio3">Most expensive - cheapest</label>
               </div>
             </div>
           </div>
@@ -247,17 +239,23 @@ export default function Home_User_UI() {
           {post
             .filter(
               (item) =>
-                item.Description.toLowerCase().includes(searchDescription.toLowerCase()) &&
-                item.Account.Game.Name.toLowerCase().includes(searchGame.toLowerCase()) &&
-                item.User.Profile_Name.toLowerCase().includes(searchUser.toLowerCase())
+                item.Description.toLowerCase().includes(
+                  searchDescription.toLowerCase()
+                ) &&
+                item.Account.Game.Name.toLowerCase().includes(
+                  searchGame.toLowerCase()
+                ) &&
+                item.User.Profile_Name.toLowerCase().includes(
+                  searchUser.toLowerCase()
+                )
             )
             .sort((a, b) => {
               if (sortFilter === 1) {
                 return b.ID - a.ID;
               } else if (sortFilter === 2) {
-                return a.Account.Price - b.Account.Price;;
-              }else if (sortFilter === 3) {
-                return b.Account.Price - a.Account.Price;;
+                return a.Account.Price - b.Account.Price;
+              } else if (sortFilter === 3) {
+                return b.Account.Price - a.Account.Price;
               } else {
                 return 0;
               }

@@ -28,6 +28,9 @@ type User struct {
 	Address         string      `valid:"required~Address is blank"`
 	Bank_Account    string      `valid:"required~Bank account number is blank,matches([0-9]{10})~Bank account number invalid format"`
 	Gender_ID       *uint       `valid:"-"`
+	Facebook        string      `valid:"-"`
+	Instagram       string      `valid:"-"`
+	Line            string      `valid:"-"`
 	Gender          Gender      `gorm:"references:id" valid:"-"`
 	Account         []Account   `gorm:"foreignKey:User_ID"`
 	Order           []Order     `gorm:"foreignKey:User_ID"`
@@ -129,7 +132,7 @@ type ReqSeller struct {
 	Personal_Card_Front string `valid:"required~Front image is blank, image_valid~Please change the image"`
 	Personal_Card_Back  string `valid:"required~Back image is blank,image_valid~Please change the image"`
 	Is_Confirm          bool   `valid:"-"`
-	Note                string `valid:"required~Note is blank"`
+	Note                string `valid:"-"`
 	Is_Reject           bool   `valid:"-"`
 }
 

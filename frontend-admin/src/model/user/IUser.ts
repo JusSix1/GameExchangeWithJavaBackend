@@ -15,4 +15,7 @@ export interface UsersInterface {
   Bank_Account: string;
   Gender_ID: number;
   Gender: GendersInterface;
+  Facebook: string;
+  Instagram: string;
+  Line: string;
 }
