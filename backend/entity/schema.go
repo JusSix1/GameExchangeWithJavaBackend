@@ -20,13 +20,13 @@ type User struct {
 	FirstName       string      `valid:"required~First name is blank"`
 	LastName        string      `valid:"required~Last name is blank"`
 	Password        string      `valid:"minstringlength(8)~Password must be longer than 8 characters,required~Password is blank"`
-	PersonalID      string      `valid:"minstringlength(13)~Personal ID must be 13 characters,maxstringlength(13)~Personal ID must be 13 characters,matches([0-9]{10})~Personal ID invalid format,required~Personal ID is blank"`
+	PersonalID      string      `valid:"minstringlength(13)~Personal ID must be 13 characters,maxstringlength(13)~Personal ID must be 13 characters,matches([0-9]{13})~Personal ID invalid format,required~Personal ID is blank"`
 	Profile_Name    string      `valid:"maxstringlength(50)~Must be no more than 50 characters long,required~Profile name is blank"`
 	Profile_Picture string      `valid:"image_valid~Please change the picture"`
-	Birthday        time.Time   `valid:"NotFutureTime~The day must not be the future,MoreThan18YearsAgo~You must be over 18 years old"`
-	Phone_Number    string      `valid:"required~Phone number is blank,matches([0-9]{10})~Phone number invalid format"`
+	Birthday        time.Time   `valid:"NotFutureTime~Birthday must not be the future,MoreThan18YearsAgo~You must be over 18 years old"`
+	Phone_Number    string      `valid:"required~Phone number is blank,minstringlength(10)~Phone number must be 10 numbers,maxstringlength(10)~Phone number must be 10 numbers,matches([0-9]{10})~Phone number invalid format"`
 	Address         string      `valid:"required~Address is blank"`
-	Bank_Account    string      `valid:"required~Bank account number is blank,matches([0-9]{10})~Bank account number invalid format"`
+	Bank_Account    string      `valid:"required~Bank account number is blank,minstringlength(10)~Bank account number must be 10 numbers,maxstringlength(10)~Bank account number must be 10 numbers,matches([0-9]{10})~Bank account number invalid format"`
 	Gender_ID       *uint       `valid:"-"`
 	Facebook        string      `valid:"-"`
 	Instagram       string      `valid:"-"`
