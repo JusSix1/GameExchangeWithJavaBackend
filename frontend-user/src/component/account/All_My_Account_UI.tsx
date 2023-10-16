@@ -561,7 +561,7 @@ export default function All_My_Account_UI() {
             onClose={handleClose}
             anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
           >
-            <Alert onClose={handleClose} severity="error">
+            <Alert onClose={handleClose} severity="error" id="error">
               Error {errorMsg}
             </Alert>
           </Snackbar>

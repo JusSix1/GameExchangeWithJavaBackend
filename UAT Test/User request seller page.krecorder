@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+<title>User request seller page</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3" data-tags="">Add personal ID image</td></tr>
+</thead>
+<tbody>
+<tr><td>open</td><td>http://localhost:3001/AllMyAccount<datalist><option>http://localhost:3001/AllMyAccount</option></datalist></td><td></td></tr>
+<tr><td>click</td><td>xpath=//input[@type='file']<datalist><option>xpath=//input[@type='file']</option><option>xpath=//div[@id='root']/div/div[2]/div/div/div[3]/input</option><option>xpath=//input</option><option>css=input[type="file"]</option></datalist></td><td></td></tr>
+<tr><td>type</td><td>xpath=//input[@type='file']<datalist><option>xpath=//input[@type='file']</option><option>xpath=//div[@id='root']/div/div[2]/div/div/div[3]/input</option><option>xpath=//input</option><option>css=input[type="file"]</option></datalist></td><td>C:\Users\Patch\OneDrive\Desktop\GameExchange\image\PersonalCardFront.png</td></tr>
+<tr><td>click</td><td>xpath=//div[@id='root']/div/div[2]/div/div/div[4]/input<datalist><option>xpath=//div[@id='root']/div/div[2]/div/div/div[4]/input</option><option>xpath=//div[4]/input</option></datalist></td><td></td></tr>
+<tr><td>type</td><td>xpath=//div[@id='root']/div/div[2]/div/div/div[4]/input<datalist><option>xpath=//div[@id='root']/div/div[2]/div/div/div[4]/input</option><option>xpath=//div[4]/input</option></datalist></td><td>C:\Users\Patch\OneDrive\Desktop\GameExchange\image\PersonalCardBack.png</td></tr>
+<tr><td>click</td><td>xpath=//div[@id='root']/div/div[2]/div/div[2]/button<datalist><option>xpath=//div[@id='root']/div/div[2]/div/div[2]/button</option><option>xpath=(.//*[normalize-space(text()) and normalize-space(.)='Back:'])[1]/following::button[1]</option><option>xpath=(.//*[normalize-space(text()) and normalize-space(.)='Front:'])[1]/following::button[1]</option><option>xpath=(.//*[normalize-space(text()) and normalize-space(.)='My Profile'])[1]/preceding::button[1]</option><option>xpath=(.//*[normalize-space(text()) and normalize-space(.)='Logout'])[1]/preceding::button[1]</option><option>xpath=//*/text()[normalize-space(.)='Send']/parent::*</option><option>xpath=//div[2]/div/div[2]/button</option><option>css=button.btn-send</option></datalist></td><td></td></tr>
+<tr><td>click</td><td>xpath=//div[@id='root']/div/div[2]/div/div/div[2]/div/div/button<datalist><option>xpath=//div[@id='root']/div/div[2]/div/div/div[2]/div/div/button</option><option>xpath=(.//*[normalize-space(text()) and normalize-space(.)='Register seller'])[1]/following::button[1]</option><option>xpath=(.//*[normalize-space(text()) and normalize-space(.)='My Profile'])[1]/preceding::button[1]</option><option>xpath=(.//*[normalize-space(text()) and normalize-space(.)='Logout'])[1]/preceding::button[1]</option><option>xpath=//*/text()[normalize-space(.)='Back to Home']/parent::*</option><option>xpath=//div[2]/div/div/button</option><option>css=button.btn-send</option></datalist></td><td></td></tr>
+<tr><td>open</td><td>http://localhost:3001/<datalist><option>http://localhost:3001/</option></datalist></td><td></td></tr>
+</tbody></table>
+</body>
+</html>

@@ -260,7 +260,7 @@ function SignIn_User() {
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert onClose={handleClose} severity="success">
-          Register succes
+          Register success
         </Alert>
       </Snackbar>
 
@@ -372,6 +372,30 @@ function SignIn_User() {
                   <Grid margin={1} item xs={12}>
                     <TextField
                       fullWidth
+                      type="password"
+                      id="password"
+                      label="Password*"
+                      variant="outlined"
+                      onChange={(event) =>
+                        setNew_password(String(event.target.value))
+                      }
+                    />
+                  </Grid>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
+                      type="password"
+                      id="confirm-password"
+                      label="Confirm Password*"
+                      variant="outlined"
+                      onChange={(event) =>
+                        setConfirm_password(String(event.target.value))
+                      }
+                    />
+                  </Grid>
+                  <Grid margin={1} item xs={12}>
+                    <TextField
+                      fullWidth
                       id="firstname"
                       label="First name*"
                       variant="outlined"
@@ -424,30 +448,6 @@ function SignIn_User() {
                       }
                     />
                   </Grid>
-                  <Grid margin={1} item xs={12}>
-                    <TextField
-                      fullWidth
-                      type="password"
-                      id="password"
-                      label="Password*"
-                      variant="outlined"
-                      onChange={(event) =>
-                        setNew_password(String(event.target.value))
-                      }
-                    />
-                  </Grid>
-                  <Grid margin={1} item xs={12}>
-                    <TextField
-                      fullWidth
-                      type="password"
-                      id="confirm-password"
-                      label="Confirm Password*"
-                      variant="outlined"
-                      onChange={(event) =>
-                        setConfirm_password(String(event.target.value))
-                      }
-                    />
-                  </Grid>
                 </Grid>
 
                 <Grid container>
@@ -485,7 +485,7 @@ function SignIn_User() {
                       {/** Profile Name */}
                       <TextField
                         fullWidth
-                        id="phonr-number"
+                        id="phone-number"
                         label="Phone number*"
                         variant="outlined"
                         onChange={(event) =>
