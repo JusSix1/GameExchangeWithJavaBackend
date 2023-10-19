@@ -132,7 +132,7 @@ export default function List_ReqSeller_UI() {
       renderCell: (params) => (
         <>
           {params.row.Is_Confirm ? (
-            <p>Access</p>
+            <p>Accept</p>
           ) : params.row.Is_Reject ? (
             <p>Reject</p>
           ) : !params.row.Is_Reject && !params.row.Is_Reject ? (
@@ -154,7 +154,7 @@ export default function List_ReqSeller_UI() {
           style={{ color: "#000" }}
           onClick={() => handleGiveButtonClick(params.row.ID)}
         >
-          Access
+          Accept
         </Button>
       ),
     },

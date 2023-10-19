@@ -6,7 +6,7 @@ import SignIn_User from "./component/SignIn/SignIn_User_UI";
 import User_Profile_UI from "./component/user/User_Profile_UI";
 //import My_Order_UI from "./component/order/myOrder";
 import Home_User_UI from "./component/Home/Home_User_UI";
-import All_My_Account_UI from "./component/account/All_My_Account_UI";
+import All_My_Account_UI from "./component/account/Game_Account_UI";
 import UserFullAppBar from "./component/FullAppBar/UserFullAppBar";
 import Edit_post_UI from "./component/Edit_post/Edit_post";
 import My_Basket_UI from "./component/Basket/myBasket";

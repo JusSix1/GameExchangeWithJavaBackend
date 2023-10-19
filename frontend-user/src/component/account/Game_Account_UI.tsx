@@ -33,7 +33,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { AccountsInterface } from "../../models/account/IAccount";
 import { GamesInterface } from "../../models/account/IGame";
 import { PostsInterface } from "../../models/post/IPost";
-import "./All_My_Account.css";
+import "./Game_Account.css";
 import { ReqSellersInterface } from "../../models/reqseller/IReqSeller";
 import Req_Seller_UI from "../ReqSeller/ReqSeller_UI";
 
