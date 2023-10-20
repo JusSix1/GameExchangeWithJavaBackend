@@ -42,6 +42,7 @@ export default function Game_UI() {
   const [gameID, setGameID] = React.useState<Number>();
   const [name, setName] = React.useState<string>();
   const [reqGameID, setReqGameID] = React.useState<Number>();
+  const [newNote, setNewNote] = React.useState<string>();
 
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -49,7 +50,10 @@ export default function Game_UI() {
   const [dialogLoadOpen, setDialogLoadOpen] = React.useState(false);
   const [dialogEditOpen, setDialogEditOpen] = React.useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = React.useState(false);
-  const [dialogCheckOpen, setDialogCheckOpen] = React.useState(false);
+  const [dialogIsAddOpen, setDialogIsAddOpen] = React.useState(false);
+  const [dialogIsRejectOpen, setDialogIsRejectOpen] = React.useState(false);
+
+  const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
   function CustomToolbarListGame() {
     return (
@@ -156,8 +160,8 @@ export default function Game_UI() {
       ),
     },
     {
-      field: "Check",
-      headerName: "Check",
+      field: "Added",
+      headerName: "Added",
       flex: 1,
       renderCell: (params) => (
         <Button
@@ -165,9 +169,25 @@ export default function Game_UI() {
           variant="contained"
           color="primary"
           style={{ color: "#fff" }}
-          onClick={() => handleCheckButtonClick(params.row.ID)}
+          onClick={() => handleIsAddButtonClick(params.row.ID)}
         >
-          Check
+          done
+        </Button>
+      ),
+    },
+    {
+      field: "Reject",
+      headerName: "Reject",
+      flex: 1,
+      renderCell: (params) => (
+        <Button
+          size="small"
+          variant="contained"
+          color="primary"
+          style={{ color: "#fff", backgroundColor: "#ff753e" }}
+          onClick={() => handleIsRejectButtonClick(params.row.ID)}
+        >
+          Reject
         </Button>
       ),
     },
@@ -185,6 +205,10 @@ export default function Game_UI() {
     setErrorMsg("");
   };
 
+  const textAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNewNote(event.target.value);
+  };
+
   const handleEditButtonClick = (item: GamesInterface) => {
     setGameID(item.ID);
     setName(item.Name);
@@ -196,9 +220,14 @@ export default function Game_UI() {
     setDialogDeleteOpen(true);
   };
 
-  const handleCheckButtonClick = (id: number) => {
+  const handleIsAddButtonClick = (id: number) => {
     setReqGameID(id);
-    setDialogCheckOpen(true);
+    setDialogIsAddOpen(true);
+  };
+
+  const handleIsRejectButtonClick = (id: number) => {
+    setReqGameID(id);
+    setDialogIsRejectOpen(true);
   };
 
   const handleDialogEditClickClose = () => {
@@ -212,9 +241,15 @@ export default function Game_UI() {
     setDialogDeleteOpen(false);
   };
 
-  const handleDialogCheckClickClose = () => {
+  const handleDialogIsAddClickClose = () => {
     setReqGameID(undefined);
-    setDialogCheckOpen(false);
+    setDialogIsAddOpen(false);
+  };
+
+  const handleDialogIsRejectClickClose = () => {
+    setReqGameID(undefined);
+    setDialogIsRejectOpen(false);
+    setNewNote(undefined);
   };
 
   const getListGame = async () => {
@@ -251,7 +286,6 @@ export default function Game_UI() {
       .then((res) => {
         if (res.data) {
           setReqGame(res.data);
-          console.log(res.data);
         }
       });
   };
@@ -279,8 +313,11 @@ export default function Game_UI() {
         .then(async (res) => {
           if (res.data) {
             setSuccess(true);
+            setNewGame({
+              ...newGame,
+              Name: "",
+            });
             getListGame();
-            setNewGame({});
           } else {
             setError(true);
             setErrorMsg(" - " + res.error);
@@ -361,14 +398,14 @@ export default function Game_UI() {
     setDialogLoadOpen(false);
   };
 
-  const UpdateReqGame = async () => {
+  const UpdateIsAddReqGame = async () => {
     setDialogLoadOpen(true);
 
     let data = {
       ID: reqGameID,
     };
 
-    const apiUrl = ip_address() + "/reqgame";
+    const apiUrl = ip_address() + "/isaddreqgames";
     const requestOptions = {
       method: "PATCH",
       headers: {
@@ -384,7 +421,7 @@ export default function Game_UI() {
         if (res.data) {
           setSuccess(true);
           getListReqGame();
-          handleDialogCheckClickClose();
+          handleDialogIsAddClickClose();
         } else {
           setError(true);
           setErrorMsg(" - " + res.error);
@@ -394,15 +431,64 @@ export default function Game_UI() {
     setDialogLoadOpen(false);
   };
 
-  React.useEffect(() => {
-    const fetchData = async () => {
+  const UpdateIsRejectReqGame = async () => {
+    if (newNote === undefined) {
+      setError(true);
+      setErrorMsg(" - Please enter a note.");
+    } else {
       setDialogLoadOpen(true);
-      await getListGame();
-      await getListReqGame();
+
+      let data = {
+        ID: reqGameID,
+        Note: newNote,
+      };
+
+      const apiUrl = ip_address() + "/isrejectreqgames";
+      const requestOptions = {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      };
+
+      await fetch(apiUrl, requestOptions)
+        .then((response) => response.json())
+        .then(async (res) => {
+          if (res.data) {
+            setSuccess(true);
+            getListReqGame();
+            handleDialogIsRejectClickClose();
+          } else {
+            setError(true);
+            setErrorMsg(" - " + res.error);
+          }
+        });
+
       setDialogLoadOpen(false);
-    };
-    fetchData();
-  }, []);
+    }
+  };
+
+  const [count, setCount] = React.useState<number>(0);
+  React.useEffect(() => {
+    if (count === 0) {
+      const fetchData = async () => {
+        setDialogLoadOpen(true);
+        await getListGame();
+        await getListReqGame();
+        setDialogLoadOpen(false);
+      };
+      fetchData();
+      setCount(1);
+    }
+
+    if (textareaRef && textareaRef.current) {
+      textareaRef.current.style.height = "0px";
+      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = scrollHeight + "px";
+    }
+  }, [count, newNote]);
 
   return (
     <>
@@ -571,26 +657,86 @@ export default function Game_UI() {
         </DialogActions>
       </Dialog>
 
-      <Dialog //Check
-        open={dialogCheckOpen}
-        onClose={handleDialogCheckClickClose}
+      <Dialog //Is Add
+        open={dialogIsAddOpen}
+        onClose={handleDialogIsAddClickClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         fullWidth={true}
         maxWidth="sm"
       >
-        <DialogTitle id="alert-dialog-title">{"Have you finished checking?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          {"Have you finished Added?"}
+        </DialogTitle>
         <DialogActions>
-          <Button size="small" color="inherit" onClick={handleDialogCheckClickClose}>
+          <Button
+            size="small"
+            color="inherit"
+            onClick={handleDialogIsAddClickClose}
+          >
             Cancel
           </Button>
           <Button
             size="small"
-            onClick={UpdateReqGame}
+            onClick={UpdateIsAddReqGame}
             color="primary"
             autoFocus
           >
-            Check
+            Done
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog //Reject
+        open={dialogIsRejectOpen}
+        onClose={handleDialogIsRejectClickClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth={true}
+        maxWidth="sm"
+      >
+        <DialogTitle id="alert-dialog-title">{"Reject request"}</DialogTitle>
+        <DialogContent>
+          <Box>
+            <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+              <Grid container>
+                <p>Note</p>
+                <textarea
+                  ref={textareaRef}
+                  style={{
+                    padding: 5,
+                    marginTop: 10,
+                    width: "98%",
+                    height: "100%",
+                    display: "block",
+                    resize: "none",
+                    backgroundColor: "#F",
+                    fontSize: 16,
+                    borderRadius: "5px",
+                  }}
+                  onChange={textAreaChange}
+                  value={newNote}
+                ></textarea>
+              </Grid>
+            </Paper>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            size="small"
+            onClick={handleDialogIsRejectClickClose}
+            color="inherit"
+          >
+            Cancel
+          </Button>
+          <Button
+            size="small"
+            onClick={UpdateIsRejectReqGame}
+            sx={{ color: "#ff753e" }}
+            color="error"
+            autoFocus
+          >
+            Reject
           </Button>
         </DialogActions>
       </Dialog>

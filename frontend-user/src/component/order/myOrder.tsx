@@ -27,11 +27,12 @@ import {
   GetColumnForNewFilterArgs,
 } from "@mui/x-data-grid";
 import { ReqSellersInterface } from "../../models/reqseller/IReqSeller";
-import Req_Seller_UI from "../ReqSeller/ReqSeller_UI";
+import ReqSeller_Status_Table_UI from "../ReqSeller/ReqSeller_Status_Table_UI";
 
 export default function My_Order_UI() {
   const [order, setOrder] = React.useState<OrdersInterface[]>([]);
-  const [is_Seller, setIsSeller] = React.useState<ReqSellersInterface>();
+  const [statusSeller, setStatusSeller] = React.useState<ReqSellersInterface>();
+  const [noReq, setNoReq] = React.useState<boolean>();
 
   const [imageString, setImageString] = React.useState<
     string | ArrayBuffer | null
@@ -253,8 +254,9 @@ export default function My_Order_UI() {
     }
   };
 
-  const isSeller = async () => {
-    const apiUrl = ip_address() + "/isseller/" + localStorage.getItem("email");
+  const GetStatusSeller = async () => {
+    const apiUrl =
+      ip_address() + "/statusseller/" + localStorage.getItem("email");
     const requestOptions = {
       method: "GET",
       headers: {
@@ -265,9 +267,13 @@ export default function My_Order_UI() {
 
     await fetch(apiUrl, requestOptions)
       .then((response) => response.json())
-      .then(async (res) => {
+      .then((res) => {
         if (res.data) {
-          setIsSeller(res.data);
+          setStatusSeller(res.data);
+          setNoReq(false);
+        }
+        if (res.error) {
+          setNoReq(true);
         }
       });
   };
@@ -355,14 +361,14 @@ export default function My_Order_UI() {
   React.useEffect(() => {
     const fetchData = async () => {
       setDialogLoadOpen(true);
-      await isSeller();
+      await GetStatusSeller();
       await getMyOrder();
       setDialogLoadOpen(false);
     };
     fetchData();
   }, []);
 
-  if (is_Seller?.Is_Confirm) {
+  if (!noReq && (statusSeller?.Is_Confirm || statusSeller?.Is_Cancel)) {
   return (
     <>
       <Snackbar //ป้ายบันทึกสำเร็จ
@@ -505,6 +511,6 @@ export default function My_Order_UI() {
       </Dialog>
     </>
   );} else {
-    return (<Req_Seller_UI/>)
+    return (<ReqSeller_Status_Table_UI/>)
   }
 }

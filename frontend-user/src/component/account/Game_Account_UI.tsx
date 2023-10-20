@@ -35,7 +35,7 @@ import { GamesInterface } from "../../models/account/IGame";
 import { PostsInterface } from "../../models/post/IPost";
 import "./Game_Account.css";
 import { ReqSellersInterface } from "../../models/reqseller/IReqSeller";
-import Req_Seller_UI from "../ReqSeller/ReqSeller_UI";
+import ReqSeller_Status_Table_UI from "../ReqSeller/ReqSeller_Status_Table_UI";
 
 const styles: { [name: string]: React.CSSProperties } = {
   container: {
@@ -58,10 +58,11 @@ const styles: { [name: string]: React.CSSProperties } = {
 export default function All_My_Account_UI() {
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
   const [account, setAccount] = React.useState<AccountsInterface[]>([]);
-  const [is_Seller, setIsSeller] = React.useState<ReqSellersInterface>();
   const [importAccount, setImportAccount] = React.useState<
     Partial<AccountsInterface>
   >({});
+  const [statusSeller, setStatusSeller] = React.useState<ReqSellersInterface>();
+  const [noReq, setNoReq] = React.useState<boolean>();
   const [post, setPost] = React.useState<Partial<PostsInterface>>({});
   const [game, setGame] = React.useState<GamesInterface[]>([]);
   const [newName, setNewName] = React.useState<string>();
@@ -269,6 +270,30 @@ export default function All_My_Account_UI() {
     setDescription(event.target.value);
   };
 
+  const GetStatusSeller = async () => {
+    const apiUrl =
+      ip_address() + "/statusseller/" + localStorage.getItem("email");
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.data) {
+          setStatusSeller(res.data);
+          setNoReq(false);
+        }
+        if (res.error) {
+          setNoReq(true);
+        }
+      });
+  };
+
   const getAccount = async () => {
     const apiUrl =
       ip_address() + "/all-account/" + localStorage.getItem("email"); // email คือ email ที่ผ่านเข้ามาทาง parameter
@@ -304,25 +329,6 @@ export default function All_My_Account_UI() {
       .then(async (res) => {
         if (res.data) {
           await setGame(res.data);
-        }
-      });
-  };
-
-  const isSeller = async () => {
-    const apiUrl = ip_address() + "/isseller/" + localStorage.getItem("email");
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      },
-    };
-
-    await fetch(apiUrl, requestOptions)
-      .then((response) => response.json())
-      .then(async (res) => {
-        if (res.data) {
-          setIsSeller(res.data);
         }
       });
   };
@@ -525,9 +531,9 @@ export default function All_My_Account_UI() {
     if (count === 0) {
       const fetchData = async () => {
         setDialogLoadOpen(true);
+        await GetStatusSeller();
         await getAccount();
         await getGame();
-        await isSeller();
         setDialogLoadOpen(false);
       };
       fetchData();
@@ -540,7 +546,7 @@ export default function All_My_Account_UI() {
     }
   }, [count, description]);
 
-  if (is_Seller?.Is_Confirm) {
+  if (!noReq && (statusSeller?.Is_Confirm || statusSeller?.Is_Cancel)) {
     return (
       <>
         <Grid>
@@ -969,6 +975,8 @@ export default function All_My_Account_UI() {
       </>
     );
   } else {
-    return <Req_Seller_UI />;
+    return (
+      <ReqSeller_Status_Table_UI/>
+    );
   }
 }

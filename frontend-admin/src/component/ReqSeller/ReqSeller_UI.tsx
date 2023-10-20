@@ -39,6 +39,7 @@ export default function List_ReqSeller_UI() {
   const [headDialog, setHeadDialog] = React.useState<string>();
 
   const [note, setNote] = React.useState<string>();
+  const [newNote, setNewNote] = React.useState<string>();
 
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -47,6 +48,7 @@ export default function List_ReqSeller_UI() {
   const [dialogCardOpen, setDialogCardOpen] = React.useState(false);
   const [dialogGiveOpen, setDialogGiveOpen] = React.useState(false);
   const [dialogRejectOpen, setDialogRejectOpen] = React.useState(false);
+  const [dialogCancelOpen, setDialogCancelOpen] = React.useState(false);
   const [dialogNoteOpen, setDialogNoteOpen] = React.useState(false);
 
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
@@ -135,6 +137,8 @@ export default function List_ReqSeller_UI() {
             <p>Accept</p>
           ) : params.row.Is_Reject ? (
             <p>Reject</p>
+          ) : params.row.Is_Cancel ? (
+            <p>Cancel</p>
           ) : !params.row.Is_Reject && !params.row.Is_Reject ? (
             <p>New Request</p>
           ) : null}
@@ -159,20 +163,34 @@ export default function List_ReqSeller_UI() {
       ),
     },
     {
-      field: "Reject",
-      headerName: "Reject",
+      field: "Reject/Cancel",
+      headerName: "Reject/Cancel",
       width: 150,
       renderCell: (params) => (
-        <Button
-          disabled={params.row.Is_Reject}
-          size="small"
-          variant="contained"
-          color="error"
-          sx={{ backgroundColor: "#ff753e" }}
-          onClick={() => handleRejectButtonClick(params.row.ID)}
-        >
-          Reject
-        </Button>
+        <>
+          {params.row.Is_Confirm || params.row.Is_Cancel ? (
+            <Button
+              disabled={params.row.Is_Reject || params.row.Is_Cancel}
+              size="small"
+              variant="contained"
+              color="error"
+              onClick={() => handleCancelButtonClick(params.row.ID)}
+            >
+              Cancel
+            </Button>
+          ) : (
+            <Button
+              disabled={params.row.Is_Reject || params.row.Is_Cancel}
+              size="small"
+              variant="contained"
+              color="error"
+              sx={{ backgroundColor: "#ff753e" }}
+              onClick={() => handleRejectButtonClick(params.row.ID)}
+            >
+              Reject
+            </Button>
+          )}
+        </>
       ),
     },
     {
@@ -245,6 +263,11 @@ export default function List_ReqSeller_UI() {
     setDialogRejectOpen(true);
   };
 
+  const handleCancelButtonClick = (ID: number) => {
+    setReqSellerID(ID);
+    setDialogCancelOpen(true);
+  };
+
   const handleCloseCardDialog = () => {
     setDialogCardOpen(false);
   };
@@ -255,6 +278,12 @@ export default function List_ReqSeller_UI() {
 
   const handleDialogRejectClickClose = () => {
     setDialogRejectOpen(false);
+    setNewNote(undefined);
+  };
+
+  const handleDialogCancelClickClose = () => {
+    setDialogCancelOpen(false);
+    setNewNote(undefined);
   };
 
   const handleDialogNoteClickClose = () => {
@@ -263,7 +292,7 @@ export default function List_ReqSeller_UI() {
   };
 
   const textAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNote(event.target.value);
+    setNewNote(event.target.value);
   };
 
   const getReqSeller = async () => {
@@ -281,7 +310,6 @@ export default function List_ReqSeller_UI() {
       .then((res) => {
         if (res.data) {
           setReqSeller(res.data);
-          console.log(res.data);
         }
       });
   };
@@ -291,7 +319,9 @@ export default function List_ReqSeller_UI() {
       ID: reqSellerID,
     };
     const apiUrl =
-      ip_address() + "/accesspermission/" + localStorage.getItem("account_name"); //ส่งขอการแก้ไข
+      ip_address() +
+      "/acceptpermission/" +
+      localStorage.getItem("account_name"); //ส่งขอการแก้ไข
     const requestOptions = {
       method: "PATCH",
       headers: {
@@ -316,37 +346,83 @@ export default function List_ReqSeller_UI() {
   };
 
   const RejectRequest = async () => {
-    setDialogLoadOpen(true);
+    if (newNote === undefined) {
+      setError(true);
+      setErrorMsg(" - Please enter a note.");
+    } else {
+      setDialogLoadOpen(true);
 
-    let data = {
-      ID: reqSellerID,
-      Note: note,
-    };
+      let data = {
+        ID: reqSellerID,
+        Note: newNote,
+      };
 
-    const apiUrl =
-      ip_address() + "/rejectreq/" + localStorage.getItem("account_name"); //ส่งขอการแก้ไข
-    const requestOptions = {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    };
+      const apiUrl =
+        ip_address() + "/rejectreq/" + localStorage.getItem("account_name"); //ส่งขอการแก้ไข
+      const requestOptions = {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      };
 
-    await fetch(apiUrl, requestOptions)
-      .then((response) => response.json())
-      .then(async (res) => {
-        if (res.data) {
-          setSuccess(true);
-          await getReqSeller();
-          handleDialogRejectClickClose();
-        } else {
-          setError(true);
-          setErrorMsg(" - " + res.error);
-        }
-      });
-    setDialogLoadOpen(false);
+      await fetch(apiUrl, requestOptions)
+        .then((response) => response.json())
+        .then(async (res) => {
+          if (res.data) {
+            setSuccess(true);
+            await getReqSeller();
+            handleDialogRejectClickClose();
+          } else {
+            setError(true);
+            setErrorMsg(" - " + res.error);
+          }
+        });
+      setDialogLoadOpen(false);
+    }
+  };
+
+  const CancelPermission = async () => {
+    if (newNote === undefined) {
+      setError(true);
+      setErrorMsg(" - Please enter a note.");
+    } else {
+      setDialogLoadOpen(true);
+
+      let data = {
+        ID: reqSellerID,
+        Note: newNote,
+      };
+
+      const apiUrl =
+        ip_address() +
+        "/cancelpermission/" +
+        localStorage.getItem("account_name"); //ส่งขอการแก้ไข
+      const requestOptions = {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      };
+
+      await fetch(apiUrl, requestOptions)
+        .then((response) => response.json())
+        .then(async (res) => {
+          if (res.data) {
+            setSuccess(true);
+            await getReqSeller();
+            handleDialogCancelClickClose();
+          } else {
+            setError(true);
+            setErrorMsg(" - " + res.error);
+          }
+        });
+      setDialogLoadOpen(false);
+    }
   };
 
   const [count, setCount] = React.useState<number>(0);
@@ -360,12 +436,13 @@ export default function List_ReqSeller_UI() {
       fetchData();
       setCount(1);
     }
+
     if (textareaRef && textareaRef.current) {
       textareaRef.current.style.height = "0px";
       const scrollHeight = textareaRef.current.scrollHeight;
       textareaRef.current.style.height = scrollHeight + "px";
     }
-  }, [count, note]);
+  }, [count, newNote]);
 
   return (
     <>
@@ -419,10 +496,17 @@ export default function List_ReqSeller_UI() {
               }
             }}
             getRowClassName={(params) => {
-              if (!params.row.Is_Confirm && params.row.Is_Reject) {
+              if (
+                !params.row.Is_Confirm &&
+                (params.row.Is_Reject || params.row.Is_Cancel)
+              ) {
                 return "reject-row";
-              } else if (!params.row.Is_Confirm && !params.row.Is_Reject) {
-                return "req-row";
+              } else if (
+                params.row.Is_Confirm &&
+                !params.row.Is_Reject &&
+                !params.row.Is_Cancel
+              ) {
+                return "new-row";
               }
               return "";
             }}
@@ -502,7 +586,7 @@ export default function List_ReqSeller_UI() {
                     borderRadius: "5px",
                   }}
                   onChange={textAreaChange}
-                  value={note}
+                  value={newNote}
                 ></textarea>
               </Grid>
             </Paper>
@@ -524,6 +608,59 @@ export default function List_ReqSeller_UI() {
             autoFocus
           >
             Reject
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog //cancel
+        open={dialogCancelOpen}
+        onClose={handleDialogCancelClickClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth={true}
+        maxWidth="sm"
+      >
+        <DialogTitle id="alert-dialog-title">{"Cancel permission"}</DialogTitle>
+        <DialogContent>
+          <Box>
+            <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+              <Grid container>
+                <p>Note</p>
+                <textarea
+                  ref={textareaRef}
+                  style={{
+                    padding: 5,
+                    marginTop: 10,
+                    width: "98%",
+                    height: "100%",
+                    display: "block",
+                    resize: "none",
+                    backgroundColor: "#F",
+                    fontSize: 16,
+                    borderRadius: "5px",
+                  }}
+                  onChange={textAreaChange}
+                  value={newNote}
+                ></textarea>
+              </Grid>
+            </Paper>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            size="small"
+            onClick={handleDialogCancelClickClose}
+            color="inherit"
+          >
+            Cancel
+          </Button>
+          <Button
+            size="small"
+            onClick={CancelPermission}
+            color="error"
+            autoFocus
+          >
+            Cancel permission
           </Button>
         </DialogActions>
       </Dialog>

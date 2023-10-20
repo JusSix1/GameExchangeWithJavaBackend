@@ -53,6 +53,7 @@ func main() {
 			protectedUser.GET("/games", game_controller.ListGame)
 
 			protectedUser.POST("/reqgame/:email", reqgame_controller.CreateReqGame)
+			protectedUser.GET("/listmyreqgames/:email", reqgame_controller.ListMyReqGame)
 
 			protectedUser.POST("/post/:email", post_controller.CreatePost)
 			protectedUser.GET("/posts", post_controller.ListPost)
@@ -77,10 +78,11 @@ func main() {
 			protectedUser.DELETE("/deletecomment", comment_controller.DeleteComment)
 
 			protectedUser.POST("/reqseller/:email", reqseller_controller.CreateReqSeller)
-			protectedUser.GET("/reqdata/:email", reqseller_controller.GetrReqData)
+			protectedUser.GET("/statusseller/:email", reqseller_controller.GetStatusSeller)
+			protectedUser.GET("/reqdata/:email", reqseller_controller.GetReqData)
 			protectedUser.GET("/isseller/:email", reqseller_controller.GetIsSeller)
 			protectedUser.GET("/isreqseller/:email", reqseller_controller.GetIsReqSeller)
-			protectedUser.GET("/isrejectreqseller/:email", reqseller_controller.GetIsRejectReqSeller)
+			protectedUser.GET("/isrejectreqseller/:email", reqseller_controller.GetIsRejectSeller)
 			protectedUser.PATCH("/rerequest/:email", reqseller_controller.UpdateReReqUser)
 		}
 	}
@@ -97,8 +99,9 @@ func main() {
 			protectedAdmin.GET("/userforadmin/:profilename", user_controller.GetUser)
 
 			protectedAdmin.GET("/reqseller", reqseller_controller.ListReqSeller)
-			protectedAdmin.PATCH("/accesspermission/:account_name", reqseller_controller.UpdateAccessUser)
+			protectedAdmin.PATCH("/acceptpermission/:account_name", reqseller_controller.UpdateAcceptUser)
 			protectedAdmin.PATCH("/rejectreq/:account_name", reqseller_controller.UpdateRejectUser)
+			protectedAdmin.PATCH("/cancelpermission/:account_name", reqseller_controller.UpdateCancelPermissionUser)
 
 			protectedAdmin.GET("/commentforadmin/:profile_name", comment_controller.GetComment)
 
@@ -108,7 +111,8 @@ func main() {
 			protectedAdmin.DELETE("/game", game_controller.DeleteGame)
 
 			protectedAdmin.GET("/listreqgames", reqgame_controller.ListReqGame)
-			protectedAdmin.PATCH("/reqgame", reqgame_controller.UpdateReqGame)
+			protectedAdmin.PATCH("/isaddreqgames", reqgame_controller.UpdateIsAddReqGame)
+			protectedAdmin.PATCH("/isrejectreqgames", reqgame_controller.UpdateIsRejectReqGame)
 		}
 	}
 

@@ -27,7 +27,7 @@ func CreateReqSeller(c *gin.Context) {
 		return
 	}
 
-	if tx := entity.DB().Where("user_id = ?", user.ID).First(&reqSellerCheck); tx.RowsAffected != 0 {
+	if tx := entity.DB().Where("user_id = ? and is_reject = false and is_cancel = false", user.ID).First(&reqSellerCheck); tx.RowsAffected != 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "You have already sent a request."})
 		return
 	}
@@ -75,7 +75,27 @@ func ListReqSeller(c *gin.Context) {
 }
 
 // GET /reqdata/:email
-func GetrReqData(c *gin.Context) {
+func GetReqData(c *gin.Context) {
+	var userCheckID entity.User
+	var reqseller []entity.ReqSeller
+
+	email := c.Param("email")
+
+	if tx := entity.DB().Where("email = ?", email).First(&userCheckID); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+
+	if err := entity.DB().Raw("SELECT * FROM req_sellers WHERE user_id = ? ORDER BY id DESC", userCheckID.ID).Find(&reqseller).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": reqseller})
+}
+
+// GET /statusseller/:email
+func GetStatusSeller(c *gin.Context) {
 	var userCheckID entity.User
 	var reqseller entity.ReqSeller
 
@@ -86,8 +106,8 @@ func GetrReqData(c *gin.Context) {
 		return
 	}
 
-	if err := entity.DB().Raw("SELECT id,personal_card_front,personal_card_back,note FROM req_sellers WHERE user_id = ?", userCheckID.ID).Find(&reqseller).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := entity.DB().Raw("SELECT is_confirm,is_reject,is_cancel FROM req_sellers WHERE user_id = ? ORDER BY id DESC", userCheckID.ID).First(&reqseller).Error; err != nil {
+		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -106,12 +126,12 @@ func GetIsSeller(c *gin.Context) {
 		return
 	}
 
-	if err := entity.DB().Raw("SELECT is_confirm FROM req_sellers WHERE user_id = ?", userCheckID.ID).Find(&reqseller).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if tx := entity.DB().Where("user_id = ? AND is_confirm = true AND is_reject = false AND is_cancel = false", userCheckID.ID).First(&reqseller); tx.RowsAffected != 0 {
+		c.JSON(http.StatusOK, gin.H{"data": "true"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": reqseller})
+	c.JSON(http.StatusOK, gin.H{"data": "false"})
 }
 
 // GET /isreqseller/:email
@@ -126,17 +146,17 @@ func GetIsReqSeller(c *gin.Context) {
 		return
 	}
 
-	if tx := entity.DB().Where("user_id = ? and is_confirm = false AND is_reject = false", userCheckID.ID).Find(&reqseller); tx.RowsAffected != 0 {
+	if tx := entity.DB().Where("user_id = ? AND is_confirm = false AND is_reject = false AND is_cancel = false", userCheckID.ID).First(&reqseller); tx.RowsAffected != 0 {
 		c.JSON(http.StatusOK, gin.H{"data": "true"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, gin.H{"data": "false"})
 
 }
 
-// GET /isrejectreqseller/:email
-func GetIsRejectReqSeller(c *gin.Context) {
+// GET /isrejectseller/:email
+func GetIsRejectSeller(c *gin.Context) {
 	var userCheckID entity.User
 	var reqseller entity.ReqSeller
 
@@ -147,17 +167,38 @@ func GetIsRejectReqSeller(c *gin.Context) {
 		return
 	}
 
-	if tx := entity.DB().Where("user_id = ? and is_confirm = false AND is_reject = true", userCheckID.ID).Find(&reqseller); tx.RowsAffected != 0 {
+	if tx := entity.DB().Where("user_id = ? AND is_confirm = false AND is_reject = true AND is_cancel = false", userCheckID.ID).First(&reqseller); tx.RowsAffected != 0 {
 		c.JSON(http.StatusOK, gin.H{"data": "true"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, gin.H{"data": "false"})
 
 }
 
-// PATCH /accesspermission/:account_name
-func UpdateAccessUser(c *gin.Context) {
+// GET /iscancelseller/:email
+func GetIsCancelSeller(c *gin.Context) {
+	var userCheckID entity.User
+	var reqseller entity.ReqSeller
+
+	email := c.Param("email")
+
+	if tx := entity.DB().Where("email = ?", email).First(&userCheckID); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+
+	if tx := entity.DB().Where("user_id = ? AND is_confirm = false AND is_reject = false AND is_cancel = true", userCheckID.ID).First(&reqseller); tx.RowsAffected != 0 {
+		c.JSON(http.StatusOK, gin.H{"data": "true"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": "false"})
+
+}
+
+// PATCH /acceptpermission/:account_name
+func UpdateAcceptUser(c *gin.Context) {
 	var reqSeller entity.ReqSeller
 	var admin entity.Admin
 
@@ -173,13 +214,15 @@ func UpdateAccessUser(c *gin.Context) {
 		return
 	}
 
-	updateReqSeller := entity.ReqSeller{
-		Admin_ID:   &admin.ID,
-		Is_Confirm: true,
-		Note:       "",
+	updateReqSeller := map[string]interface{}{
+		"Admin_ID":   &admin.ID,
+		"Is_Confirm": true,
+		"Is_Reject":  false,
+		"Is_Cancel":  false,
+		"Note":       "",
 	}
 
-	if err := entity.DB().Where("id = ?", reqSeller.ID).Updates(&updateReqSeller).Error; err != nil {
+	if err := entity.DB().Model(&reqSeller).Where("id = ?", reqSeller.ID).Updates(updateReqSeller).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -209,6 +252,38 @@ func UpdateRejectUser(c *gin.Context) {
 		"Is_Confirm": false,
 		"Note":       reqSeller.Note,
 		"Is_Reject":  true,
+	}
+
+	if err := entity.DB().Model(&reqSeller).Where("id = ?", reqSeller.ID).Updates(updateReqSeller).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": reqSeller})
+}
+
+// PATCH /cancelpermission/:account_name
+func UpdateCancelPermissionUser(c *gin.Context) {
+	var reqSeller entity.ReqSeller
+	var admin entity.Admin
+
+	account_name := c.Param("account_name")
+
+	if err := c.ShouldBindJSON(&reqSeller); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if tx := entity.DB().Where("account_name = ?", account_name).First(&admin); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Admin not found"})
+		return
+	}
+
+	updateReqSeller := map[string]interface{}{
+		"Admin_ID":   &admin.ID,
+		"Is_Confirm": false,
+		"Note":       reqSeller.Note,
+		"Is_Cancel":  true,
 	}
 
 	if err := entity.DB().Model(&reqSeller).Where("id = ?", reqSeller.ID).Updates(updateReqSeller).Error; err != nil {

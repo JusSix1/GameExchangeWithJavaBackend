@@ -8,7 +8,7 @@
     background-color: #3a3b3c;
     box-shadow: 0px 0px 20px 10px #48abe0;
     animation: shadows-post 10s infinite;
-    color: #FFF;
+    color: #fff;
 }
 
 @keyframes shadows-post {
@@ -58,6 +58,7 @@
 }
 
 .div-btn {
+    margin-top: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -93,4 +94,26 @@
 }
 .btn-send:active {
     top: 2px;
+}
+
+.div-personalID-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.div-status-table {
+    margin: 1rem;
+}
+
+.div-rule-under-table {
+    justify-content: start;
+    align-items: start;
+    flex-direction: row;
+    border: 1px solid #727272;
+    border-radius: 10px;
+    margin: 1rem;
+    padding: 1rem;
+    background-color: #3a3b3c;
+    font-size: 18px;
 }

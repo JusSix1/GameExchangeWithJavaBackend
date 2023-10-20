@@ -1,10 +1,10 @@
-.req-row {
-    background-color: #48abe0;
+.new-row {
+    background-color: #76b7da;
     color: #fff;
 }
 
 .reject-row {
-    background-color: blueviolet;
+    background-color: rgb(185, 76, 76);
     color: #fff;
 }
 

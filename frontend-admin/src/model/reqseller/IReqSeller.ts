@@ -13,4 +13,5 @@ export interface ReqSellersInterface {
   Is_Confirm: boolean;
   Note: string;
   Is_Reject: boolean;
+  Is_Cancel: boolean;
 }

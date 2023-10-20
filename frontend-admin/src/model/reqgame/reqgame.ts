@@ -5,5 +5,7 @@ export interface ReqGamesInterface {
   User_ID: number;
   User: UsersInterface;
   Name: string;
-  Is_Check: boolean;
+  Is_Add: boolean;
+  Is_Reject: boolean; 
+  Note: string;
 }

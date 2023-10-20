@@ -49,10 +49,12 @@ type Game struct {
 
 type ReqGame struct {
 	gorm.Model
-	User_ID  *uint  `valid:"-"`
-	User     User   `gorm:"references:id" valid:"-"`
-	Name     string `valid:"required~Game name is blank"`
-	Is_Check bool   `valid:"-"`
+	User_ID   *uint  `valid:"-"`
+	User      User   `gorm:"references:id" valid:"-"`
+	Name      string `valid:"required~Game name is blank"`
+	Is_Add    bool   `valid:"-"`
+	Is_Reject bool   `valid:"-"`
+	Note      string `valid:"-"`
 }
 
 type Account struct {
@@ -126,6 +128,7 @@ type ReqSeller struct {
 	Is_Confirm          bool   `valid:"-"`
 	Note                string `valid:"-"`
 	Is_Reject           bool   `valid:"-"`
+	Is_Cancel           bool   `valid:"-"`
 }
 
 func init() {
