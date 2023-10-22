@@ -17,6 +17,7 @@ import ip_address from "../ip";
 import { PostsInterface } from "../../models/post/IPost";
 import "./myBasket.css";
 import "../Home/Home_User_UI.css";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 export default function My_Basket_UI() {
   const [reserve, setReserve] = React.useState<OrdersInterface[]>([]);
@@ -291,16 +292,29 @@ export default function My_Basket_UI() {
         <DialogTitle id="alert-dialog-title">Upload Slip</DialogTitle>
         <Grid margin={1} item xs={12}>
           <h4>Slip</h4>
-          <Grid>
-            {reserveForUploadSlip.Slip && (
+          <div className="div-slip">
+            {reserveForUploadSlip.Slip ? (
               <img
                 src={`${reserveForUploadSlip?.Slip}`}
                 width="480"
                 height="640"
               />
+            ) : (
+              <>
+                <label htmlFor="Image-Input-slip">
+                  <AddPhotoAlternateIcon
+                    sx={{
+                      fontSize: 120,
+                      margin: 1,
+                      padding: 2,
+                      cursor: "pointer", // เปลี่ยนรูปแบบเคอร์เซอร์เป็นตัวเลือก
+                    }}
+                  />
+                </label>
+              </>
             )}
-          </Grid>
-          <input type="file" onChange={handleImageChange} />
+          </div>
+          <input id="Image-Input-slip" type="file" onChange={handleImageChange} />
         </Grid>
         <DialogActions>
           <Button size="small" onClick={handleCloseSlipDialog} color="inherit">

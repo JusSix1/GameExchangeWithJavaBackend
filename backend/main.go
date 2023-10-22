@@ -71,6 +71,9 @@ func main() {
 			protectedUser.DELETE("/order", order_controller.DeleteOrder)
 			protectedUser.DELETE("/cancelorder", order_controller.CancelOrder)
 
+			protectedUser.GET("/top5seller", order_controller.GetTop5Seller)
+			protectedUser.GET("/top5game", order_controller.GetTop5Game)
+
 			protectedUser.POST("/comment/:email", comment_controller.CreateComment)
 			protectedUser.GET("/comment/:profile_name", comment_controller.GetComment)
 			protectedUser.GET("/mycomment/:email", comment_controller.GetMyComment)

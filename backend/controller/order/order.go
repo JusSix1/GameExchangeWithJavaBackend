@@ -318,3 +318,60 @@ func CancelOrder(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"data": order})
 }
+
+// GET /top5seller
+func GetTop5Seller(c *gin.Context) {
+
+	type Top5Seller struct {
+		User_ID         uint
+		Profile_Name    string
+		Profile_Picture string
+		Order_Count     uint
+	}
+
+	var top5seller []Top5Seller
+
+	if err := entity.DB().Table("users").
+		Select("users.id AS user_id, users.profile_name, users.profile_picture, COUNT(orders.id) AS order_count").
+		Joins("JOIN accounts ON users.ID = accounts.user_id").
+		Joins("JOIN orders ON accounts.id = orders.account_id").
+		Where("orders.is_receive = ?", true).
+		Where("orders.updated_at >= DATE('now', '-7 days')").
+		Group("users.id").
+		Order("order_count DESC").
+		Limit(5).
+		Scan(&top5seller).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": top5seller})
+}
+
+// GET /top5game
+func GetTop5Game(c *gin.Context) {
+
+	type Top5Game struct {
+		Game_ID     uint
+		Name        string
+		Order_Count uint
+	}
+
+	var top5game []Top5Game
+
+	if err := entity.DB().Table("games").
+		Select("games.id AS game_id, games.name, COUNT(orders.id) AS order_count").
+		Joins("JOIN accounts ON games.id = accounts.game_id").
+		Joins("JOIN orders ON accounts.id = orders.account_id").
+		Where("orders.is_receive = ?", true).
+		Where("orders.updated_at >= DATE('now', '-7 days')").
+		Group("games.id").
+		Order("order_count DESC").
+		Limit(5).
+		Scan(&top5game).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": top5game})
+}

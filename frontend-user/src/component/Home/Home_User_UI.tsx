@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/style-prop-object */
 import React from "react";
 import { PostsInterface } from "../../models/post/IPost";
@@ -13,9 +14,15 @@ import {
 import "./Home_User_UI.css";
 import Moment from "moment";
 import moment from "moment";
+import { Top5SellersInterface } from "../../models/top5seller/ITop5Seller";
+import { Top5GameInterface } from "../../models/top5game/ITop5Game";
 
 export default function Home_User_UI() {
   const [post, setPost] = React.useState<PostsInterface[]>([]);
+  const [top5Seller, setTop5Seller] = React.useState<Top5SellersInterface[]>(
+    []
+  );
+  const [top5Game, setTop5Game] = React.useState<Top5GameInterface[]>([]);
   const textareaRefDescription = React.useRef<HTMLTextAreaElement | null>(null);
   const textareaRefGame = React.useRef<HTMLTextAreaElement | null>(null);
   const textareaRefUser = React.useRef<HTMLTextAreaElement | null>(null);
@@ -97,6 +104,42 @@ export default function Home_User_UI() {
       });
   };
 
+  const getTop5Seller = async () => {
+    const apiUrl = ip_address() + "/top5seller";
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    };
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.data) {
+          setTop5Seller(res.data);
+        }
+      });
+  };
+
+  const getTop5Game = async () => {
+    const apiUrl = ip_address() + "/top5game";
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    };
+    await fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.data) {
+          setTop5Game(res.data);
+        }
+      });
+  };
+
   const CreateReserve = async () => {
     setDialogLoadOpen(true);
 
@@ -137,6 +180,8 @@ export default function Home_User_UI() {
       const fetchData = async () => {
         setDialogLoadOpen(true);
         await getPost();
+        await getTop5Seller();
+        await getTop5Game();
         setDialogLoadOpen(false);
       };
       fetchData();
@@ -220,15 +265,31 @@ export default function Home_User_UI() {
             <div className="search-component">Sort by</div>
             <div className="search-component">
               <div className="radio-item">
-                <input name="radio" id="radio1" type="radio" defaultChecked onChange={(event) => setSortFilter(1)} />
+                <input
+                  name="radio"
+                  id="radio1"
+                  type="radio"
+                  defaultChecked
+                  onChange={(event) => setSortFilter(1)}
+                />
                 <label htmlFor="radio1">Newest</label>
               </div>
               <div className="radio-item">
-                <input name="radio" id="radio2" type="radio" onChange={(event) => setSortFilter(2)} />
+                <input
+                  name="radio"
+                  id="radio2"
+                  type="radio"
+                  onChange={(event) => setSortFilter(2)}
+                />
                 <label htmlFor="radio2">Cheapest - most expensive</label>
               </div>
               <div className="radio-item">
-                <input name="radio" id="radio3" type="radio" onChange={(event) => setSortFilter(3)} />
+                <input
+                  name="radio"
+                  id="radio3"
+                  type="radio"
+                  onChange={(event) => setSortFilter(3)}
+                />
                 <label htmlFor="radio3">Most expensive - cheapest</label>
               </div>
             </div>
@@ -304,6 +365,84 @@ export default function Home_User_UI() {
                 </div>
               </div>
             ))}
+        </div>
+        <div className="top5">
+          <div className="top5-seller">
+            <div className="top5-seller-body">
+              <div className="top5-seller-header">5 Seller of the Week</div>
+              {top5Seller.map((item, index) => (
+                <div className="top5-seller-component">
+                  {index + 1 === 1 ? (
+                    <img
+                      src="https://wi08ebtatdc7oj83wtl9uxwz807l8b.ext-twitch.tv/wi08ebtatdc7oj83wtl9uxwz807l8b/2.2.3/eb638f0611d8c2bbd2ed07ca79f13578/js/../images/rank1-star.a14b172b161fba9194cfe32f74071cca.svg"
+                      className={`lb__rank${index + 1}-star`}
+                    />
+                  ) : index + 1 === 2 ? (
+                    <img
+                      src="https://wi08ebtatdc7oj83wtl9uxwz807l8b.ext-twitch.tv/wi08ebtatdc7oj83wtl9uxwz807l8b/2.2.3/eb638f0611d8c2bbd2ed07ca79f13578/js/../images/silver-star-night.2556bf8a1637f08dd792a003ba713d61.svg"
+                      className={`lb__user-rank--star`}
+                    />
+                  ) : index + 1 === 3 ? (
+                    <img
+                      src="https://wi08ebtatdc7oj83wtl9uxwz807l8b.ext-twitch.tv/wi08ebtatdc7oj83wtl9uxwz807l8b/2.2.3/eb638f0611d8c2bbd2ed07ca79f13578/js/../images/bronze-star-night.d1dfbfaf32ac42d26248a7b8ad43a6f0.svg"
+                      className={`lb__user-rank--star`}
+                    />
+                  ) : (
+                    <label className={`top5-seller-component-label-rank`}>
+                      {index + 1}
+                    </label>
+                  )}
+                  <img
+                    src={item.Profile_Picture}
+                    alt={`${item.Profile_Name}'s profile`}
+                    className="top5-seller-component-img"
+                  />
+                  <label
+                    htmlFor={`top5-seller-radio-${item.User_ID}`}
+                    className="top5-seller-component-label-profile-name"
+                  >
+                    {item.Profile_Name}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="top5-game">
+            <div className="top5-game-body">
+              <div className="top5-game-header">5 Games of the Week</div>
+              {top5Game.map((item, index) => (
+                <div className="top5-game-component">
+                  {index + 1 === 1 ? (
+                    <img
+                      src="https://wi08ebtatdc7oj83wtl9uxwz807l8b.ext-twitch.tv/wi08ebtatdc7oj83wtl9uxwz807l8b/2.2.3/eb638f0611d8c2bbd2ed07ca79f13578/js/../images/rank1-star.a14b172b161fba9194cfe32f74071cca.svg"
+                      className={`lb__rank${index + 1}-star`}
+                    />
+                  ) : index + 1 === 2 ? (
+                    <img
+                      src="https://wi08ebtatdc7oj83wtl9uxwz807l8b.ext-twitch.tv/wi08ebtatdc7oj83wtl9uxwz807l8b/2.2.3/eb638f0611d8c2bbd2ed07ca79f13578/js/../images/silver-star-night.2556bf8a1637f08dd792a003ba713d61.svg"
+                      className={`lb__user-rank--star`}
+                    />
+                  ) : index + 1 === 3 ? (
+                    <img
+                      src="https://wi08ebtatdc7oj83wtl9uxwz807l8b.ext-twitch.tv/wi08ebtatdc7oj83wtl9uxwz807l8b/2.2.3/eb638f0611d8c2bbd2ed07ca79f13578/js/../images/bronze-star-night.d1dfbfaf32ac42d26248a7b8ad43a6f0.svg"
+                      className={`lb__user-rank--star`}
+                    />
+                  ) : (
+                    <label className={`top5-game-component-label-rank`}>
+                      {index + 1}
+                    </label>
+                  )}
+                  <label
+                    htmlFor={`top5-game-radio-${item.Name}`}
+                    className="top5-game-component-label-profile-name"
+                  >
+                    {item.Name}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 

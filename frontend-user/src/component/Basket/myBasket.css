@@ -96,3 +96,9 @@
         min-width: 150px;
     }
 }
+
+.div-slip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
