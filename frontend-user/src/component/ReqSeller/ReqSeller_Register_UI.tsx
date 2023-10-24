@@ -177,6 +177,23 @@ export default function ReqSeller_Register_UI() {
                 </>
               )}
             </div>
+            {reqSeller.Personal_Card_Front ? (
+              <>
+                <input
+                  type="file"
+                  id="Image-Input-front"
+                  style={{ display: "none" }}
+                  onChange={handleImageChangeFront}
+                  accept=".jpg, .jpeg, .png"
+                />
+                <label
+                  htmlFor="Image-Input-front"
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className="div-change-personal-image">Change Front Image</div>
+                </label>
+              </>
+            ) : null}
           </div>
 
           <div className="div-upload">
@@ -212,6 +229,20 @@ export default function ReqSeller_Register_UI() {
                 </>
               )}
             </div>
+            {reqSeller.Personal_Card_Back ? (
+              <>
+                <input
+                  type="file"
+                  id="Image-Input-back"
+                  style={{ display: "none" }}
+                  onChange={handleImageChangeFront}
+                  accept=".jpg, .jpeg, .png"
+                />
+                <label htmlFor="Image-Input-back" style={{ cursor: "pointer" }}>
+                  <div className="div-change-personal-image">Change Back Image</div>
+                </label>
+              </>
+            ) : null}
           </div>
         </div>
 

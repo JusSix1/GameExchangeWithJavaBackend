@@ -78,3 +78,13 @@ button{
     z-index: -1;
     transition: all 0.25s ease;
 }
+
+.div-add-advertising-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.div-change-Advertising-image {
+    color: #2d54ff;
+}

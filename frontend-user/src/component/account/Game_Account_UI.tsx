@@ -36,6 +36,7 @@ import { PostsInterface } from "../../models/post/IPost";
 import "./Game_Account.css";
 import { ReqSellersInterface } from "../../models/reqseller/IReqSeller";
 import ReqSeller_Status_Table_UI from "../ReqSeller/ReqSeller_Status_Table_UI";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 const styles: { [name: string]: React.CSSProperties } = {
   container: {
@@ -867,19 +868,54 @@ export default function All_My_Account_UI() {
                   </Grid>
 
                   <Grid item xs={12}>
-                    {" "}
-                    {/* Profile Picture */}
                     <h4>Advertising Image</h4>
-                    <Grid item xs={12} sx={{ marginX: 2 }}>
-                      {imageString && (
+                    <div className="div-add-advertising-image">
+                      {imageString ? (
                         <img
                           src={`${imageString}`}
                           width="100%"
                           height="100%"
                         />
+                      ) : (
+                        <>
+                          <input
+                            type="file"
+                            id="Add-Advertising-Image"
+                            style={{ display: "none" }}
+                            onChange={handleImageChange}
+                          />
+                          <label htmlFor="Add-Advertising-Image">
+                            <AddPhotoAlternateIcon
+                              sx={{
+                                fontSize: 120,
+                                margin: 1,
+                                padding: 2,
+                                cursor: "pointer", // เปลี่ยนรูปแบบเคอร์เซอร์เป็นตัวเลือก
+                              }}
+                            />
+                          </label>
+                        </>
                       )}
-                    </Grid>
-                    <input type="file" onChange={handleImageChange} />
+                    </div>
+                    {imageString ? (
+                      <>
+                        <input
+                          type="file"
+                          id="Add-Advertising-Image"
+                          style={{ display: "none" }}
+                          onChange={handleImageChange}
+                          accept=".jpg, .jpeg, .png"
+                        />
+                        <label
+                          htmlFor="Add-Advertising-Image"
+                          style={{ cursor: "pointer" }}
+                        >
+                          <div className="div-change-Advertising-image">
+                            Change Image
+                          </div>
+                        </label>
+                      </>
+                    ) : null}
                   </Grid>
                 </Paper>
               </Box>
@@ -939,7 +975,12 @@ export default function All_My_Account_UI() {
               >
                 Cancel
               </Button>
-              <Button size="small" onClick={CreateReqNewGame} color="info" autoFocus>
+              <Button
+                size="small"
+                onClick={CreateReqNewGame}
+                color="info"
+                autoFocus
+              >
                 Send
               </Button>
             </DialogActions>
@@ -975,8 +1016,6 @@ export default function All_My_Account_UI() {
       </>
     );
   } else {
-    return (
-      <ReqSeller_Status_Table_UI/>
-    );
+    return <ReqSeller_Status_Table_UI />;
   }
 }
