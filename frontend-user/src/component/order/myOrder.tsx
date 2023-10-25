@@ -3,12 +3,14 @@
 import * as React from "react";
 import {
   Alert,
+  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Grid,
+  Paper,
   Snackbar,
 } from "@mui/material";
 import Moment from "moment";
@@ -38,6 +40,8 @@ export default function My_Order_UI() {
     string | ArrayBuffer | null
   >(null);
   const [orderID, setOrderID] = React.useState<Number>();
+  const [newNote, setNewNote] = React.useState<string>();
+  const [note, setNote] = React.useState<string>();
 
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -46,7 +50,11 @@ export default function My_Order_UI() {
   const [dialogSlipOpen, setDialogSlipOpen] = React.useState(false);
   const [dialogConfirmSlipOpen, setDialogConfirmSlipOpen] =
     React.useState(false);
+  const [dialogRejectOpen, setDialogRejectOpen] = React.useState(false);
   const [dialogCancelOpen, setDialogCancelOpen] = React.useState(false);
+  const [dialogNoteOpen, setDialogNoteOpen] = React.useState(false);
+
+  const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
   Moment.locale("th");
 
@@ -99,7 +107,11 @@ export default function My_Order_UI() {
       width: 200,
       renderCell: (params) => (
         <span>
-          {params.value && params.row.Is_Slip_Confirm ? "Received" : !params.value && params.row.Is_Slip_Confirm ? "Not Received" : null}
+          {params.value && params.row.Is_Slip_Confirm
+            ? "Received"
+            : !params.value && params.row.Is_Slip_Confirm
+            ? "Not Received"
+            : null}
         </span>
       ),
     },
@@ -113,7 +125,7 @@ export default function My_Order_UI() {
           size="small"
           variant="contained"
           color="inherit"
-          style={{color: "#000"}}
+          style={{ color: "#000" }}
           onClick={() => handleSlipButtonClick(params.row.Slip)}
         >
           View Slip
@@ -126,7 +138,9 @@ export default function My_Order_UI() {
       width: 150,
       renderCell: (params) => (
         <Button
-          disabled={!(params.row.Slip && !params.row.Is_Slip_Confirm)}
+          disabled={
+            !(params.row.Slip && !params.row.Is_Slip_Confirm)|| params.row.Is_Reject
+          }
           size="small"
           variant="contained"
           color="primary"
@@ -134,6 +148,24 @@ export default function My_Order_UI() {
           onClick={() => handleConfirmButtonClick(params.row.ID)}
         >
           Confirm Slip
+        </Button>
+      ),
+    },
+    {
+      field: "reject",
+      headerName: "Reject",
+      width: 150,
+      renderCell: (params) => (
+        <Button
+          disabled={
+            !(params.row.Slip && !params.row.Is_Slip_Confirm) || params.row.Is_Reject
+          }
+          size="small"
+          variant="contained"
+          color="secondary"
+          onClick={() => handleRejectButtonClick(params.row.ID)}
+        >
+          Reject
         </Button>
       ),
     },
@@ -168,6 +200,11 @@ export default function My_Order_UI() {
           View
         </Button>
       ),
+    },
+    {
+      field: "Note",
+      headerName: "Note",
+      width: 200,
     },
   ];
 
@@ -227,8 +264,18 @@ export default function My_Order_UI() {
     setDialogConfirmSlipOpen(true);
   };
 
+  const handleRejectButtonClick = (ID: Number) => {
+    setOrderID(ID);
+    setDialogRejectOpen(true);
+  };
+
   const handleDialogConfrimClickClose = () => {
     setDialogConfirmSlipOpen(false);
+  };
+
+  const handleDialogRejectClickClose = () => {
+    setDialogRejectOpen(false);
+    setNewNote(undefined);
   };
 
   const handleCanelButtonClick = (ID: Number) => {
@@ -237,11 +284,16 @@ export default function My_Order_UI() {
   };
 
   const handlePostButtonClick = (ID: Number) => {
-    window.open("/Individual_Post/" + ID)
+    window.open("/Individual_Post/" + ID);
   };
 
   const handleDialogCancelClickClose = () => {
     setDialogCancelOpen(false);
+  };
+
+  const handleDialogNoteClickClose = () => {
+    setNote(undefined);
+    setDialogNoteOpen(false);
   };
 
   const handleSlip = () => {
@@ -252,6 +304,10 @@ export default function My_Order_UI() {
     } else {
       return <Grid>No slip upload</Grid>;
     }
+  };
+
+  const textAreaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNewNote(event.target.value);
   };
 
   const GetStatusSeller = async () => {
@@ -322,7 +378,35 @@ export default function My_Order_UI() {
           setError(true);
           setErrorMsg(" - " + res.error);
         }
-        handleCloseSlipDialog();
+      });
+  };
+
+  const Reject = () => {
+    let data = {
+      ID: orderID,
+      Note: newNote,
+    };
+    const apiUrl = ip_address() + "/orderreject"; //ส่งขอการแก้ไข
+    const requestOptions = {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+
+    fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then(async (res) => {
+        if (res.data) {
+          setSuccess(true);
+          getMyOrder();
+          handleDialogRejectClickClose();
+        } else {
+          setError(true);
+          setErrorMsg(" - " + res.error);
+        }
       });
   };
 
@@ -358,159 +442,254 @@ export default function My_Order_UI() {
     setDialogLoadOpen(false);
   };
 
+  const [count, setCount] = React.useState<number>(0);
   React.useEffect(() => {
-    const fetchData = async () => {
-      setDialogLoadOpen(true);
-      await GetStatusSeller();
-      await getMyOrder();
-      setDialogLoadOpen(false);
-    };
-    fetchData();
-  }, []);
+    if (count === 0) {
+      const fetchData = async () => {
+        setDialogLoadOpen(true);
+        await GetStatusSeller();
+        await getMyOrder();
+        setDialogLoadOpen(false);
+      };
+      fetchData();
+      setCount(1);
+    }
+
+    if (textareaRef && textareaRef.current) {
+      textareaRef.current.style.height = "0px";
+      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = scrollHeight + "px";
+    }
+  }, [count, newNote]);
 
   if (!noReq && (statusSeller?.Is_Confirm || statusSeller?.Is_Cancel)) {
-  return (
-    <>
-      <Snackbar //ป้ายบันทึกสำเร็จ
-        open={success}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert onClose={handleClose} severity="success">
-          Succes
-        </Alert>
-      </Snackbar>
+    return (
+      <>
+        <Snackbar //ป้ายบันทึกสำเร็จ
+          open={success}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert onClose={handleClose} severity="success">
+            Succes
+          </Alert>
+        </Snackbar>
 
-      <Snackbar //ป้ายบันทึกไม่สำเร็จ
-        open={error}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert onClose={handleClose} severity="error">
-          Error {errorMsg}
-        </Alert>
-      </Snackbar>
+        <Snackbar //ป้ายบันทึกไม่สำเร็จ
+          open={error}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert onClose={handleClose} severity="error">
+            Error {errorMsg}
+          </Alert>
+        </Snackbar>
 
-      <Grid //ตารางแสดงผล
-        container
-        sx={{ padding: 2 }}
-      >
-        <div style={{ height: "90vh", width: "100%" }}>
-          <DataGrid
-            style={{ background: "#3a3b3c", color: "white" }}
-            rows={order}
-            getRowId={(row) => row.ID}
-            slots={{ toolbar: CustomToolbar }}
-            columns={columns}
-            slotProps={{
-              filterPanel: {
-                filterFormProps: {
-                  filterColumns,
+        <Grid //ตารางแสดงผล
+          container
+          sx={{ padding: 2 }}
+        >
+          <div style={{ height: "90vh", width: "100%" }}>
+            <DataGrid
+              style={{ background: "#3a3b3c", color: "white" }}
+              rows={order}
+              getRowId={(row) => row.ID}
+              slots={{ toolbar: CustomToolbar }}
+              columns={columns}
+              onCellClick={(params) => {
+                if (params.field === "Note") {
+                  const preNote = params?.value;
+                  setNote(String(preNote));
+                  setDialogNoteOpen(true);
+                }
+              }}
+              slotProps={{
+                filterPanel: {
+                  filterFormProps: {
+                    filterColumns,
+                  },
+                  getColumnForNewFilter,
                 },
-                getColumnForNewFilter,
-              },
-            }}
-          />
-        </div>
-      </Grid>
+              }}
+            />
+          </div>
+        </Grid>
 
-      <Dialog //view slip
-        open={dialogSlipOpen}
-        onClose={handleCloseSlipDialog}
-      >
-        <DialogTitle>Slip Image</DialogTitle>
-        <DialogContent>{handleSlip()}</DialogContent>
-        <DialogActions>
-          <Button size="small" onClick={handleCloseSlipDialog} color="inherit">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog //view slip
+          open={dialogSlipOpen}
+          onClose={handleCloseSlipDialog}
+        >
+          <DialogTitle>Slip Image</DialogTitle>
+          <DialogContent>{handleSlip()}</DialogContent>
+          <DialogActions>
+            <Button
+              size="small"
+              onClick={handleCloseSlipDialog}
+              color="inherit"
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
 
-      <Dialog //confirm
-        open={dialogConfirmSlipOpen}
-        onClose={handleDialogConfrimClickClose}
+        <Dialog //confirm
+          open={dialogConfirmSlipOpen}
+          onClose={handleDialogConfrimClickClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          fullWidth={true}
+          maxWidth="sm"
+        >
+          <DialogTitle id="alert-dialog-title">{"Confirm slip"}</DialogTitle>
+          <DialogActions>
+            <Button
+              size="small"
+              onClick={handleDialogConfrimClickClose}
+              color="inherit"
+            >
+              Cancel
+            </Button>
+            <Button
+              size="small"
+              onClick={ConfirmSlip}
+              sx={{ color: "#00ADB5" }}
+              color="primary"
+              autoFocus
+            >
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog //reject
+          open={dialogRejectOpen}
+          onClose={handleDialogRejectClickClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          fullWidth={true}
+          maxWidth="sm"
+        >
+          <DialogTitle id="alert-dialog-title">{"Reject"}</DialogTitle>
+          <DialogContent>
+            <Grid container>
+              <p>Note</p>
+              <textarea
+                ref={textareaRef}
+                style={{
+                  padding: 5,
+                  marginTop: 10,
+                  width: "98%",
+                  height: "100%",
+                  display: "block",
+                  resize: "none",
+                  backgroundColor: "#F",
+                  fontSize: 16,
+                  borderRadius: "5px",
+                }}
+                onChange={textAreaChange}
+                value={newNote}
+              ></textarea>
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              size="small"
+              onClick={handleDialogRejectClickClose}
+              color="inherit"
+            >
+              Cancel
+            </Button>
+            <Button size="small" onClick={Reject} color="secondary" autoFocus>
+              Reject
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog //Cancel
+          open={dialogCancelOpen}
+          onClose={handleDialogCancelClickClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          fullWidth={true}
+          maxWidth="sm"
+        >
+          <DialogTitle id="alert-dialog-title">{"Cancel order"}</DialogTitle>
+          <DialogActions>
+            <Button size="small" onClick={handleDialogCancelClickClose}>
+              Cancel
+            </Button>
+            <Button
+              size="small"
+              onClick={CancelOrder}
+              sx={{ color: "#ff753e" }}
+              color="error"
+              autoFocus
+            >
+              Cancel Order
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog //Note
+        open={dialogNoteOpen}
+        onClose={handleDialogNoteClickClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         fullWidth={true}
         maxWidth="sm"
       >
-        <DialogTitle id="alert-dialog-title">{"Confirm slip"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Note"}</DialogTitle>
+        <DialogContent>
+          <Box>
+            <Paper elevation={2} sx={{ padding: 2, margin: 2 }}>
+              <Grid container>
+                <div className="note-content">{note}</div>
+              </Grid>
+            </Paper>
+          </Box>
+        </DialogContent>
         <DialogActions>
           <Button
             size="small"
-            onClick={handleDialogConfrimClickClose}
+            onClick={handleDialogNoteClickClose}
             color="inherit"
           >
-            Cancel
-          </Button>
-          <Button
-            size="small"
-            onClick={ConfirmSlip}
-            sx={{ color: "#00ADB5" }}
-            color="primary"
-            autoFocus
-          >
-            Confirm
+            close
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog //Cancel
-        open={dialogCancelOpen}
-        onClose={handleDialogCancelClickClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        fullWidth={true}
-        maxWidth="sm"
-      >
-        <DialogTitle id="alert-dialog-title">{"Cancel order"}</DialogTitle>
-        <DialogActions>
-          <Button size="small" onClick={handleDialogCancelClickClose}>
-            Cancel
-          </Button>
-          <Button
-            size="small"
-            onClick={CancelOrder}
-            sx={{ color: "#ff753e" }}
-            color="error"
-            autoFocus
-          >
-            Cancel Order
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog //Load
-        open={dialogLoadOpen}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <div className="custom-loader" />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <div>Loading...</div>
-          </div>
-        </DialogTitle>
-      </Dialog>
-    </>
-  );} else {
-    return (<ReqSeller_Status_Table_UI/>)
+        <Dialog //Load
+          open={dialogLoadOpen}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div className="custom-loader" />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div>Loading...</div>
+            </div>
+          </DialogTitle>
+        </Dialog>
+      </>
+    );
+  } else {
+    return <ReqSeller_Status_Table_UI />;
   }
 }

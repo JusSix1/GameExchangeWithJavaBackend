@@ -102,3 +102,21 @@
     justify-content: center;
     align-items: center;
 }
+
+.post-upload {
+    margin-left: 1rem;
+    white-space: pre-line;
+    color: #ffffff;
+}
+
+.post-process {
+    margin-left: 1rem;
+    white-space: pre-line;
+    color: #00f7ff;
+}
+
+.post-alert {
+    margin-left: 1rem;
+    white-space: pre-line;
+    color: #ff2a2a;
+}

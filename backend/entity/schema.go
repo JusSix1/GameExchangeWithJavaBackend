@@ -83,7 +83,9 @@ type Order struct {
 	Account         Account   `gorm:"references:id" valid:"-"`
 	Slip            string    `valid:"image_valid~Please change the image"`
 	Slip_Create_At  time.Time `valid:"-"`
+	Note            string    `valid:"-"`
 	Is_Slip_Confirm bool      `valid:"-"`
+	Is_Reject       bool      `valid:"-"`
 	Is_Receive      bool      `valid:"-"`
 }
 

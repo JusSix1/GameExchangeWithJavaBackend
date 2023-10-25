@@ -67,6 +67,7 @@ func main() {
 			protectedUser.GET("/mybought/:email", order_controller.GetBought)
 			protectedUser.PATCH("/orderslip", order_controller.UpdateOrderSlip)
 			protectedUser.PATCH("/orderslipconfirm", order_controller.UpdateOrderSlipConfirm)
+			protectedUser.PATCH("/orderreject", order_controller.UpdateOrderReject)
 			protectedUser.PATCH("/orderreive", order_controller.UpdateOrderReceive)
 			protectedUser.DELETE("/order", order_controller.DeleteOrder)
 			protectedUser.DELETE("/cancelorder", order_controller.CancelOrder)

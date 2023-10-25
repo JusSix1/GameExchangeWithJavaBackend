@@ -24,6 +24,9 @@ export default function My_Basket_UI() {
   const [reserveForUploadSlip, setReserveForUploadSlip] = React.useState<
     Partial<OrdersInterface>
   >({});
+  const [reserveBeforeUploadSlip, setReserveBeforeUploadSlip] = React.useState<
+    Partial<OrdersInterface>
+  >({});
   const [posts, setPosts] = React.useState<PostsInterface[]>([]);
   const [postID, setPostID] = React.useState<number>();
 
@@ -65,6 +68,7 @@ export default function My_Basket_UI() {
   const handleOpenSlipDialog = (ID: Number) => {
     const foundOrder = reserve.find((order) => order.Account_ID === ID);
     if (foundOrder) {
+      setReserveBeforeUploadSlip(foundOrder);
       setReserveForUploadSlip(foundOrder);
       setDialogSlipOpen(true);
     }
@@ -254,6 +258,81 @@ export default function My_Basket_UI() {
                     Bank account number: {item.User.Bank_Account}
                   </h4>
                 </div>
+
+                {reserve.some(
+                  (order) => order.Account_ID === item.Account_ID && !order.Slip
+                ) ? (
+                  <div>
+                    {reserve
+                      .filter(
+                        (order) =>
+                          order.Account_ID === item.Account_ID && !order.Slip
+                      )
+                      .map((order) => (
+                        <div key={order.ID}>
+                          <div className="post-upload">
+                            <p>
+                              <b>Upload your slip</b>
+                              <br />
+                              <br />
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                ) : reserve.some(
+                    (order) =>
+                      order.Account_ID === item.Account_ID && order.Slip && !order.Is_Reject
+                  ) ? (
+                  <div>
+                    {reserve
+                      .filter(
+                        (order) =>
+                          order.Account_ID === item.Account_ID && order.Slip && !order.Is_Reject
+                      )
+                      .map((order) => (
+                        <div key={order.ID}>
+                          <div className="post-process">
+                            <p>
+                              <b>In progress</b>
+                              <br />
+                              <br />
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                ) : reserve.some(
+                    (order) =>
+                      order.Account_ID === item.Account_ID && order.Is_Reject
+                  ) ? (
+                  <div>
+                    {reserve
+                      .filter(
+                        (order) =>
+                          order.Account_ID === item.Account_ID &&
+                          order.Is_Reject
+                      )
+                      .map((order) => (
+                        <div key={order.ID}>
+                          <div className="post-alert">
+                            <p>
+                              <b>Your order was rejected.</b>
+                              <br />
+                              <br />
+                              <b>Note: </b>
+                              {order.Note}
+                              <br/>
+                              <br/>
+                              <b>If you think I'm wrong, please contact me through my profile page.</b>
+                            </p>
+                            <br />
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                ) : null}
+
                 {item.Advertising_image && (
                   <img
                     src={item.Advertising_image}
@@ -261,14 +340,29 @@ export default function My_Basket_UI() {
                     className="post-image"
                   />
                 )}
+
                 <div className="container-btn-slip">
-                  <button
-                    className="button-slip"
-                    role="button"
-                    onClick={() => handleOpenSlipDialog(item.Account_ID)}
-                  >
-                    Upload Slip
-                  </button>
+                  {item &&
+                  !reserve.some(
+                    (order) =>
+                      order.Account_ID === item.Account_ID && order.Slip
+                  ) ? (
+                    <button
+                      className="button-slip"
+                      role="button"
+                      onClick={() => handleOpenSlipDialog(item.Account_ID)}
+                    >
+                      Upload Slip
+                    </button>
+                  ) : (
+                    <button
+                      className="button-slip"
+                      role="button"
+                      onClick={() => handleOpenSlipDialog(item.Account_ID)}
+                    >
+                      View Slip
+                    </button>
+                  )}
                   <button
                     className="button-cancel"
                     role="button"
@@ -314,21 +408,29 @@ export default function My_Basket_UI() {
               </>
             )}
           </div>
-          <input id="Image-Input-slip" type="file" onChange={handleImageChange} />
+          {!reserveBeforeUploadSlip.Slip ? (
+            <input
+              id="Image-Input-slip"
+              type="file"
+              onChange={handleImageChange}
+            />
+          ) : null}
         </Grid>
         <DialogActions>
           <Button size="small" onClick={handleCloseSlipDialog} color="inherit">
             Cancel
           </Button>
-          <Button
-            size="small"
-            onClick={PatchOrder}
-            sx={{ color: "#00ADB5" }}
-            color="success"
-            autoFocus
-          >
-            Upload
-          </Button>
+          {!reserveBeforeUploadSlip.Slip ? (
+            <Button
+              size="small"
+              onClick={PatchOrder}
+              sx={{ color: "#00ADB5" }}
+              color="success"
+              autoFocus
+            >
+              Upload
+            </Button>
+          ) : null}
         </DialogActions>
       </Dialog>
 

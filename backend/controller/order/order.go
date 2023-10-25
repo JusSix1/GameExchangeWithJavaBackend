@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/JusSix1/GameExchange/entity"
 	"github.com/asaskevich/govalidator"
@@ -71,6 +72,7 @@ func CreateOrder(c *gin.Context) {
 		Account_ID:      &account.ID,
 		Slip:            order.Slip,
 		Is_Slip_Confirm: false,
+		Is_Reject:       false,
 		Is_Receive:      false,
 	}
 
@@ -91,8 +93,6 @@ func CreateOrder(c *gin.Context) {
 func GetOrder(c *gin.Context) {
 	var userCheckID entity.User
 	var order []entity.Order
-	var user []entity.User
-	var account []entity.Account
 
 	email := c.Param("email")
 
@@ -102,11 +102,11 @@ func GetOrder(c *gin.Context) {
 	}
 
 	if err := entity.DB().Preload("User", func(db *gorm.DB) *gorm.DB {
-		return db.Select("id", "profile_name", "email").Find(&user)
+		return db.Select("id", "profile_name", "email")
 	}).Preload("Account", func(db *gorm.DB) *gorm.DB {
-		return db.Select("id", "game_account").Find(&account)
+		return db.Select("id", "game_account")
 	}).Table("orders").
-		Select("orders.id, orders.user_id, orders.account_id, orders.slip, orders.slip_create_at, orders.is_slip_confirm, orders.is_receive").
+		Select("orders.id, orders.user_id, orders.account_id, orders.slip, orders.slip_create_at, orders.is_slip_confirm, orders.is_reject, orders.is_receive, orders.note").
 		Joins("INNER JOIN accounts ON orders.account_id = accounts.id AND accounts.user_id = ?", userCheckID.ID).
 		Order("orders.id, orders.is_slip_confirm").Find(&order).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -190,7 +190,8 @@ func UpdateOrderSlip(c *gin.Context) {
 	}
 
 	updateOrder := entity.Order{
-		Slip: order.Slip,
+		Slip:           order.Slip,
+		Slip_Create_At: time.Now(),
 	}
 
 	if _, err := govalidator.ValidateStruct(updateOrder); err != nil {
@@ -235,6 +236,28 @@ func UpdateOrderSlipConfirm(c *gin.Context) {
 	}
 
 	if err := entity.DB().Where("id = ?", orderCheckID.Account_ID).Updates(&updateAccount).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": order})
+}
+
+// PATCH /orderreject
+func UpdateOrderReject(c *gin.Context) {
+	var order entity.Order
+
+	if err := c.ShouldBindJSON(&order); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updateOrder := entity.Order{
+		Note:      order.Note,
+		Is_Reject: true,
+	}
+
+	if err := entity.DB().Where("id = ?", order.ID).Updates(&updateOrder).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

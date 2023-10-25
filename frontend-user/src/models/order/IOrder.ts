@@ -10,6 +10,8 @@ export interface OrdersInterface {
   Account: AccountsInterface;
   Slip: string;
   Slip_Create_At: Date;
+  Note: string;
   Is_Slip_Confirm: boolean;
+  Is_Reject: boolean;
   Is_Receive: boolean;
 }

@@ -553,7 +553,7 @@ export default function List_ReqSeller_UI() {
             color="primary"
             autoFocus
           >
-            Access
+            Accept
           </Button>
         </DialogActions>
       </Dialog>
