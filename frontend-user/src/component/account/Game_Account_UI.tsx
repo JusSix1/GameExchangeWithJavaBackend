@@ -243,7 +243,7 @@ export default function All_My_Account_UI() {
   };
 
   const handleDialogNewGameClickOpen = () => {
-    setDialogNewGameOpen(true);
+    setDialogCreateOpen(false);
   };
 
   const handleDialogNewGameClickClose = () => {
@@ -684,7 +684,12 @@ export default function All_My_Account_UI() {
                             }}
                             isOptionEqualToValue={isOptionEqualToValue}
                           />
-                          <a onClick={handleDialogNewGameClickOpen}>
+                          <a
+                            href={`/RequestGame`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={handleDialogNewGameClickOpen}
+                          >
                             Don't have a game name?
                           </a>
                         </Grid>

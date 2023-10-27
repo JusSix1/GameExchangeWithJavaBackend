@@ -85,6 +85,7 @@ type Order struct {
 	Slip_Create_At  time.Time `valid:"-"`
 	Note            string    `valid:"-"`
 	Is_Slip_Confirm bool      `valid:"-"`
+	Slip_Confirm_At time.Time `valid:"-"`
 	Is_Reject       bool      `valid:"-"`
 	Is_Receive      bool      `valid:"-"`
 }

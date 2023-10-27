@@ -19,6 +19,7 @@ import {
   createTheme,
   TextField,
   Button,
+  Grid,
 } from "@mui/material";
 import * as React from "react";
 import ip_address from "../ip";
@@ -144,6 +145,10 @@ export default function ReqGame_Status_Table_UI() {
           Error {errorMsg}
         </Alert>
       </Snackbar>
+      
+      <Grid container justifyContent={"center"}>
+        <h1 className="head-text">Request new game</h1>
+      </Grid>
 
       <div className="div-request-game-main">
         <ThemeProvider theme={darkTheme}>

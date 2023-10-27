@@ -139,7 +139,7 @@ export default function My_Order_UI() {
       renderCell: (params) => (
         <Button
           disabled={
-            !(params.row.Slip && !params.row.Is_Slip_Confirm)|| params.row.Is_Reject
+            !(params.row.Slip && !params.row.Is_Slip_Confirm)
           }
           size="small"
           variant="contained"

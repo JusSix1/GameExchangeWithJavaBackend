@@ -8,6 +8,8 @@ import "./Edit_post.css";
 import Moment from "moment";
 import moment from "moment";
 import { useParams } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+
 
 const styles: { [name: string]: React.CSSProperties } = {
   container: {
@@ -22,7 +24,8 @@ const styles: { [name: string]: React.CSSProperties } = {
     height: "100%",
     display: "block",
     resize: "none",
-    backgroundColor: "#F",
+    backgroundColor: "#86878a",
+    color: "#fff",
     fontSize: 16,
   },
 };
@@ -39,6 +42,8 @@ export default function Edit_post_UI() {
   const [dialogLoadOpen, setDialogLoadOpen] = React.useState(false);
 
   Moment.locale("th");
+  const navigate = useNavigate();
+
 
   const handleClose = (
     event?: React.SyntheticEvent | Event,
@@ -114,7 +119,9 @@ export default function Edit_post_UI() {
       .then(async (res) => {
         if (res.data) {
           setSuccess(true);
-          getPost();
+          setTimeout(() => {
+            navigate('/GameAccount'); // เปลี่ยนหน้าไปที่ '/your-other-page'
+          }, 1000);
         } else {
           setError(true);
           setErrorMsg(" - " + res.error);

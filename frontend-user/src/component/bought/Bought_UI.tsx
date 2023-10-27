@@ -22,6 +22,7 @@ import {
   FilterColumnsArgs,
   GetColumnForNewFilterArgs,
 } from "@mui/x-data-grid";
+import "./Bought_UI.css"
 
 export default function My_Bought_UI() {
   const [order, setOrder] = React.useState<OrdersInterface[]>([]);
@@ -172,7 +173,7 @@ export default function My_Bought_UI() {
   };
 
   const handlePostButtonClick = (ID: Number) => {
-    window.open("/Individual_Post/" + ID)
+    window.open("/Individual_Post/" + ID);
   };
 
   const handleReviewButtonClick = async (User_ID: Number) => {
@@ -189,7 +190,7 @@ export default function My_Bought_UI() {
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
-          window.open("/profile/" + res.data.Profile_Name)
+          window.open("/profile/" + res.data.Profile_Name);
         }
       });
     // window.open("/profile/" + User_ID)
@@ -283,7 +284,7 @@ export default function My_Bought_UI() {
         container
         sx={{ padding: 2 }}
       >
-        <div style={{ height: "90vh", width: "100%" }}>
+        <div style={{ height: "70vh", width: "100%" }}>
           <DataGrid
             style={{ background: "#3a3b3c", color: "white" }}
             rows={order}
@@ -301,6 +302,13 @@ export default function My_Bought_UI() {
           />
         </div>
       </Grid>
+      <div className="div-announce-under-table">
+        <h3>Announce:</h3>
+        <ul>
+          <li>Please press receive the account when you have finished checking the account.</li>
+          <li>If 3 days have passed, the system will automatically receive the account.</li>
+        </ul>
+      </div>
 
       <Dialog //receive
         open={dialogReceiveOpen}

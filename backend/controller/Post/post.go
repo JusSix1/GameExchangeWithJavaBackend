@@ -107,8 +107,8 @@ func GetPost(c *gin.Context) {
 		return
 	}
 
-	if tx := entity.DB().Where("id = ? AND is_sell = false", id).First(&accountCheck); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Account not found or already sold"})
+	if tx := entity.DB().Where("id = ?", id).First(&accountCheck); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Account not found"})
 		return
 	}
 

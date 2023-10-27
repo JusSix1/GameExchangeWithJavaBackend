@@ -170,6 +170,24 @@ func GetBought(c *gin.Context) {
 		return
 	}
 
+	// คำนวณวันที่ 3 วันที่ผ่านมา
+	threeDaysAgo := time.Now().Add(-3 * 24 * time.Hour)
+	//thirtySecondsAgo := time.Now().Add(-30 * time.Second)
+
+	// ตรวจสอบเงื่อนไขก่อนดึงข้อมูลจากฐานข้อมูล
+	err := entity.DB().Where("user_id = ? AND is_slip_confirm = true AND is_receive = false", userCheckID.ID).
+		Where("slip_confirm_at <= ?", threeDaysAgo).Find(&order).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// อัปเดต Is_Receive เป็น true สำหรับรายการที่ผ่านเงื่อนไข
+	for _, o := range order {
+		o.Is_Receive = true
+		entity.DB().Save(&o)
+	}
+
 	if err := entity.DB().Preload("Account", func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Game").Select("id", "game_id", "game_account", "game_password", "email", "email_password", "user_id").Find(&accountOrder)
 	}).Raw("SELECT * FROM orders WHERE user_id = ? and is_slip_confirm = true ORDER BY id DESC", userCheckID.ID).Find(&order).Error; err != nil {
@@ -217,11 +235,14 @@ func UpdateOrderSlipConfirm(c *gin.Context) {
 		return
 	}
 
-	updateOrder := entity.Order{
-		Is_Slip_Confirm: true,
+	updateOrder := map[string]interface{}{
+		"Is_Slip_Confirm": true,
+		"Slip_Confirm_At": time.Now(),
+		"Is_Reject":       false,
+		"Note":            "",
 	}
 
-	if err := entity.DB().Where("id = ?", order.ID).Updates(&updateOrder).Error; err != nil {
+	if err := entity.DB().Model(&order).Where("id = ?", order.ID).Updates(updateOrder).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
