@@ -297,6 +297,7 @@ func UpdateOrderReceive(c *gin.Context) {
 
 	updateOrder := entity.Order{
 		Is_Receive: true,
+		Receive_At: time.Now(),
 	}
 
 	if _, err := govalidator.ValidateStruct(updateOrder); err != nil {
@@ -380,7 +381,7 @@ func GetTop5Seller(c *gin.Context) {
 		Joins("JOIN accounts ON users.ID = accounts.user_id").
 		Joins("JOIN orders ON accounts.id = orders.account_id").
 		Where("orders.is_receive = ?", true).
-		Where("orders.updated_at >= DATE('now', '-7 days')").
+		Where("orders.receive_at >= DATE('now', '-7 days')").
 		Group("users.id").
 		Order("order_count DESC").
 		Limit(5).
@@ -408,7 +409,7 @@ func GetTop5Game(c *gin.Context) {
 		Joins("JOIN accounts ON games.id = accounts.game_id").
 		Joins("JOIN orders ON accounts.id = orders.account_id").
 		Where("orders.is_receive = ?", true).
-		Where("orders.updated_at >= DATE('now', '-7 days')").
+		Where("orders.receive_at >= DATE('now', '-7 days')").
 		Group("games.id").
 		Order("order_count DESC").
 		Limit(5).

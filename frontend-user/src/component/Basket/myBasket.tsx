@@ -35,7 +35,7 @@ export default function My_Basket_UI() {
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
   const [dialogLoadOpen, setDialogLoadOpen] = React.useState(false);
   const [dialogSlipOpen, setDialogSlipOpen] = React.useState(false);
-  const [dialogDeleteOpen, setDialogDeleteOpen] = React.useState(false);
+  const [dialogCancelOpen, setDialogCancelOpen] = React.useState(false);
 
   Moment.locale("th");
 
@@ -78,17 +78,17 @@ export default function My_Basket_UI() {
     setDialogSlipOpen(false);
   };
 
-  const handleDialogDeleteClickOpen = (ID: Number) => {
-    const foundOrder = reserve.find((order) => order.Account_ID === ID);
+  const handleDialogCancelClickOpen = (Account_ID: Number,Post_ID: Number) => {
+    const foundOrder = reserve.find((order) => order.Account_ID === Account_ID);
     if (foundOrder) {
       setReserveForUploadSlip(foundOrder);
-      setPostID(Number(ID));
-      setDialogDeleteOpen(true);
+      setPostID(Number(Post_ID));
+      setDialogCancelOpen(true);
     }
   };
 
-  const handleDialogDeleteClickClose = () => {
-    setDialogDeleteOpen(false);
+  const handleDialogCancelClickClose = () => {
+    setDialogCancelOpen(false);
   };
 
   const getReserve = async () => {
@@ -172,7 +172,7 @@ export default function My_Basket_UI() {
       .then(async (res) => {
         if (res.data) {
           setSuccess(true);
-          handleDialogDeleteClickClose();
+          handleDialogCancelClickClose();
           getReserve();
         } else {
           setError(true);
@@ -366,7 +366,7 @@ export default function My_Basket_UI() {
                   <button
                     className="button-cancel"
                     role="button"
-                    onClick={() => handleDialogDeleteClickOpen(item.ID)}
+                    onClick={() => handleDialogCancelClickOpen(item.Account_ID,item.ID)}
                   >
                     Cancel Reserve
                   </button>
@@ -413,6 +413,7 @@ export default function My_Basket_UI() {
               id="Image-Input-slip"
               type="file"
               onChange={handleImageChange}
+              accept=".jpg, .jpeg, .png"
             />
           ) : null}
         </Grid>
@@ -434,19 +435,19 @@ export default function My_Basket_UI() {
         </DialogActions>
       </Dialog>
 
-      <Dialog //Delete
-        open={dialogDeleteOpen}
-        onClose={handleDialogDeleteClickClose}
+      <Dialog //Cancel
+        open={dialogCancelOpen}
+        onClose={handleDialogCancelClickClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         fullWidth={true}
         maxWidth="sm"
       >
-        <DialogTitle id="alert-dialog-title">{"Delete Account"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Cancel Reserve"}</DialogTitle>
         <DialogActions>
           <Button
             size="small"
-            onClick={handleDialogDeleteClickClose}
+            onClick={handleDialogCancelClickClose}
             color="inherit"
           >
             Cancel
@@ -458,7 +459,7 @@ export default function My_Basket_UI() {
             color="error"
             autoFocus
           >
-            Delete
+            Cancel Reserve
           </Button>
         </DialogActions>
       </Dialog>

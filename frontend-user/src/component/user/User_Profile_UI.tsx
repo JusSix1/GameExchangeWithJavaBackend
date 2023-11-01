@@ -394,7 +394,7 @@ function User_Profile() {
                       className="comment-image"
                     />
                   )}
-                  <input type="file" onChange={handleImageChange} />
+                  <input type="file" onChange={handleImageChange} accept=".jpg, .jpeg, .png"/>
                 </div>
 
                 <div

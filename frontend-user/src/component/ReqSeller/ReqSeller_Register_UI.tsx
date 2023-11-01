@@ -190,7 +190,7 @@ export default function ReqSeller_Register_UI() {
                   htmlFor="Image-Input-front"
                   style={{ cursor: "pointer" }}
                 >
-                  <div className="div-change-personal-image">Change Front Image</div>
+                  <div className="div-change-personal-image"><h6>Change Front Image</h6></div>
                 </label>
               </>
             ) : null}
@@ -239,7 +239,7 @@ export default function ReqSeller_Register_UI() {
                   accept=".jpg, .jpeg, .png"
                 />
                 <label htmlFor="Image-Input-back" style={{ cursor: "pointer" }}>
-                  <div className="div-change-personal-image">Change Back Image</div>
+                  <div className="div-change-personal-image"><h6>Change Back Image</h6></div>
                 </label>
               </>
             ) : null}

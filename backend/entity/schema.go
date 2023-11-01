@@ -88,6 +88,7 @@ type Order struct {
 	Slip_Confirm_At time.Time `valid:"-"`
 	Is_Reject       bool      `valid:"-"`
 	Is_Receive      bool      `valid:"-"`
+	Receive_At      time.Time `valid:"-"`
 }
 
 type Post struct {

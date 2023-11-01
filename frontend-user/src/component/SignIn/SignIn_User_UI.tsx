@@ -562,7 +562,7 @@ function SignIn_User() {
                       <img src={`${imageString}`} width="250" height="250" />{" "}
                       {/** show base64 picture from string variable (that contain base64 picture data) */}
                     </Grid>
-                    <input type="file" onChange={handleImageChange} />
+                    <input type="file" onChange={handleImageChange} accept=".jpg, .jpeg, .png"/>
                     <FormHelperText>
                       recommend size is 250*250 pixels
                     </FormHelperText>

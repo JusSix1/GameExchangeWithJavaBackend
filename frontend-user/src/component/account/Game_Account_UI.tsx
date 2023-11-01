@@ -74,6 +74,8 @@ export default function All_My_Account_UI() {
   const [description, setDescription] = React.useState<String>("");
   const [buttonDialogAccount, setButtonDialogAccount] =
     React.useState<String>("");
+    const [headerDialogAccount, setHeaderDialogAccount] =
+    React.useState<String>("");
 
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -118,7 +120,7 @@ export default function All_My_Account_UI() {
       width: 200,
       renderCell: (params) => (
         <>
-          {params.row.Is_Post ? (
+          {params.row.Is_Post && !params.row.Is_Sell ? (
             <Button
               disabled={params.row.Is_Sell}
               size="small"
@@ -130,7 +132,7 @@ export default function All_My_Account_UI() {
             >
               Edit Post
             </Button>
-          ) : (
+          ) : !params.row.Is_Post && !params.row.Is_Sell ? (
             <Button
               size="small"
               variant="contained"
@@ -138,6 +140,17 @@ export default function All_My_Account_UI() {
               onClick={() => handlePostButtonClick(params.row.ID)}
             >
               Post
+            </Button>
+          ) : (
+            <Button
+              size="small"
+              variant="contained"
+              sx={{ backgroundColor: "#393E46" }}
+              color="warning"
+              component={RouterLink}
+              to={"/Individual_Post/" + params.row.ID}
+            >
+              View Post
             </Button>
           )}
         </>
@@ -217,6 +230,7 @@ export default function All_My_Account_UI() {
 
   const handleDialogCreateClickOpen = () => {
     setDialogCreateOpen(true);
+    setHeaderDialogAccount("Add an account");
     setButtonDialogAccount("Import");
   };
 
@@ -253,7 +267,8 @@ export default function All_My_Account_UI() {
 
   const handleDialogEditClickOpen = () => {
     setDialogCreateOpen(true);
-    setButtonDialogAccount("Summit");
+    setHeaderDialogAccount("Edit account");
+    setButtonDialogAccount("Save");
   };
 
   const handleImageChange = (event: any) => {
@@ -631,7 +646,7 @@ export default function All_My_Account_UI() {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">
-              {"Add an Account"}
+              {headerDialogAccount}
             </DialogTitle>
 
             <DialogContent>
@@ -888,6 +903,7 @@ export default function All_My_Account_UI() {
                             id="Add-Advertising-Image"
                             style={{ display: "none" }}
                             onChange={handleImageChange}
+                            accept=".jpg, .jpeg, .png"
                           />
                           <label htmlFor="Add-Advertising-Image">
                             <AddPhotoAlternateIcon
