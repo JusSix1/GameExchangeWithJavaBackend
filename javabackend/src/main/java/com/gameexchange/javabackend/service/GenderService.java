@@ -4,6 +4,7 @@ import com.gameexchange.javabackend.entity.Gender;
 import com.gameexchange.javabackend.repository.GenderRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,12 +17,12 @@ public class GenderService {
 
     }
 
-    public Optional<Gender> findById(String id){
+    public Optional<Gender> findById(Long id){
         return repository.findById(id);
     }
 
-    public Iterable<Gender> findAll(){
-        return repository.findAll();
+    public List<Gender> findAll(){
+        return (List<Gender>) repository.findAll();
     }
 
 }

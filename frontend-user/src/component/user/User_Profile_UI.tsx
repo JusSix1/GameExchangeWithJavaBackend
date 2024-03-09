@@ -308,7 +308,7 @@ function User_Profile() {
           {"Full name: " + user.FirstName + " " + user.LastName + "\n\n"}
           {"Email: " + user.Email + "\n\n"}
           {"Phone number: " + user.Phone_Number + "\n\n"}
-          {"Gender: " + user.Gender?.Gender + "\n\n"}
+          {"Gender: " + user.Gender?.gender_name + "\n\n"}
           {user.Facebook && ("Facebook: " + user.Facebook + "\n\n")}
           {user.Instagram && ("Instagram: " + user.Instagram + "\n\n")}
           {user.Line && ("Line: " + user.Line + "\n\n")}

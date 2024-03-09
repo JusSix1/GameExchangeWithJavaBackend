@@ -29,11 +29,11 @@ public class User extends BaseEntity{
     @Column(nullable = false, length = 50)
     private String profile_name;
 
-    @Column()
+    @Column(columnDefinition="TEXT")
     private String profile_picture;
 
     @Column(nullable = false)
-    private Date date_of_birthday;
+    private Date date_of_birth;
 
     @Column(nullable = false)
     private String phone_number;
@@ -43,6 +43,15 @@ public class User extends BaseEntity{
 
     @Column(nullable = false)
     private String bank_account_number;
+
+    @Column()
+    private String facebook;
+
+    @Column()
+    private String instagram;
+
+    @Column()
+    private String line;
 
     @ManyToOne
     @JoinColumn(name = "gender_id", nullable = false)

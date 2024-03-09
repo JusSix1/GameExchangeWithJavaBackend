@@ -415,7 +415,7 @@ function My_Profile() {
             `${Moment(user.Birthday).format("DD MMMM YYYY")}` +
             "\n\n"}
           {"Phone number: " + user.Phone_Number + "\n\n"}
-          {"Gender: " + user.Gender?.Gender + "\n\n"}
+          {"Gender: " + user.Gender?.gender_name + "\n\n"}
           {"Address: " + user.Address + "\n\n"}
           {"Bank account number: " + user.Bank_Account + "\n\n"}
           {user.Facebook && "Facebook: " + user.Facebook + "\n\n"}
@@ -724,9 +724,9 @@ function My_Profile() {
                         >
                           {genders.map((o) => (
                             <FormControlLabel
-                              value={o.ID} // <---- pass a primitive id value, don't pass the whole object here
+                              value={o.id} // <---- pass a primitive id value, don't pass the whole object here
                               control={<Radio size="small" />}
-                              label={o.Gender}
+                              label={o.gender_name}
                             />
                           ))}
                         </RadioGroup>

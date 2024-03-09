@@ -23,7 +23,7 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
-  FormHelperText,
+  FormHelperText, Drawer,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -101,16 +101,16 @@ function SignIn_User() {
   }
 
   const getGender = async () => {
-    const apiUrl = ip_address() + "/genders";
+    const apiUrl = ip_address() + "/gender/get-gender-list";
+    // const apiUrl = ip_address() + "/genders";
     const requestOptions = {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
     };
 
     await fetch(apiUrl, requestOptions)
       .then((response) => response.json())
       .then((res) => {
-        if (res.data) {
+        if(res.data){
           setGenders(res.data);
         }
       });
@@ -169,6 +169,7 @@ function SignIn_User() {
   };
 
   const createAccount = () => {
+
     const signout = () => {
       localStorage.clear();
     };
@@ -176,24 +177,24 @@ function SignIn_User() {
     if (new_password === confirm_password) {
       // password ตรงกันก็จะ มีการ submit
       let data = {
-        Email: email.toLowerCase(),
-        FirstName: firstName,
-        LastName: lastName,
-        Password: new_password,
-        PersonalID: personalID,
-        Address: address,
-        Profile_Name: profile_name,
-        Profile_Picture: imageString,
-        Birthday: birthday,
-        Phone_number: phoneNumber,
-        Bank_Account: bankAccount,
-        Gender_ID: gender_id,
-        Facebook: facebook,
-        Instagram: ig,
-        Line: line,
+        email: email.toLowerCase(),
+        first_name: firstName,
+        last_name: lastName,
+        password: new_password,
+        personal_id: personalID,
+        address: address,
+        profile_name: profile_name,
+        profile_picture: imageString,
+        date_of_birth: birthday,
+        phone_number: phoneNumber,
+        bank_account_number: bankAccount,
+        gender_id: gender_id,
+        facebook: facebook,
+        instagram: ig,
+        line: line,
       };
 
-      const apiUrl = ip_address() + "/users"; // create user
+      const apiUrl = ip_address() + "/user/register"; // create user
       const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -509,9 +510,9 @@ function SignIn_User() {
                         >
                           {genders.map((o) => (
                             <FormControlLabel
-                              value={o.ID} // <---- pass a primitive id value, don't pass the whole object here
+                              value={o.id} // <---- pass a primitive id value, don't pass the whole object here
                               control={<Radio size="small" />}
-                              label={o.Gender}
+                              label={o.gender_name}
                             />
                           ))}
                         </RadioGroup>

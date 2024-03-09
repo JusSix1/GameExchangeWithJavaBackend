@@ -15,8 +15,8 @@ public class GenderBusiness {
         this.genderService = genderService;
     }
 
-    public Iterable<Gender> getGender(){
-        Iterable<Gender> gender;
+    public List<Gender> getGender(){
+        List<Gender> gender;
         gender = genderService.findAll();
 
         return gender;
